@@ -1,24 +1,17 @@
 package org.firstinspires.ftc.teamcode.pedroPathing;
-package com.pedropathing.ftc;
-import com.acmerobotics.dashboard.config.Config;
+import com.pedropathing.control.FilteredPIDFCoefficients;
 import com.pedropathing.control.PIDFCoefficients;
-import com.pedropathing.localization.*;
-import com.pedropathing.localization.constants.*;
+import com.pedropathing.ftc.drivetrains.MecanumConstants;
+import com.pedropathing.ftc.localization.constants.PinpointConstants;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.ftc.FollowerBuilder;
 import com.pedropathing.paths.PathConstraints;
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-
-import com.acmerobotics.dashboard.config.Config;
-import com.pedropathing.follower.Follower;
-import com.pedropathing.localization.Localizers;
-import com.pedropathing.follower.FollowerConstants;
-import com.pedropathing.util.CustomFilteredPIDFCoefficients;
-import com.pedropathing.util.CustomPIDFCoefficients;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 
