@@ -1,9 +1,15 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+
 import android.graphics.Point;
 
 import org.firstinspires.ftc.teamcode.Auto.PoseConstants;
+import org.firstinspires.ftc.teamcode.pedroPathing.Tuning;
+import com.bylazar.telemetry.PanelsTelemetry;
 
+import com.bylazar.panels.Panels;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
@@ -14,9 +20,11 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
+@Autonomous
 public class MovementAuto extends OpMode {
     private Follower f;
-    private Telemetry telemetryA;
+    //private Telemetry telemetryA;
+    public PanelsTelemetry panels = PanelsTelemetry.INSTANCE;
 
     private PoseConstants poses = new PoseConstants();
 
@@ -36,15 +44,25 @@ public class MovementAuto extends OpMode {
         f.update();
         autoPathUpdates();
 
-        telemetryA.addData("test", true);
-        telemetryA.update();
+        panels.getTelemetry().addData("hello", false);
+        panels.getTelemetry().addData("dError", f.getDriveError());
+        panels.getTelemetry().addData("hError", f.getHeadingError());
+        panels.getTelemetry().addData("hGoal", f.getHeadingGoal(0.0));
+
+        panels.getTelemetry().addData("x", f.getPose().getX());
+        panels.getTelemetry().addData("y", f.getPose().getY());
+
+//        telemetryA.addData("test", true);
+//        telemetryA.update();
     }
 
     @Override
     public void init() {
-        telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
-        telemetryA.addLine("data");
-        telemetryA.update();
+        panels.getTelemetry().addData("working = ", true);
+
+//        telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
+//        telemetryA.addLine("data");
+//        telemetryA.update();
         pathTimer = new Timer();
         actionTimer = new Timer();
         opmodeTimer = new Timer();
@@ -118,7 +136,7 @@ public class MovementAuto extends OpMode {
                     f.followPath(end, true);
                     setPathState(5);
                 }
-            case 1:
+            case 5:
                 if (!f.isBusy()) {
                     setPathState(-1);
                 }
