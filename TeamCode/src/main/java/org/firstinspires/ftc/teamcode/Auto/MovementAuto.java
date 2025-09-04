@@ -88,7 +88,7 @@ public class MovementAuto extends OpMode {
                 .setLinearHeadingInterpolation(poses.POSE_THREE.getHeading(), poses.POSE_FOUR.getHeading())
                 .build();
         end = new Path(new BezierLine(poses.POSE_FOUR, poses.END_POSE));
-        end.setLinearHeadingInterpolation(poses.POSE_FOUR.heading, poses.END_POSE.heading());
+        end.setLinearHeadingInterpolation(poses.POSE_FOUR.getHeading(), poses.END_POSE.getHeading());
     }
 
 
