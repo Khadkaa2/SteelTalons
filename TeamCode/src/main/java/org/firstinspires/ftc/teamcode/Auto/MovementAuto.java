@@ -35,7 +35,7 @@ public class MovementAuto extends OpMode {
     private PathChain one, two, three;
 
     public void setPathState(int pState) {
-        pathState = pState;
+        this.pathState = pState;
         pathTimer.resetTimer();
     }
 
@@ -51,7 +51,7 @@ public class MovementAuto extends OpMode {
 
         panels.getTelemetry().addData("x", f.getPose().getX());
         panels.getTelemetry().addData("y", f.getPose().getY());
-
+        panels.getTelemetry().update();
 //        telemetryA.addData("test", true);
 //        telemetryA.update();
     }
@@ -69,7 +69,7 @@ public class MovementAuto extends OpMode {
         opmodeTimer.resetTimer();
 
         f = Constants.createFollower(hardwareMap);
-        f.setStartingPose(new Pose(0, 0, Math.toRadians(0)));
+        f.setStartingPose(poses.START_POSE);
 
         buildPaths();
     }
@@ -90,7 +90,7 @@ public class MovementAuto extends OpMode {
 
 
     public void buildPaths() {
-        start = new Path(new BezierLine(new Pose(0, 0, 0), new Pose(0, 0, 0)));
+        start = new Path(new BezierLine(poses.START_POSE,poses.POSE_ONE ));
         start.setLinearHeadingInterpolation(poses.START_POSE.getHeading(), poses.POSE_ONE.getHeading());
 
         one = f.pathBuilder()

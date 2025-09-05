@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.teleop;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+
+import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.robot.Robot;
+import com.bylazar.telemetry.PanelsTelemetry;
 
 
 @TeleOp
@@ -25,9 +28,12 @@ public class Teleop extends LinearOpMode {
     DcMotorEx backRight = null;
     boolean isSlowMode;
     int slowModeDelay;
+    private PanelsTelemetry panels = PanelsTelemetry.INSTANCE;
 
+    private Follower f;
     public void runOpMode() throws InterruptedException{
 
+        f = Constants.createFollower(hardwareMap);
 
         frontLeft = hardwareMap.get(DcMotorEx.class, "leftFront");
         frontRight = hardwareMap.get(DcMotorEx.class, "rightFront");
@@ -48,17 +54,6 @@ public class Teleop extends LinearOpMode {
 
 
         while (opModeIsActive()){
-
-            if (gamepad1.y && !isSlowMode&& slowModeDelay <= 0) {
-                isSlowMode = true; // Enable slow mode
-                //debounceDelay();
-                slowModeDelay = 20;
-            } else if (gamepad1.y && isSlowMode&& slowModeDelay <= 0) {
-                isSlowMode = false; // Disable slow mode
-                //debounceDelay();
-                slowModeDelay = 20;
-            }
-            slowModeDelay --;
 
             double y = -gamepad1.left_stick_y;  // Forward/Backward movement
             double x = gamepad1.left_stick_x;   // Strafing (left/right)
@@ -166,8 +161,10 @@ public class Teleop extends LinearOpMode {
 //                    break;
 //            }
 
-
-
+            f.update();
+            panels.getTelemetry().addData("x",f.getPose().getX());
+            panels.getTelemetry().addData("y", f.getPose().getY());
+            panels.getTelemetry().update();
         }
 
 
