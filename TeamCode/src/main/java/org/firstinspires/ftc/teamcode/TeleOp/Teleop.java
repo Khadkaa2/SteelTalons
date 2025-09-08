@@ -31,7 +31,8 @@ public class Teleop extends LinearOpMode {
     private PanelsTelemetry panels = PanelsTelemetry.INSTANCE;
 
     private Follower f;
-    public void runOpMode() throws InterruptedException{
+
+    public void runOpMode() throws InterruptedException {
 
         f = Constants.createFollower(hardwareMap);
 
@@ -53,80 +54,41 @@ public class Teleop extends LinearOpMode {
         RobotState currentState = RobotState.INIT;
 
 
-        while (opModeIsActive()){
+        while (opModeIsActive()) {
 
-            double y = -gamepad1.left_stick_y;  // Forward/Backward movement
-            double x = gamepad1.left_stick_x;   // Strafing (left/right)
-            double turn = gamepad1.right_stick_x;  // Turning (rotation)
+            double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
+            double x = gamepad1.left_stick_x; // Counteract imperfect strafing
+            double rx = gamepad1.right_stick_x;
 
-// Apply non-linear scaling for joystick input (quadratic scaling for smoother low-speed control)
-            y = Math.signum(y) * Math.pow(y, 2);  // Square the value for non-linear sensitivity
-            x = Math.signum(x) * Math.pow(x, 2);  // Same for x-axis
-            turn = Math.signum(turn) * Math.pow(turn, 2);  // And for turn
+            double denominator = Math.max(Math.max(Math.abs(x), Math.abs(y)), rx);
 
-// Define speed factor based on whether the robot is in slow mode (D-pad up/down for y-axis, left/right for x-axis)
-            boolean isSlowModeY = gamepad1.dpad_up || gamepad1.dpad_down;  // Slow mode for forward/backward (y-axis)
-            boolean isSlowModeX = gamepad1.dpad_left || gamepad1.dpad_right;  // Slow mode for strafing (x-axis)
-
-// Speed factors for the axes              hiiiii
-            double speedFactorY = isSlowModeY ? 0.2 : 1;  // Apply slower speed in slow mode (0.2 for slow, 0.92 for normal)
-            double speedFactorX = isSlowModeX ? 0.5 : 1;  // Apply slower speed for strafing (0.5 for slow, 0.92 for normal)
-
-// Handle D-Pad input for strafing (left, right, up, down) with fixed slow mode
-            if (gamepad1.dpad_left || gamepad1.dpad_right || gamepad1.dpad_up || gamepad1.dpad_down) {
-                // Apply fixed speed for D-Pad movements
-                if (gamepad1.dpad_left) {
-                    x = -0.5;  // Strafe left
-                    y = 0;     // Prevent forward/backward movement while strafing
-                } else if (gamepad1.dpad_right) {
-                    x = 0.5;   // Strafe right
-                    y = 0;     // Prevent forward/backward movement while strafing
-                } else if (gamepad1.dpad_up) {
-                    y = 0.5;  // Move forward
-                    x = 0;     // Prevent strafing while moving forward
-                } else if (gamepad1.dpad_down) {
-                    y = -0.5;   // Move backward
-                    x = 0;     // Prevent strafing while moving backward
-                }
-
-                // Ensure that slow mode is active for D-pad actions
-                speedFactorY = 0.2;  // Slow down forward/backward motion
-                speedFactorX = 0.5;  // Slow down strafing motion
+            if (gamepad1.left_trigger != 0 || gamepad1.right_trigger != 0) {
+                denominator = denominator * 2;
             }
 
-// Denominator calculation for normalizing speed and to prevent division by zero
-            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(turn), 0.2);
+            double frontLeftPower = (y + x + rx) / denominator;
+            double backLeftPower = (y - x + rx) / denominator;
+            double frontRightPower = (y - x - rx) / denominator;
+            double backRightPower = (y + x - rx) / denominator;
 
-// Calculate power for each wheel
-            double frontLeftPower = ((y + x + turn) / denominator) * speedFactorY;
-            double backLeftPower = ((y - x + turn) / denominator) * speedFactorY;
-            double frontRightPower = ((y - x - turn) / denominator) * speedFactorY;
-            double backRightPower = ((y + x - turn) / denominator) * speedFactorY;
 
-// Set power to wheels
             frontLeft.setPower(frontLeftPower);
             backLeft.setPower(backLeftPower);
             frontRight.setPower(frontRightPower);
             backRight.setPower(backRightPower);
 
 
-
-            if (gamepad1.a){
+            if (gamepad1.a) {
                 currentState = RobotState.INTAKE;
-            }
-            else if ( gamepad1.b){
+            } else if (gamepad1.b) {
                 currentState = RobotState.ASCEND;
-            }
-            else if (gamepad1.x){
+            } else if (gamepad1.x) {
                 currentState = RobotState.BASKET;
-            }
-            else if (gamepad1.right_trigger > 0.1){
+            } else if (gamepad1.right_trigger > 0.1) {
                 currentState = RobotState.SAMPLE;
-            }
-            else if (gamepad1.left_trigger > 0.1){
+            } else if (gamepad1.left_trigger > 0.1) {
                 currentState = RobotState.SPECIMEN;
             }
-
 
 
             //            switch (currentState){
@@ -162,12 +124,13 @@ public class Teleop extends LinearOpMode {
 //            }
 
             f.update();
-            panels.getTelemetry().addData("x",f.getPose().getX());
+            panels.getTelemetry().addData("x", f.getPose().getX());
             panels.getTelemetry().addData("y", f.getPose().getY());
             panels.getTelemetry().update();
         }
 
 
     }
-
 }
+
+
