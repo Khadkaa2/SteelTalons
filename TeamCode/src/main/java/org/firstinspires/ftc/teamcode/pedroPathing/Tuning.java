@@ -32,6 +32,7 @@ import com.pedropathing.telemetry.SelectableOpMode;
 import com.pedropathing.util.*;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +47,9 @@ import java.util.List;
 @TeleOp(name = "Tuning", group = "Pedro Pathing")
 public class Tuning extends SelectableOpMode {
     public static Follower follower;
+    @IgnoreConfigurable
+
+
 
     @IgnoreConfigurable
     static PoseHistory poseHistory;
@@ -870,12 +874,16 @@ class HeadingTuner extends OpMode {
 class DriveTuner extends OpMode {
     public static double DISTANCE = 40;
     private boolean forward = true;
+    private VoltageSensor batteryVolt;
 
     private PathChain forwards;
     private PathChain backwards;
 
     @Override
-    public void init() {}
+    public void init() {
+        batteryVolt = hardwareMap.voltageSensor.iterator().next();
+
+    }
 
     /**
      * This initializes the Follower and creates the forward and backward Paths. Additionally, this
@@ -931,6 +939,8 @@ class DriveTuner extends OpMode {
         }
 
         telemetryM.debug("Driving forward?: " + forward);
+
+        telemetryM.debug("voltage",batteryVolt.getVoltage());
         telemetryM.update(telemetry);
     }
 }

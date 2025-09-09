@@ -21,20 +21,22 @@ public class Constants {
 
     public static FollowerConstants followerConstants = new FollowerConstants()
             .mass(9)
-            .forwardZeroPowerAcceleration(-35.69136394169781)
-            .lateralZeroPowerAcceleration(-59.96206242302557)
+            .forwardZeroPowerAcceleration(-35.4126335839)
+            .lateralZeroPowerAcceleration(-49.616811183)
 
-            .useSecondaryTranslationalPIDF(false)
+            .useSecondaryTranslationalPIDF(true)
             .useSecondaryHeadingPIDF(true)
-            .useSecondaryDrivePIDF(false)
-            .centripetalScaling(0.0005)
+            .useSecondaryDrivePIDF(true)
+            //.centripetalScaling(0.0005)
 
-            .translationalPIDFCoefficients(new PIDFCoefficients(1, 0, 0.07, 0))
-            .headingPIDFCoefficients(new PIDFCoefficients(1, 0, .05, 0))
+            .translationalPIDFCoefficients(new PIDFCoefficients(0, 0, 0, 0))
+            .headingPIDFCoefficients(new PIDFCoefficients(0, 0, 0, 0))
             .drivePIDFCoefficients(
-                    new FilteredPIDFCoefficients(0.03, 0, 0.0013, 0.6, 0)
+                    new FilteredPIDFCoefficients(0, 0, 0, 0.6, 0)
             )
-            .secondaryHeadingPIDFCoefficients(new PIDFCoefficients(0.69, 0, 0.008, 0));
+            .secondaryHeadingPIDFCoefficients(new PIDFCoefficients(0, 0, 0, 0))
+            .secondaryDrivePIDFCoefficients( new FilteredPIDFCoefficients(0,0,0,0,0))
+            .secondaryTranslationalPIDFCoefficients(new PIDFCoefficients(0,0,0,0));
 
     public static MecanumConstants driveConstants = new MecanumConstants()
             .leftFrontMotorName("leftFront")
@@ -45,8 +47,8 @@ public class Constants {
             .leftRearMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightRearMotorDirection(DcMotorSimple.Direction.REVERSE)
-            .xVelocity(66.2058474652435)
-            .yVelocity(55.84761539969857);
+            .xVelocity(67.0965584823)
+            .yVelocity(57.9228971226);
 
 
     public static PinpointConstants localizerConstants = new PinpointConstants()
