@@ -44,16 +44,13 @@ public class MovementAuto extends OpMode {
         f.update();
         autoPathUpdates();
 
-        panels.getTelemetry().addData("hello", false);
-        panels.getTelemetry().addData("dError", f.getDriveError());
-        panels.getTelemetry().addData("hError", f.getHeadingError());
-        panels.getTelemetry().addData("hGoal", f.getHeadingGoal(0.0));
-
+        panels.getTelemetry().addData("Path State", pathState);
+        panels.getTelemetry().addData("Turning", f.isTurning());
+        panels.getTelemetry().addData("heading", f.getPose().getHeading());
         panels.getTelemetry().addData("x", f.getPose().getX());
         panels.getTelemetry().addData("y", f.getPose().getY());
         panels.getTelemetry().update();
-//        telemetryA.addData("test", true);
-//        telemetryA.update();
+
     }
 
     @Override
