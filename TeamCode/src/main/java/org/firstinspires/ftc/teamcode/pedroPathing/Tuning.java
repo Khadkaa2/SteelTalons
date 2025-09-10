@@ -47,7 +47,6 @@ import java.util.List;
 @TeleOp(name = "Tuning", group = "Pedro Pathing")
 public class Tuning extends SelectableOpMode {
     public static Follower follower;
-    @IgnoreConfigurable
 
 
 
@@ -858,6 +857,7 @@ class HeadingTuner extends OpMode {
         }
 
         telemetryM.debug("Turn the robot manually to test the Heading PIDF(s).");
+        telemetryM.debug("heading is:" , follower.getPose().getHeading());
         telemetryM.update(telemetry);
     }
 }
