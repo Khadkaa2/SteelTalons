@@ -46,6 +46,7 @@ public class MovementAuto extends OpMode {
 
         panels.getTelemetry().addData("Path State", pathState);
         panels.getTelemetry().addData("Turning", f.isTurning());
+        panels.getTelemetry().addData("headingError", f.getHeadingError());
         panels.getTelemetry().addData("heading", f.getPose().getHeading());
         panels.getTelemetry().addData("x", f.getPose().getX());
         panels.getTelemetry().addData("y", f.getPose().getY());
@@ -55,7 +56,7 @@ public class MovementAuto extends OpMode {
 
     @Override
     public void init() {
-        panels.getTelemetry().addData("working = ", true);
+
 
 //        telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
 //        telemetryA.addLine("data");
@@ -67,7 +68,7 @@ public class MovementAuto extends OpMode {
 
         f = Constants.createFollower(hardwareMap);
         f.setStartingPose(poses.START_POSE);
-
+        f.activateAllPIDFs();
         buildPaths();
     }
 
@@ -108,36 +109,47 @@ public class MovementAuto extends OpMode {
 
 
     public void autoPathUpdates() {
-        switch (pathState) {
-            case 0:
-                f.followPath(start);
-                setPathState(1);
-                break;
-            case 1:
-                if (!f.isBusy()) {
-                    f.followPath(one, true);
-                    setPathState(2);
-                }
-            case 2:
-                if (!f.isBusy()) {
-                    f.followPath(two, true);
-                    setPathState(3);
-                }
-            case 3:
-                if (!f.isBusy()) {
-                    f.followPath(three, true);
-                    setPathState(4);
-                }
-            case 4:
-                if (!f.isBusy()) {
-                    f.followPath(end, true);
-                    setPathState(5);
-                }
-            case 5:
-                if (!f.isBusy()) {
-                    setPathState(-1);
-                }
-                break;
+        f.turnToDegrees(MATH.PI/2);
+        setPathState(0);
+        if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 8) {
+            f.turnToDegrees(MATH.PI/4);
+            setPathState(1);
+        }
+
+//        switch (pathState) {
+//            case 0:
+//                f.followPath(start);
+//                setPathState(1);
+//                break;
+//            case 1:
+//                if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
+//                    f.followPath(one, true);
+//                    setPathState(2);
+//                }
+//                break;
+//            case 2:
+//                if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
+//                    f.followPath(two, true);
+//                    setPathState(3);
+//                }
+//                break;
+//            case 3:
+//                if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
+//                    f.followPath(three, true);
+//                    setPathState(4);
+//                }
+//                break;
+//            case 4:
+//                if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
+//                    f.followPath(end, true);
+//                    setPathState(5);
+//                }
+//                break;
+//            case 5:
+//                if (!f.isBusy()) {
+//                    setPathState(-1);
+//                }
+//                break;
         }
     }
-}
+

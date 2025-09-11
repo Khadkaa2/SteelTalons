@@ -6,11 +6,11 @@ import com.pedropathing.geometry.Pose;
 @Configurable
 public class PoseConstants {
     public static Pose START_POSE = new Pose(0,0,Math.toRadians(0));
-    public static Pose POSE_ONE = new Pose(24,24,Math.toRadians(0));
+    public static Pose POSE_ONE = new Pose(0,0,Math.toRadians(0));
     public static Pose POSE_TWO = new Pose(0,0,Math.toRadians(95));
-    public static Pose POSE_THREE = new Pose(0.1,0.1,Math.toRadians(180));
+    public static Pose POSE_THREE = new Pose(0,0,Math.toRadians(180));
     public static Pose POSE_FOUR = new Pose(0,0,Math.toRadians(0));
-    public static Pose END_POSE = new Pose(0,-12,Math.toRadians(0));
+    public static Pose END_POSE = new Pose(0,0,Math.toRadians(0));
 
 
 }
