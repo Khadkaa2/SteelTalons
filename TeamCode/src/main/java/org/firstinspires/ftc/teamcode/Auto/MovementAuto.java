@@ -109,10 +109,10 @@ public class MovementAuto extends OpMode {
 
 
     public void autoPathUpdates() {
-        f.turnToDegrees(MATH.PI/2);
-        setPathState(0);
+        //f.turnToDegrees(MATH.PI/2);
+        //setPathState(0);
         if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 8) {
-            f.turnToDegrees(MATH.PI/4);
+        //    f.turnToDegrees(MATH.PI/4);
             setPathState(1);
         }
 
