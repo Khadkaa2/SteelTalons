@@ -31,7 +31,7 @@ public class MovementAuto extends OpMode {
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
 
-    private Path start, end;
+    private Path start, end, p;
     private PathChain one, two, three;
 
     public void setPathState(int pState) {
@@ -88,19 +88,22 @@ public class MovementAuto extends OpMode {
 
 
     public void buildPaths() {
-        start = new Path(new BezierLine(poses.START_POSE,poses.POSE_ONE ));
+        start = new Path(new BezierLine(poses.START_POSE, poses.POSE_ONE));
         start.setLinearHeadingInterpolation(poses.START_POSE.getHeading(), poses.POSE_ONE.getHeading());
 
+        p = new Path(new BezierLine(new Pose(0, 0, Math.PI / 2), new Pose(12, 12, Math.PI)));
+        p.setLinearHeadingInterpolation(new Pose(0, 0, Math.PI / 2).getHeading(), new Pose(12, 12, Math.PI).getHeading());
+
         one = f.pathBuilder()
-                .addPath(new BezierLine(poses.POSE_ONE,poses.POSE_TWO))
+                .addPath(new BezierLine(poses.POSE_ONE, poses.POSE_TWO))
                 .setLinearHeadingInterpolation(poses.POSE_ONE.getHeading(), poses.POSE_TWO.getHeading())
                 .build();
         two = f.pathBuilder()
-                .addPath(new BezierLine(poses.POSE_TWO, poses.POSE_THREE ))
+                .addPath(new BezierLine(poses.POSE_TWO, poses.POSE_THREE))
                 .setLinearHeadingInterpolation(poses.POSE_TWO.getHeading(), poses.POSE_THREE.getHeading())
                 .build();
         three = f.pathBuilder()
-                .addPath(new BezierLine(poses.POSE_THREE, poses.POSE_FOUR ))
+                .addPath(new BezierLine(poses.POSE_THREE, poses.POSE_FOUR))
                 .setLinearHeadingInterpolation(poses.POSE_THREE.getHeading(), poses.POSE_FOUR.getHeading())
                 .build();
         end = new Path(new BezierLine(poses.POSE_FOUR, poses.END_POSE));
@@ -109,47 +112,72 @@ public class MovementAuto extends OpMode {
 
 
     public void autoPathUpdates() {
-        //f.turnToDegrees(MATH.PI/2);
-        //setPathState(0);
-        if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 8) {
-        //    f.turnToDegrees(MATH.PI/4);
-            setPathState(1);
-        }
 
-//        switch (pathState) {
+
+//        switch (pathState)  {
 //            case 0:
-//                f.followPath(start);
-//                setPathState(1);
-//                break;
+//                f.turnToDegrees(180);
+//
+//                if ((Math.abs(f.getHeadingError())<Math.PI/40)&& (pathTimer.getElapsedTimeSeconds() > 4)) {
+//                    setPathState(1);
+//                }
+//                    break;
 //            case 1:
-//                if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
-//                    f.followPath(one, true);
+//                f.turnToDegrees(90);
+//                if ((Math.abs(f.getHeadingError())<Math.PI/40) && (pathTimer.getElapsedTimeSeconds() > 4)) {
 //                    setPathState(2);
 //                }
 //                break;
 //            case 2:
-//                if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
-//                    f.followPath(two, true);
-//                    setPathState(3);
+//                f.followPath(p);
+//                if(!f.isBusy() && (pathTimer.getElapsedTimeSeconds() > 4)) {
+//                setPathState(3);
 //                }
 //                break;
 //            case 3:
-//                if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
-//                    f.followPath(three, true);
-//                    setPathState(4);
-//                }
-//                break;
-//            case 4:
-//                if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
-//                    f.followPath(end, true);
-//                    setPathState(5);
-//                }
-//                break;
-//            case 5:
-//                if (!f.isBusy()) {
+//                if(!f.isBusy())
+//                {
 //                    setPathState(-1);
 //                }
 //                break;
+//
+//        }
+
+
+        switch (pathState) {
+            case 0:
+                f.followPath(start);
+                setPathState(1);
+                break;
+            case 1:
+                if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
+                    f.followPath(one, true);
+                    setPathState(2);
+                }
+                break;
+            case 2:
+                if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
+                    f.followPath(two, true);
+                    setPathState(3);
+                }
+                break;
+            case 3:
+                if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
+                    f.followPath(three, true);
+                    setPathState(4);
+                }
+                break;
+            case 4:
+                if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
+                    f.followPath(end, true);
+                    setPathState(5);
+                }
+                break;
+            case 5:
+                if (!f.isBusy()) {
+                    setPathState(-1);
+                }
+                break;
         }
     }
-
+}
