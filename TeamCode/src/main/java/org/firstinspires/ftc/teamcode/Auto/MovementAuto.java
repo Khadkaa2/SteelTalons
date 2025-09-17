@@ -4,9 +4,6 @@ package org.firstinspires.ftc.teamcode.Auto;
 import com.pedropathing.geometry.BezierPoint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import android.graphics.Path;
-import android.graphics.Point;
-
 import org.firstinspires.ftc.teamcode.Auto.PoseConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Tuning;
 import com.bylazar.telemetry.PanelsTelemetry;
@@ -112,7 +109,8 @@ public class MovementAuto extends OpMode {
         p = new Path(new BezierLine(new Pose(0, 0, Math.PI / 2), new Pose(12, 12, Math.PI)));
         p.setLinearHeadingInterpolation(new Pose(0, 0, Math.PI / 2).getHeading(), new Pose(12, 12, Math.PI).getHeading());
 
-        point = new Path( new BezierPoint())
+        point = new Path( new BezierPoint(new Pose(0,0,Math.PI)));
+
 
 
         one = f.pathBuilder()

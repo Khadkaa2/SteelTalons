@@ -42,6 +42,7 @@ public class AprilTagAllInOne extends LinearOpMode {
             else if (ID == -1) pattern = "NOT-DETECTED";
 
             telemetry.addData("COLOR", pattern);
+            telemetry.addData("AprilTag ID", ID);
             telemetry.update();
 
 
