@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import android.graphics.Path;
 import android.graphics.Point;
 
 import org.firstinspires.ftc.teamcode.Auto.PoseConstants;
@@ -31,7 +32,7 @@ public class MovementAuto extends OpMode {
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
 
-    private Path start, end, p;
+    private Path start, end, p, point;
     private PathChain one, two, three;
 
     public void setPathState(int pState) {
@@ -93,6 +94,9 @@ public class MovementAuto extends OpMode {
 
         p = new Path(new BezierLine(new Pose(0, 0, Math.PI / 2), new Pose(12, 12, Math.PI)));
         p.setLinearHeadingInterpolation(new Pose(0, 0, Math.PI / 2).getHeading(), new Pose(12, 12, Math.PI).getHeading());
+
+        point = new Path( new BezierPoint())
+
 
         one = f.pathBuilder()
                 .addPath(new BezierLine(poses.POSE_ONE, poses.POSE_TWO))
