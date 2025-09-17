@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
 
+import com.pedropathing.geometry.BezierPoint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import android.graphics.Path;
@@ -38,6 +39,22 @@ public class MovementAuto extends OpMode {
     public void setPathState(int pState) {
         this.pathState = pState;
         pathTimer.resetTimer();
+    }
+    private void sort(boolean[] storage, int index)
+    {
+        if(storage[index])
+            return;
+        else
+        {
+            //do sorting
+            sort(detect(),index);
+        }
+    }
+    private boolean[] detect()
+    {
+        boolean[] order = new boolean[3];
+        //color sensor stuff
+        return order;
     }
 
     @Override

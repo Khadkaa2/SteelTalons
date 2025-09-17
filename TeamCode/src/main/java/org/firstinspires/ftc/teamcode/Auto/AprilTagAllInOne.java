@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.sampleCode.computerVision.aprilTag;
+package org.firstinspires.ftc.teamcode.Auto;
 
 
 import androidx.lifecycle.ViewModelStoreOwner;
@@ -17,7 +17,7 @@ import java.util.List;
 @TeleOp
 public class AprilTagAllInOne extends LinearOpMode {
 
-    private AprilTagProcessor aprilTag;
+    private static AprilTagProcessor aprilTag;
 
     private VisionPortal visionPortal;
 
@@ -59,7 +59,7 @@ public class AprilTagAllInOne extends LinearOpMode {
         visionPortal = builder.build();
     }
 
-    private int figureID(){
+    public static int figureID(){
         List<AprilTagDetection> detections = aprilTag.getDetections();
         for (AprilTagDetection detection : detections){
             if (detection.metadata!=null){
