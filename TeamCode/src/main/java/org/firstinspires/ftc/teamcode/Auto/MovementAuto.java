@@ -45,6 +45,7 @@ public class MovementAuto extends OpMode {
     private static AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
 
+    int index;
     public void initAprilTag(){
          aprilTag = new AprilTagProcessor.Builder()
                 .setDrawAxes(true)
@@ -59,9 +60,7 @@ public class MovementAuto extends OpMode {
     public static int figureID(){
         List<AprilTagDetection> detections = aprilTag.getDetections();
         for (AprilTagDetection detection : detections){
-            if (detection.metadata!=null){
                 return detection.id;
-            }
         }
         return -1;
     }
@@ -70,14 +69,14 @@ public class MovementAuto extends OpMode {
         this.pathState = pState;
         pathTimer.resetTimer();
     }
-    private void sort(boolean[] storage, int index)
+    private void sort(boolean[] storage)
     {
         if(storage[index])
             return;
         else
         {
             //do sorting
-            sort(detect(),index);
+            sort(detect());
         }
     }
     private boolean[] detect()
@@ -123,8 +122,15 @@ public class MovementAuto extends OpMode {
     @Override
     public void init_loop() {
         //detect
+        int ID = figureID();
 
-        telemetry.addData("April Tag", figureID());
+        if (ID == 21) {
+            index = 0;
+        } else if (ID == 22) {
+            index = 1;
+        } else if (ID == 23) index = 2;
+        telemetry.addData("Green Index", index );
+        SharedData.greenIndex = index;
         telemetry.update();
     }
 
