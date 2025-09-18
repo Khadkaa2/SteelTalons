@@ -4,7 +4,11 @@ package org.firstinspires.ftc.teamcode.Auto;
 import com.pedropathing.geometry.BezierPoint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Auto.PoseConstants;
+import org.firstinspires.ftc.teamcode.SharedData;
 import org.firstinspires.ftc.teamcode.pedroPathing.Tuning;
 import com.bylazar.telemetry.PanelsTelemetry;
 
@@ -18,6 +22,11 @@ import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+
+import java.util.List;
 
 @Autonomous
 public class MovementAuto extends OpMode {
@@ -32,6 +41,30 @@ public class MovementAuto extends OpMode {
 
     private Path start, end, p, point;
     private PathChain one, two, three;
+
+    private static AprilTagProcessor aprilTag;
+    private VisionPortal visionPortal;
+
+    public void initAprilTag(){
+         aprilTag = new AprilTagProcessor.Builder()
+                .setDrawAxes(true)
+                .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
+                .build();
+        VisionPortal.Builder builder = new VisionPortal.Builder();
+        builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
+        builder.addProcessor(aprilTag);
+        visionPortal = builder.build();
+    }
+
+    public static int figureID(){
+        List<AprilTagDetection> detections = aprilTag.getDetections();
+        for (AprilTagDetection detection : detections){
+            if (detection.metadata!=null){
+                return detection.id;
+            }
+        }
+        return -1;
+    }
 
     public void setPathState(int pState) {
         this.pathState = pState;
@@ -71,8 +104,8 @@ public class MovementAuto extends OpMode {
 
     @Override
     public void init() {
-
-
+        SharedData.reset();
+        initAprilTag();
 //        telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
 //        telemetryA.addLine("data");
 //        telemetryA.update();
@@ -89,6 +122,10 @@ public class MovementAuto extends OpMode {
 
     @Override
     public void init_loop() {
+        //detect
+
+        telemetry.addData("April Tag", figureID());
+        telemetry.update();
     }
 
     @Override

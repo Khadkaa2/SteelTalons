@@ -65,8 +65,7 @@ public class AprilTagAllInOne extends LinearOpMode {
         for (AprilTagDetection detection : detections){
             if (detection.metadata!=null){
                 return detection.id;
-            }
-            else return -1;
+            } else return -1;
         }
         return -1;
     }
