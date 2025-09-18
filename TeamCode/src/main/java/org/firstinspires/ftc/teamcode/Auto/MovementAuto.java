@@ -154,7 +154,7 @@ public class MovementAuto extends OpMode {
         p.setLinearHeadingInterpolation(new Pose(0, 0, Math.PI / 2).getHeading(), new Pose(12, 12, Math.PI).getHeading());
 
         point = new Path( new BezierPoint(new Pose(0,0,Math.PI)));
-
+        point.setLinearHeadingInterpolation(poses.START_POSE.getHeading(),Math.PI);
 
 
         one = f.pathBuilder()
@@ -205,12 +205,12 @@ public class MovementAuto extends OpMode {
                     f.followPath(end, true);
                     setPathState(5);
                 }
-                break;
-            case 5:
+                break;*/
+            case 2:
                 if (!f.isBusy()) {
                     setPathState(-1);
                 }
-                break;*/
+                break;
         }
     }
 }

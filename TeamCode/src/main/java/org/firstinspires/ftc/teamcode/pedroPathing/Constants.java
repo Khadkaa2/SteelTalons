@@ -34,7 +34,7 @@ public class Constants {
             .drivePIDFCoefficients(
                     new FilteredPIDFCoefficients(0.015, 0, 0, 0.6, 0)
             )
-            .secondaryHeadingPIDFCoefficients(new PIDFCoefficients(0, 0, 0, 0))
+            .secondaryHeadingPIDFCoefficients(new PIDFCoefficients(1, 0, .1, 0))
             .secondaryDrivePIDFCoefficients( new FilteredPIDFCoefficients(0,0,0,0,0))
             .secondaryTranslationalPIDFCoefficients(new PIDFCoefficients(0,0,0,0));
 
@@ -43,8 +43,8 @@ public class Constants {
             .leftRearMotorName("leftBack")
             .rightFrontMotorName("rightFront")
             .rightRearMotorName("rightBack")
-            .leftFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
-            .leftRearMotorDirection(DcMotorSimple.Direction.FORWARD)
+            .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
+            .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .xVelocity(64.91270232914002)
