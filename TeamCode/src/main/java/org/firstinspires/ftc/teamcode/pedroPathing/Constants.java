@@ -25,7 +25,7 @@ public class Constants {
             .lateralZeroPowerAcceleration(-49.616811183)
 
             .useSecondaryTranslationalPIDF(false)
-            .useSecondaryHeadingPIDF(false)
+            .useSecondaryHeadingPIDF(true)
             .useSecondaryDrivePIDF(false)
             //.centripetalScaling(0.0005)
 
@@ -59,7 +59,7 @@ public class Constants {
             .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
             .yawScalar(1.0)
             .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED)
-            .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED);
+            .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
 
     public static PathConstraints pathConstraints = new PathConstraints(
             0.95,

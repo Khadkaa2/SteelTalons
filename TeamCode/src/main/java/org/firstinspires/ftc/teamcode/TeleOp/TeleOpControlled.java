@@ -15,8 +15,7 @@ public class TeleOpControlled extends LinearOpMode {
     DcMotorEx frontRight = null;
     DcMotorEx backLeft = null;
     DcMotorEx backRight = null;
-    boolean isSlowMode;
-    int slowModeDelay;
+
     private PanelsTelemetry panels = PanelsTelemetry.INSTANCE;
 
     private Follower f;
@@ -39,13 +38,13 @@ public class TeleOpControlled extends LinearOpMode {
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        while (opModeIsActive()){
+        while (opModeIsActive()) {
 //hehehehee i luv u
             double y = -gamepad1.left_stick_y;
             double x = gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
 
-            double denominator = Math.max(Math.max(Math.abs(x),Math.abs(y)),rx);
+            double denominator = Math.max(Math.max(Math.abs(x), Math.abs(y)), rx);
 
             double frontLeftPower = (y + x + rx); /// (denominator * speedCoef);
             double backLeftPower = (y - x + rx); /// (denominator * speedCoef);
@@ -59,9 +58,9 @@ public class TeleOpControlled extends LinearOpMode {
             telemetry.addData("Pattern", SharedData.greenIndex);
             telemetry.update();
 
-
         }
-
     }
 
-    }
+}
+
+
