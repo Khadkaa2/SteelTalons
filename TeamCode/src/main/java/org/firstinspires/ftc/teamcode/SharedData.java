@@ -6,6 +6,7 @@ public class SharedData {
 
     public static void reset()
     {
-        greenIndex = 0;
+
+        greenIndex = -1;
     }
 }

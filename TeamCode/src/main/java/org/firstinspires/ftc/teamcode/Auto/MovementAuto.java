@@ -91,6 +91,7 @@ public class MovementAuto extends OpMode {
         f.update();
         autoPathUpdates();
 
+
         panels.getTelemetry().addData("Path State", pathState);
         panels.getTelemetry().addData("Turning", f.isTurning());
         panels.getTelemetry().addData("headingError", f.getHeadingError());
@@ -176,48 +177,18 @@ public class MovementAuto extends OpMode {
     public void autoPathUpdates() {
 
 
-//        switch (pathState)  {
-//            case 0:
-//                f.turnToDegrees(180);
-//
-//                if ((Math.abs(f.getHeadingError())<Math.PI/40)&& (pathTimer.getElapsedTimeSeconds() > 4)) {
-//                    setPathState(1);
-//                }
-//                    break;
-//            case 1:
-//                f.turnToDegrees(90);
-//                if ((Math.abs(f.getHeadingError())<Math.PI/40) && (pathTimer.getElapsedTimeSeconds() > 4)) {
-//                    setPathState(2);
-//                }
-//                break;
-//            case 2:
-//                f.followPath(p);
-//                if(!f.isBusy() && (pathTimer.getElapsedTimeSeconds() > 4)) {
-//                setPathState(3);
-//                }
-//                break;
-//            case 3:
-//                if(!f.isBusy())
-//                {
-//                    setPathState(-1);
-//                }
-//                break;
-//
-//        }
-
-
         switch (pathState) {
             case 0:
                 f.followPath(start);
                 setPathState(1);
                 break;
             case 1:
-                if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
-                    f.followPath(one, true);
+                if (pathTimer.getElapsedTimeSeconds() > 5) {
+                    f.followPath(point, true);
                     setPathState(2);
                 }
                 break;
-            case 2:
+       /*     case 2:
                 if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
                     f.followPath(two, true);
                     setPathState(3);
@@ -239,7 +210,7 @@ public class MovementAuto extends OpMode {
                 if (!f.isBusy()) {
                     setPathState(-1);
                 }
-                break;
+                break;*/
         }
     }
 }
