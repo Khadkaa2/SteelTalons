@@ -60,6 +60,7 @@ public class MovementAuto extends OpMode {
     public static int figureID(){
         List<AprilTagDetection> detections = aprilTag.getDetections();
         for (AprilTagDetection detection : detections){
+            if(detection.id == 21||detection.id == 22||detection.id == 23)
                 return detection.id;
         }
         return -1;
@@ -183,12 +184,12 @@ public class MovementAuto extends OpMode {
                 setPathState(1);
                 break;
             case 1:
-                if (pathTimer.getElapsedTimeSeconds() > 5) {
-                    f.followPath(point, true);
+                if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
+                    f.followPath(one, true);
                     setPathState(2);
                 }
                 break;
-       /*     case 2:
+            case 2:
                 if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
                     f.followPath(two, true);
                     setPathState(3);
@@ -205,8 +206,8 @@ public class MovementAuto extends OpMode {
                     f.followPath(end, true);
                     setPathState(5);
                 }
-                break;*/
-            case 2:
+                break;
+            case 5:
                 if (!f.isBusy()) {
                     setPathState(-1);
                 }

@@ -45,14 +45,14 @@ public class Constants {
             .rightRearMotorName("rightBack")
             .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
-            .rightFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
+            .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .xVelocity(64.91270232914002)
             .yVelocity(55.28762966366266);
 
 
     public static PinpointConstants localizerConstants = new PinpointConstants()
-            .forwardPodY(-3.30709)
+            .forwardPodY(3.30709)
             .strafePodX(0)
             .distanceUnit(DistanceUnit.INCH)
             .hardwareMapName("odo")
@@ -62,7 +62,7 @@ public class Constants {
             .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
 
     public static PathConstraints pathConstraints = new PathConstraints(
-            0.95,
+            .97,
             75,
             1,
             1
