@@ -148,30 +148,34 @@ public class MovementAuto extends OpMode {
 
 
     public void buildPaths() {
-        start = new Path(new BezierLine(poses.START_POSE, poses.POSE_ONE));
-        start.setLinearHeadingInterpolation(poses.START_POSE.getHeading(), poses.POSE_ONE.getHeading());
+        start = new Path(new BezierLine(poses.START_POSE, poses.LAUNCH_POSE));
+        start.setLinearHeadingInterpolation(poses.START_POSE.getHeading(), poses.LAUNCH_POSE.getHeading());
 
-        p = new Path(new BezierLine(new Pose(0, 0, Math.PI / 2), new Pose(12, 12, Math.PI)));
-        p.setLinearHeadingInterpolation(new Pose(0, 0, Math.PI / 2).getHeading(), new Pose(12, 12, Math.PI).getHeading());
-
-        point = new Path( new BezierPoint(new Pose(0,0,Math.PI)));
-        point.setConstantHeadingInterpolation(Math.PI);
+//        p = new Path(new BezierLine(new Pose(0, 0, Math.PI / 2), new Pose(12, 12, Math.PI)));
+//        p.setLinearHeadingInterpolation(new Pose(0, 0, Math.PI / 2).getHeading(), new Pose(12, 12, Math.PI).getHeading());
+//
+//        point = new Path( new BezierPoint(new Pose(0,0,Math.PI)));
+//        point.setConstantHeadingInterpolation(Math.PI);
 
 
         one = f.pathBuilder()
-                .addPath(new BezierLine(poses.POSE_ONE, poses.POSE_TWO))
-                .setLinearHeadingInterpolation(poses.POSE_ONE.getHeading(), poses.POSE_TWO.getHeading())
+                .addPath(new BezierLine(poses.LAUNCH_POSE, poses.ALIGN1_POSE))
+                .setLinearHeadingInterpolation(poses.LAUNCH_POSE.getHeading(), poses.ALIGN1_POSE.getHeading())
+                .addPath(new BezierLine(poses.ALIGN1_POSE, poses.PICKUP1_POSE))
+                .setLinearHeadingInterpolation(poses.ALIGN1_POSE.getHeading(), poses.PICKUP1_POSE.getHeading())
                 .build();
         two = f.pathBuilder()
-                .addPath(new BezierLine(poses.POSE_TWO, poses.POSE_THREE))
-                .setLinearHeadingInterpolation(poses.POSE_TWO.getHeading(), poses.POSE_THREE.getHeading())
+                .addPath(new BezierLine(poses.PICKUP1_POSE, poses.LAUNCH_POSE))
+                .setLinearHeadingInterpolation(poses.PICKUP1_POSE.getHeading(), poses.LAUNCH_POSE.getHeading())
                 .build();
         three = f.pathBuilder()
-                .addPath(new BezierLine(poses.POSE_THREE, poses.POSE_FOUR))
-                .setLinearHeadingInterpolation(poses.POSE_THREE.getHeading(), poses.POSE_FOUR.getHeading())
+                .addPath(new BezierLine(poses.LAUNCH_POSE, poses.ALIGN2_POSE))
+                .setLinearHeadingInterpolation(poses.LAUNCH_POSE.getHeading(), poses.ALIGN2_POSE.getHeading())
+                .addPath(new BezierLine(poses.ALIGN2_POSE, poses.PICKUP2_POSE))
+                .setLinearHeadingInterpolation(poses.ALIGN2_POSE.getHeading(), poses.PICKUP2_POSE.getHeading())
                 .build();
-        end = new Path(new BezierLine(poses.POSE_FOUR, poses.END_POSE));
-        end.setLinearHeadingInterpolation(poses.POSE_FOUR.getHeading(), poses.END_POSE.getHeading());
+        end = new Path(new BezierLine(poses.PICKUP2_POSE, poses.END_POSE));
+        end.setLinearHeadingInterpolation(poses.PICKUP2_POSE.getHeading(), poses.END_POSE.getHeading());
     }
 
 
