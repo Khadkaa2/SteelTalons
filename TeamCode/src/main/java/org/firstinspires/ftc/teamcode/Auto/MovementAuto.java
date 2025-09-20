@@ -36,7 +36,7 @@ public class MovementAuto extends OpMode {
 
     private PoseConstants poses = new PoseConstants();
 
-    private Timer pathTimer, actionTimer, opmodeTimer;
+    private Timer pathTimer, actionTimer, opmodeTimer, sortTimer;
     private int pathState;
 
     private Path start, end, p, point;
@@ -44,6 +44,8 @@ public class MovementAuto extends OpMode {
 
     private static AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
+
+    private boolean sorting = false;
 
     int index;
     public void initAprilTag(){
@@ -72,12 +74,15 @@ public class MovementAuto extends OpMode {
     }
     private void sort(boolean[] storage)
     {
-        if(storage[index])
-            return;
-        else
-        {
-            //do sorting
-            sort(detect());
+
+        if(!sorting) {
+            if (storage[index]) {
+                sorting = false;
+            }
+            else {
+                sorting = true;
+                sortTimer.resetTimer();
+            }
         }
     }
     private boolean[] detect()
@@ -101,6 +106,15 @@ public class MovementAuto extends OpMode {
         panels.getTelemetry().addData("y", f.getPose().getY());
         panels.getTelemetry().update();
 
+        if(sorting)
+        {
+            //set servo pos here
+        }
+        // #5 is holder -> time it takes to sort one ball
+        if(sortTimer.getElapsedTimeSeconds()>5) {
+        sort(detect());
+        }
+
     }
 
     @Override
@@ -114,6 +128,8 @@ public class MovementAuto extends OpMode {
         actionTimer = new Timer();
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();
+        sortTimer = new Timer();
+
 
         f = Constants.createFollower(hardwareMap);
         f.setStartingPose(poses.START_POSE);
