@@ -40,7 +40,7 @@ public class MovementAuto extends OpMode {
     private int pathState;
 
     private Path start, end, p, point;
-    private PathChain one, two, three;
+    private PathChain one, two, three, four;
 
     private static AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
@@ -114,7 +114,7 @@ public class MovementAuto extends OpMode {
         if(sortTimer.getElapsedTimeSeconds()>5) {
         sort(detect());
         }
-
+        telemetry.addData("Path State", pathState);
     }
 
     @Override
@@ -176,7 +176,7 @@ public class MovementAuto extends OpMode {
 
         one = f.pathBuilder()
                 .addPath(new BezierLine(poses.LAUNCH_POSE, poses.ALIGN1_POSE))
-                .setLinearHeadingInterpolation(poses.LAUNCH_POSE.getHeading(), poses.ALIGN1_POSE.getHeading())
+                .setConstantHeadingInterpolation(poses.ALIGN1_POSE.getHeading())
                 .addPath(new BezierLine(poses.ALIGN1_POSE, poses.PICKUP1_POSE))
                 .setLinearHeadingInterpolation(poses.ALIGN1_POSE.getHeading(), poses.PICKUP1_POSE.getHeading())
                 .build();
@@ -186,12 +186,16 @@ public class MovementAuto extends OpMode {
                 .build();
         three = f.pathBuilder()
                 .addPath(new BezierLine(poses.LAUNCH_POSE, poses.ALIGN2_POSE))
-                .setLinearHeadingInterpolation(poses.LAUNCH_POSE.getHeading(), poses.ALIGN2_POSE.getHeading())
+                .setConstantHeadingInterpolation(poses.ALIGN2_POSE.getHeading())
                 .addPath(new BezierLine(poses.ALIGN2_POSE, poses.PICKUP2_POSE))
                 .setLinearHeadingInterpolation(poses.ALIGN2_POSE.getHeading(), poses.PICKUP2_POSE.getHeading())
                 .build();
-        end = new Path(new BezierLine(poses.PICKUP2_POSE, poses.END_POSE));
-        end.setLinearHeadingInterpolation(poses.PICKUP2_POSE.getHeading(), poses.END_POSE.getHeading());
+        four = f.pathBuilder()
+                .addPath(new BezierLine(poses.PICKUP2_POSE, poses.LAUNCH_POSE))
+                .setLinearHeadingInterpolation(poses.PICKUP2_POSE.getHeading(), poses.LAUNCH_POSE.getHeading())
+                .build();
+        end = new Path(new BezierLine(poses.LAUNCH_POSE, poses.END_POSE));
+        end.setLinearHeadingInterpolation(poses.LAUNCH_POSE.getHeading(), poses.END_POSE.getHeading());
     }
 
 
@@ -223,11 +227,17 @@ public class MovementAuto extends OpMode {
                 break;
             case 4:
                 if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
-                    f.followPath(end, true);
+                    f.followPath(four, true);
                     setPathState(5);
                 }
                 break;
             case 5:
+                if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
+                    f.followPath(end, true);
+                    setPathState(6);
+                }
+                break;
+            case 6:
                 if (!f.isBusy()) {
                     setPathState(-1);
                 }
