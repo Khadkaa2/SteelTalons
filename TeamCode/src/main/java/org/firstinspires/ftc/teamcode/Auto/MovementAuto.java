@@ -120,6 +120,15 @@ public class MovementAuto extends OpMode {
         sort(detect());
         }
         telemetry.addData("Path State", pathState);
+
+        if(pathState == 1||pathState == 3)
+        {
+            intakeServo.setPosition(0);
+        }
+        else
+        {
+            intakeServo.setPosition(.5);
+        }
     }
 
     @Override
@@ -221,7 +230,7 @@ public class MovementAuto extends OpMode {
                 if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
                     f.followPath(one, true);
                     setPathState(2);
-                    intakeServo.setPosition(1);
+
                 }
                 break;
             case 2:
@@ -229,7 +238,7 @@ public class MovementAuto extends OpMode {
                 if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
                     f.followPath(two, true);
                     setPathState(3);
-                    intakeServo.setPosition(0);
+
                 }
                 break;
             case 3:
@@ -237,7 +246,7 @@ public class MovementAuto extends OpMode {
                 if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
                     f.followPath(three, true);
                     setPathState(4);
-                    intakeServo.setPosition(1);
+
                 }
                 break;
             case 4:
@@ -245,7 +254,7 @@ public class MovementAuto extends OpMode {
                 if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
                     f.followPath(four, true);
                     setPathState(5);
-                    intakeServo.setPosition(0);
+
                 }
                 break;
             case 5:
