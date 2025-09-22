@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.SharedData;
 
@@ -16,6 +17,7 @@ public class TeleOpControlled extends LinearOpMode {
     DcMotorEx frontRight = null;
     DcMotorEx backLeft = null;
     DcMotorEx backRight = null;
+    Servo intakeServo = null;
 
     private PanelsTelemetry panels = PanelsTelemetry.INSTANCE;
 
@@ -26,6 +28,7 @@ public class TeleOpControlled extends LinearOpMode {
         frontRight = hardwareMap.get(DcMotorEx.class, "rightFront");
         backLeft = hardwareMap.get(DcMotorEx.class, "leftBack");
         backRight = hardwareMap.get(DcMotorEx.class, "rightBack");
+        intakeServo = hardwareMap.get(Servo.class, "intakeServo");
 
         waitForStart();
 

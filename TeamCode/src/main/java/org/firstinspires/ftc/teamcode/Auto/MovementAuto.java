@@ -20,6 +20,8 @@ import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.Servo;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -48,6 +50,9 @@ public class MovementAuto extends OpMode {
     private boolean sorting = false;
 
     int index;
+
+    Servo intakeServo = null;
+
     public void initAprilTag(){
          aprilTag = new AprilTagProcessor.Builder()
                 .setDrawAxes(true)
@@ -135,6 +140,9 @@ public class MovementAuto extends OpMode {
         f.setStartingPose(poses.START_POSE);
         f.activateAllPIDFs();
         buildPaths();
+
+        intakeServo = hardwareMap.get(Servo.class, "intakeServo");
+        intakeServo.setPosition(0);
     }
 
     @Override
@@ -204,34 +212,44 @@ public class MovementAuto extends OpMode {
 
         switch (pathState) {
             case 0:
+                //Score 1
                 f.followPath(start);
                 setPathState(1);
                 break;
             case 1:
+                //Pickup 1
                 if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
                     f.followPath(one, true);
                     setPathState(2);
+                    intakeServo.setPosition(1);
                 }
                 break;
             case 2:
+                //Score 2
                 if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
                     f.followPath(two, true);
                     setPathState(3);
+                    intakeServo.setPosition(0);
                 }
                 break;
             case 3:
+                //Pickup 2
                 if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
                     f.followPath(three, true);
                     setPathState(4);
+                    intakeServo.setPosition(1);
                 }
                 break;
             case 4:
+                //Score 3
                 if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
                     f.followPath(four, true);
                     setPathState(5);
+                    intakeServo.setPosition(0);
                 }
                 break;
             case 5:
+                //Move to human area
                 if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
                     f.followPath(end, true);
                     setPathState(6);
