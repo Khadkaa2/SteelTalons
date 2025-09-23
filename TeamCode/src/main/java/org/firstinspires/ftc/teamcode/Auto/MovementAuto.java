@@ -8,6 +8,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.Auto.PoseConstants;
 import org.firstinspires.ftc.teamcode.SharedData;
 import org.firstinspires.ftc.teamcode.pedroPathing.Tuning;
@@ -75,6 +78,15 @@ public class MovementAuto extends OpMode {
         return -1;
     }
 
+    public static Pose3D robotPose(){
+        List<AprilTagDetection> detections = aprilTag.getDetections();
+        for (AprilTagDetection detection : detections){
+            if(detection.id == 20||detection.id == 24)
+                return detection.robotPose;
+        }
+        return null;
+    }
+
     public void setPathState(int pState) {
         this.pathState = pState;
         pathTimer.resetTimer();
@@ -122,7 +134,12 @@ public class MovementAuto extends OpMode {
         sort(detect());
         }
         telemetry.addData("Path State", pathState);
-
+        Pose3D currentPose = robotPose();
+        if (currentPose!=null){
+            telemetry.addData("X",currentPose.getPosition().x);
+            telemetry.addData("Y",currentPose.getPosition().y);
+            telemetry.addData("H",currentPose.getOrientation());
+        }
         if(pathState == 3||pathState == 6)
             intakeServo.setPower(1);
         else
@@ -151,6 +168,7 @@ public class MovementAuto extends OpMode {
 
         intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
         intakeServo.setPower(0);
+        index = -1;
     }
 
     @Override
@@ -165,6 +183,15 @@ public class MovementAuto extends OpMode {
         } else if (ID == 23) index = 2;
         telemetry.addData("Green Index", index );
         SharedData.greenIndex = index;
+        Pose3D currentPose = robotPose();
+        if (currentPose!=null){
+
+            telemetry.addData("X",currentPose.getPosition().x);
+            telemetry.addData("Y",currentPose.getPosition().y);
+            telemetry.addData("H",currentPose.getOrientation().getYaw());
+
+        }
+        telemetry.addData("test","test");
         telemetry.update();
     }
 
