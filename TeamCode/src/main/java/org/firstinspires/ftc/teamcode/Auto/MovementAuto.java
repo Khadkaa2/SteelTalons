@@ -44,7 +44,7 @@ public class MovementAuto extends OpMode {
     private int pathState;
 
     private Path start, end, p, point;
-    private PathChain one, two, three, four;
+    private PathChain one, two, three, four, five, six;
 
     private static AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
@@ -123,7 +123,7 @@ public class MovementAuto extends OpMode {
         }
         telemetry.addData("Path State", pathState);
 
-        if(pathState == 2||pathState == 4)
+        if(pathState == 3||pathState == 6)
             intakeServo.setPower(1);
         else
             intakeServo.setPower(0);
@@ -194,20 +194,24 @@ public class MovementAuto extends OpMode {
         one = f.pathBuilder()
                 .addPath(new BezierLine(poses.LAUNCH_POSE, poses.ALIGN1_POSE))
                 .setConstantHeadingInterpolation(poses.ALIGN1_POSE.getHeading())
+                .build();
+        two = f.pathBuilder()
                 .addPath(new BezierLine(poses.ALIGN1_POSE, poses.PICKUP1_POSE))
                 .setLinearHeadingInterpolation(poses.ALIGN1_POSE.getHeading(), poses.PICKUP1_POSE.getHeading())
                 .build();
-        two = f.pathBuilder()
+        three = f.pathBuilder()
                 .addPath(new BezierLine(poses.PICKUP1_POSE, poses.LAUNCH_POSE))
                 .setLinearHeadingInterpolation(poses.PICKUP1_POSE.getHeading(), poses.LAUNCH_POSE.getHeading())
                 .build();
-        three = f.pathBuilder()
+        four = f.pathBuilder()
                 .addPath(new BezierLine(poses.LAUNCH_POSE, poses.ALIGN2_POSE))
                 .setConstantHeadingInterpolation(poses.ALIGN2_POSE.getHeading())
+                .build();
+        five = f.pathBuilder()
                 .addPath(new BezierLine(poses.ALIGN2_POSE, poses.PICKUP2_POSE))
                 .setLinearHeadingInterpolation(poses.ALIGN2_POSE.getHeading(), poses.PICKUP2_POSE.getHeading())
                 .build();
-        four = f.pathBuilder()
+        six = f.pathBuilder()
                 .addPath(new BezierLine(poses.PICKUP2_POSE, poses.LAUNCH_POSE))
                 .setLinearHeadingInterpolation(poses.PICKUP2_POSE.getHeading(), poses.LAUNCH_POSE.getHeading())
                 .build();
@@ -226,49 +230,64 @@ public class MovementAuto extends OpMode {
                 setPathState(1);
                 break;
             case 1:
-                //Pickup 1
+                //Align 1
                 if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
                     f.followPath(one, true);
-                    f.setMaxPower(.5);
                     setPathState(2);
 
                 }
                 break;
             case 2:
-                //Score 2
+                //Pickup 1
                 if (!f.isBusy()) {
                     f.followPath(two, true);
-                    f.setMaxPower(1);
+                    f.setMaxPower(.5);
                     setPathState(3);
 
                 }
                 break;
             case 3:
-                //Pickup 2
-                if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
+                //Score 2
+                if (!f.isBusy()) {
                     f.followPath(three, true);
-                    f.setMaxPower(.5);
+                    f.setMaxPower(1);
                     setPathState(4);
 
                 }
                 break;
             case 4:
-                //Score 3
-                if (!f.isBusy()) {
+                //Align 2
+                if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
                     f.followPath(four, true);
                     setPathState(5);
-                    f.setMaxPower(1);
+
 
                 }
                 break;
             case 5:
-                //Move to human area
-                if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
-                    f.followPath(end, true);
+                //Pickup 2
+                if (!f.isBusy()) {
+                    f.followPath(five, true);
+                    f.setMaxPower(.5);
                     setPathState(6);
                 }
                 break;
             case 6:
+                //Score 3
+                if (!f.isBusy()) {
+                    f.followPath(six, true);
+                    f.setMaxPower(1);
+                    setPathState(7);
+                }
+                break;
+            case 7:
+                //move to human area
+                if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
+                    f.followPath(end, true);
+                    setPathState(8);
+                }
+                break;
+            case 8:
                 if (!f.isBusy()) {
                     setPathState(-1);
                 }
