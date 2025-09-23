@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Auto;
 
 
 import com.pedropathing.geometry.BezierPoint;
+import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -20,6 +21,7 @@ import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -51,7 +53,7 @@ public class MovementAuto extends OpMode {
 
     int index;
 
-    Servo intakeServo = null;
+    CRServo intakeServo = null;
 
     public void initAprilTag(){
          aprilTag = new AprilTagProcessor.Builder()
@@ -121,14 +123,11 @@ public class MovementAuto extends OpMode {
         }
         telemetry.addData("Path State", pathState);
 
-        if(pathState == 1||pathState == 3)
-        {
-            intakeServo.setPosition(0);
-        }
+        if(pathState == 2||pathState == 4)
+            intakeServo.setPower(1);
         else
-        {
-            intakeServo.setPosition(.5);
-        }
+            intakeServo.setPower(0);
+
     }
 
     @Override
@@ -150,8 +149,8 @@ public class MovementAuto extends OpMode {
         f.activateAllPIDFs();
         buildPaths();
 
-        intakeServo = hardwareMap.get(Servo.class, "intakeServo");
-        intakeServo.setPosition(0);
+        intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
+        intakeServo.setPower(0);
     }
 
     @Override
@@ -183,6 +182,7 @@ public class MovementAuto extends OpMode {
     public void buildPaths() {
         start = new Path(new BezierLine(poses.START_POSE, poses.LAUNCH_POSE));
         start.setLinearHeadingInterpolation(poses.START_POSE.getHeading(), poses.LAUNCH_POSE.getHeading());
+
 
 //        p = new Path(new BezierLine(new Pose(0, 0, Math.PI / 2), new Pose(12, 12, Math.PI)));
 //        p.setLinearHeadingInterpolation(new Pose(0, 0, Math.PI / 2).getHeading(), new Pose(12, 12, Math.PI).getHeading());
@@ -229,14 +229,16 @@ public class MovementAuto extends OpMode {
                 //Pickup 1
                 if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
                     f.followPath(one, true);
+                    f.setMaxPower(.5);
                     setPathState(2);
 
                 }
                 break;
             case 2:
                 //Score 2
-                if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
+                if (!f.isBusy()) {
                     f.followPath(two, true);
+                    f.setMaxPower(1);
                     setPathState(3);
 
                 }
@@ -245,15 +247,17 @@ public class MovementAuto extends OpMode {
                 //Pickup 2
                 if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
                     f.followPath(three, true);
+                    f.setMaxPower(.5);
                     setPathState(4);
 
                 }
                 break;
             case 4:
                 //Score 3
-                if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
+                if (!f.isBusy()) {
                     f.followPath(four, true);
                     setPathState(5);
+                    f.setMaxPower(1);
 
                 }
                 break;
