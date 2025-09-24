@@ -92,8 +92,8 @@ public class TeleOpControlled extends LinearOpMode {
 
     public static Pose3D robotPose(){
         List<AprilTagDetection> detections = aprilTag.getDetections();
-        for (AprilTagDetection detection : detections){
-            if(detection.id == 21||detection.id == 22||detection.id == 23)
+        for (AprilTagDetection detection : detections) {
+            if (detection.id == 21 || detection.id == 22 || detection.id == 23)
                 return detection.robotPose;
         }
         return null;

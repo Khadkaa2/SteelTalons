@@ -31,6 +31,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
+import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
@@ -58,10 +60,13 @@ public class MovementAuto extends OpMode {
 
     CRServo intakeServo = null;
 
+    AprilTagPoseFtc currentPose = null;
+
     public void initAprilTag(){
          aprilTag = new AprilTagProcessor.Builder()
                 .setDrawAxes(true)
                 .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
+                 .setTagLibrary(AprilTagGameDatabase.getCurrentGameTagLibrary())
                 .build();
         VisionPortal.Builder builder = new VisionPortal.Builder();
         builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
@@ -78,12 +83,17 @@ public class MovementAuto extends OpMode {
         return -1;
     }
 
-    public static Pose3D robotPose(){
+    public  AprilTagPoseFtc robotPose(){
         List<AprilTagDetection> detections = aprilTag.getDetections();
         for (AprilTagDetection detection : detections){
-            if(detection.id == 20||detection.id == 24)
-                return detection.robotPose;
+            if(detection.id == 20||detection.id == 24){
+                if(detection.metadata!= null)
+                    return detection.ftcPose;
+                else
+                    telemetry.addData("Metadata", "null");
+            }
         }
+
         return null;
     }
 
@@ -134,11 +144,11 @@ public class MovementAuto extends OpMode {
         sort(detect());
         }
         telemetry.addData("Path State", pathState);
-        Pose3D currentPose = robotPose();
+        AprilTagPoseFtc currentPose = robotPose();
         if (currentPose!=null){
-            telemetry.addData("X",currentPose.getPosition().x);
-            telemetry.addData("Y",currentPose.getPosition().y);
-            telemetry.addData("H",currentPose.getOrientation());
+            telemetry.addData("X",currentPose.x);
+            telemetry.addData("Y",currentPose.y);
+            telemetry.addData("H",currentPose.yaw);
         }
         if(pathState == 3||pathState == 6)
             intakeServo.setPower(1);
@@ -183,15 +193,20 @@ public class MovementAuto extends OpMode {
         } else if (ID == 23) index = 2;
         telemetry.addData("Green Index", index );
         SharedData.greenIndex = index;
-        Pose3D currentPose = robotPose();
-        if (currentPose!=null){
 
-            telemetry.addData("X",currentPose.getPosition().x);
-            telemetry.addData("Y",currentPose.getPosition().y);
-            telemetry.addData("H",currentPose.getOrientation().getYaw());
 
+            currentPose = robotPose();
+
+
+        if (currentPose!= null){
+
+            telemetry.addData("X",robotPose().x);
+            telemetry.addData("Y",robotPose().y);
+            telemetry.addData("H",robotPose().yaw);
         }
-        telemetry.addData("test","test");
+
+        telemetry.addData("test",currentPose == null);
+
         telemetry.update();
     }
 
