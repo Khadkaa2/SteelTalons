@@ -86,7 +86,7 @@ public class MovementAuto extends OpMode {
     public  AprilTagPoseFtc robotPose(){
         List<AprilTagDetection> detections = aprilTag.getDetections();
         for (AprilTagDetection detection : detections){
-            if(detection.id == 20||detection.id == 24){
+            if(detection.id == 20||detection.id == 24||detection.id == 13){
                 if(detection.metadata!= null)
                     return detection.ftcPose;
                 else
