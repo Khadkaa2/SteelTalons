@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.CRServo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -23,11 +24,11 @@ import java.util.List;
 
 @TeleOp
 public class TeleOpControlled extends LinearOpMode {
-    DcMotorEx frontLeft = null;
-    DcMotorEx frontRight = null;
-    DcMotorEx backLeft = null;
-    DcMotorEx backRight = null;
-    Servo intakeServo = null;
+    private DcMotorEx frontLeft = null;
+    private DcMotorEx frontRight = null;
+    private DcMotorEx backLeft = null;
+    private DcMotorEx backRight = null;
+    private CRServo intakeServo;
 
     private PanelsTelemetry panels = PanelsTelemetry.INSTANCE;
 
@@ -36,12 +37,14 @@ public class TeleOpControlled extends LinearOpMode {
     private static AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
 
+    private Pose currentPose = null;
+
     public void runOpMode() throws InterruptedException {
         frontLeft = hardwareMap.get(DcMotorEx.class, "leftFront");
         frontRight = hardwareMap.get(DcMotorEx.class, "rightFront");
         backLeft = hardwareMap.get(DcMotorEx.class, "leftBack");
         backRight = hardwareMap.get(DcMotorEx.class, "rightBack");
-        intakeServo = hardwareMap.get(Servo.class, "intakeServo");
+        intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
 
         initAprilTag();
 
@@ -75,6 +78,29 @@ public class TeleOpControlled extends LinearOpMode {
             frontRight.setPower(frontRightPower);
             backRight.setPower(backRightPower);
             telemetry.addData("Pattern", SharedData.greenIndex);
+
+
+            if(gamepad1.right_bumper)
+                intakeServo.setPower(1);
+            else if (gamepad1.left_bumper) {
+                intakeServo.setPower(-1);
+            }
+            else
+                intakeServo.setPower(0);
+
+
+            currentPose = robotPose();
+
+
+            if (currentPose!= null){
+
+                telemetry.addData("X",currentPose.getX());
+                telemetry.addData("Y",currentPose.getY());
+                telemetry.addData("H",currentPose.getHeading());
+            }
+
+            telemetry.addData("test",currentPose == null);
+
             telemetry.update();
 
         }
@@ -89,6 +115,21 @@ public class TeleOpControlled extends LinearOpMode {
         builder.addProcessor(aprilTag);
         visionPortal = builder.build();
     }
+
+    public  Pose robotPose(){
+        List<AprilTagDetection> detections = aprilTag.getDetections();
+        for (AprilTagDetection detection : detections){
+            if(detection.id == 20||detection.id == 24||detection.id == 13){
+                if(detection.metadata!= null)
+                    return new Pose( detection.robotPose.getPosition().x , detection.robotPose.getPosition().y , detection.robotPose.getOrientation().getYaw(AngleUnit.DEGREES));
+                else
+                    telemetry.addData("Metadata", "null");
+            }
+        }
+
+        return null;
+    }
+
 }
 
 

@@ -88,7 +88,8 @@ public class MovementAuto extends OpMode {
         for (AprilTagDetection detection : detections){
             if(detection.id == 20||detection.id == 24||detection.id == 13){
                 if(detection.metadata!= null)
-                    return new Pose((0) + Math.sin(f.getPose().getX() - detection.ftcPose.x) - poses.CamOff.getX(), (0) + Math.cos(detection.ftcPose.y) - poses.CamOff.getY(),Math.toRadians(-detection.ftcPose.yaw-45));
+                    return new Pose( detection.robotPose.getPosition().x , detection.robotPose.getPosition().y , detection.robotPose.getOrientation().getYaw(AngleUnit.DEGREES));
+//                            Pose((0) + Math.sin(f.getPose().getX() - detection.ftcPose.x) - poses.CamOff.getX(), (0) + Math.cos(detection.ftcPose.y) - poses.CamOff.getY(),(detection.ftcPose.yaw));
                 else
                     telemetry.addData("Metadata", "null");
             }
