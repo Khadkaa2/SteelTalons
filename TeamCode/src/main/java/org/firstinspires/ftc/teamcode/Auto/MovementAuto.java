@@ -60,7 +60,7 @@ public class MovementAuto extends OpMode {
 
     CRServo intakeServo = null;
 
-    AprilTagPoseFtc currentPose = null;
+    Pose currentPose = null;
 
     public void initAprilTag(){
          aprilTag = new AprilTagProcessor.Builder()
@@ -83,12 +83,12 @@ public class MovementAuto extends OpMode {
         return -1;
     }
 
-    public  AprilTagPoseFtc robotPose(){
+    public  Pose robotPose(){
         List<AprilTagDetection> detections = aprilTag.getDetections();
         for (AprilTagDetection detection : detections){
             if(detection.id == 20||detection.id == 24||detection.id == 13){
                 if(detection.metadata!= null)
-                    return detection.ftcPose;
+                    return new Pose((0) + Math.sin(f.getPose().getX() - detection.ftcPose.x) - poses.CamOff.getX(), (0) + Math.cos(detection.ftcPose.y) - poses.CamOff.getY(),Math.toRadians(-detection.ftcPose.yaw-45));
                 else
                     telemetry.addData("Metadata", "null");
             }
@@ -144,12 +144,6 @@ public class MovementAuto extends OpMode {
         sort(detect());
         }
         telemetry.addData("Path State", pathState);
-        AprilTagPoseFtc currentPose = robotPose();
-        if (currentPose!=null){
-            telemetry.addData("X",currentPose.x);
-            telemetry.addData("Y",currentPose.y);
-            telemetry.addData("H",currentPose.yaw);
-        }
         if(pathState == 3||pathState == 6)
             intakeServo.setPower(1);
         else
@@ -200,9 +194,9 @@ public class MovementAuto extends OpMode {
 
         if (currentPose!= null){
 
-            telemetry.addData("X",robotPose().x);
-            telemetry.addData("Y",robotPose().y);
-            telemetry.addData("H",robotPose().yaw);
+            telemetry.addData("X",currentPose.getX());
+            telemetry.addData("Y",currentPose.getY());
+            telemetry.addData("H",currentPose.getHeading());
         }
 
         telemetry.addData("test",currentPose == null);

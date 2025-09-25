@@ -13,6 +13,6 @@ public class PoseConstants {
     public static Pose PICKUP2_POSE = new Pose(51, -12, Math.toRadians(90));
     public static Pose END_POSE = new Pose(12,-12,Math.toRadians(180));
     public static Pose FIELD_OFFSET = new Pose(8.75,8.75);
-
+    public static Pose CamOff = new Pose(-8,3.5);
 
 }
