@@ -90,16 +90,21 @@ public class TeleOpControlled extends LinearOpMode {
 
 
             currentPose = robotPose();
+            Pose rawPose = rawPose();
+            Pose FTCPOSE = ftcPose();
+
+            if (currentPose!= null)  telemetry.addData("Robotpose X,Y,H", Math.round(currentPose.getX()) + " " + currentPose.getY() + " " + currentPose.getHeading());
+
+            if (rawPose != null)    telemetry.addData("Rawpose X,Y,H", rawPose.getX() + " " + rawPose.getY() + " " + rawPose.getHeading());
+
+            if (FTCPOSE != null)    telemetry.addData("FTCPOSE X,Y,H", FTCPOSE.getX() + " " + FTCPOSE.getY() + " " + FTCPOSE.getHeading());
 
 
-            if (currentPose!= null){
+            telemetry.addData("Current test",currentPose == null);
+            telemetry.addData("Raw test",rawPose == null);
+            telemetry.addData("FTC test",FTCPOSE == null);
 
-                telemetry.addData("X",currentPose.getX());
-                telemetry.addData("Y",currentPose.getY());
-                telemetry.addData("H",currentPose.getHeading());
-            }
 
-            telemetry.addData("test",currentPose == null);
 
             telemetry.update();
 
@@ -119,16 +124,44 @@ public class TeleOpControlled extends LinearOpMode {
     public  Pose robotPose(){
         List<AprilTagDetection> detections = aprilTag.getDetections();
         for (AprilTagDetection detection : detections){
-            if(detection.id == 20||detection.id == 24||detection.id == 13){
+            if(detection.id == 23||detection.id == 24){
                 if(detection.metadata!= null)
                     return new Pose( detection.robotPose.getPosition().x , detection.robotPose.getPosition().y , detection.robotPose.getOrientation().getYaw(AngleUnit.DEGREES));
                 else
-                    telemetry.addData("Metadata", "null");
+                    telemetry.addData("RobotMetadata", "null");
             }
         }
 
         return null;
     }
+
+    public  Pose rawPose(){
+        List<AprilTagDetection> detections = aprilTag.getDetections();
+        for (AprilTagDetection detection : detections){
+            if(detection.id == 23||detection.id == 24){
+                if(detection.metadata!= null)
+                    return new Pose( detection.rawPose.x , detection.rawPose.y , detection.rawPose.z);
+                else
+                    telemetry.addData("RawMetadata", "null");
+            }
+        }
+
+        return null;
+    }
+    public  Pose ftcPose(){
+        List<AprilTagDetection> detections = aprilTag.getDetections();
+        for (AprilTagDetection detection : detections){
+            if(detection.id == 23||detection.id == 24){
+                if(detection.metadata!= null)
+                    return new Pose( detection.ftcPose.x , detection.ftcPose.y , detection.ftcPose.yaw);
+                else
+                    telemetry.addData("FTC-Metadata", "null");
+            }
+        }
+
+        return null;
+    }
+
 
 }
 
