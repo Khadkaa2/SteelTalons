@@ -20,6 +20,8 @@ import com.bylazar.panels.Panels;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.paths.PathConstraints;
+
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
@@ -222,12 +224,6 @@ public class MovementAuto extends OpMode {
         start.setLinearHeadingInterpolation(poses.START_POSE.getHeading(), poses.LAUNCH_POSE.getHeading());
 
 
-//        p = new Path(new BezierLine(new Pose(0, 0, Math.PI / 2), new Pose(12, 12, Math.PI)));
-//        p.setLinearHeadingInterpolation(new Pose(0, 0, Math.PI / 2).getHeading(), new Pose(12, 12, Math.PI).getHeading());
-//
-//        point = new Path( new BezierPoint(new Pose(0,0,Math.PI)));
-//        point.setConstantHeadingInterpolation(Math.PI);
-
 
         one = f.pathBuilder()
                 .addPath(new BezierLine(poses.LAUNCH_POSE, poses.ALIGN1_POSE))
@@ -258,21 +254,26 @@ public class MovementAuto extends OpMode {
     }
 
 
+    private void sendPose(){
+        SharedData.toTeleopPose = f.getPose();
+
+    }
+
     public void autoPathUpdates() {
-
-
+        sendPose();
         switch (pathState) {
             case 0:
                 //Score 1
                 f.followPath(start);
                 setPathState(1);
+                sendPose();
                 break;
             case 1:
                 //Align 1
                 if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
                     f.followPath(one, true);
                     setPathState(2);
-
+                    sendPose();
                 }
                 break;
             case 2:
@@ -281,7 +282,7 @@ public class MovementAuto extends OpMode {
                     f.followPath(two, true);
                     f.setMaxPower(.5);
                     setPathState(3);
-
+                    sendPose();
                 }
                 break;
             case 3:
@@ -290,7 +291,7 @@ public class MovementAuto extends OpMode {
                     f.followPath(three, true);
                     f.setMaxPower(1);
                     setPathState(4);
-
+                    sendPose();
                 }
                 break;
             case 4:
@@ -298,7 +299,7 @@ public class MovementAuto extends OpMode {
                 if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
                     f.followPath(four, true);
                     setPathState(5);
-
+                    sendPose();
 
                 }
                 break;
@@ -308,6 +309,7 @@ public class MovementAuto extends OpMode {
                     f.followPath(five, true);
                     f.setMaxPower(.5);
                     setPathState(6);
+                    sendPose();
                 }
                 break;
             case 6:
@@ -316,6 +318,7 @@ public class MovementAuto extends OpMode {
                     f.followPath(six, true);
                     f.setMaxPower(1);
                     setPathState(7);
+                    sendPose();
                 }
                 break;
             case 7:
@@ -323,12 +326,13 @@ public class MovementAuto extends OpMode {
                 if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
                     f.followPath(end, true);
                     setPathState(8);
+                    sendPose();
                 }
                 break;
             case 8:
                 if (!f.isBusy()) {
-                    SharedData.toTeleopPose = f.getPose();
                     setPathState(-1);
+                    sendPose();
                 }
                 break;
         }
