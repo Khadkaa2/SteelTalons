@@ -48,6 +48,7 @@ public class MovementAuto extends OpMode {
     private Timer pathTimer, actionTimer, opmodeTimer, sortTimer;
     private int pathState;
 
+
     private Path start, end, p, point;
     private PathChain one, two, three, four, five, six;
 
@@ -326,6 +327,7 @@ public class MovementAuto extends OpMode {
                 break;
             case 8:
                 if (!f.isBusy()) {
+                    SharedData.toTeleopPose = f.getPose();
                     setPathState(-1);
                 }
                 break;

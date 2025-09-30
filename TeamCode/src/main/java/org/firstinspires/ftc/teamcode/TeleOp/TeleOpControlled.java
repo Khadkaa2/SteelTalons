@@ -97,7 +97,7 @@ public class TeleOpControlled extends LinearOpMode {
 
             if (rawPose != null)    telemetry.addData("Rawpose X,Y,H", rawPose.getX() + " " + rawPose.getY() + " " + rawPose.getHeading());
 
-            if (FTCPOSE != null)    telemetry.addData("FTCPOSE X,Y,H", FTCPOSE.getX() + " " + FTCPOSE.getY() + " " + FTCPOSE.getHeading());
+            if (FTCPOSE != null)    telemetry.addData("FTCPOSE X,Y,H", FTCPOSE.getX() + ", " + FTCPOSE.getY() + " " + FTCPOSE.getBearing());
 
 
             telemetry.addData("Current test",currentPose == null);
