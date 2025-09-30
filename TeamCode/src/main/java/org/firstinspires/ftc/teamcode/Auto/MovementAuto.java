@@ -86,7 +86,7 @@ public class MovementAuto extends OpMode {
     public  Pose robotPose(){
         List<AprilTagDetection> detections = aprilTag.getDetections();
         for (AprilTagDetection detection : detections){
-            if(detection.id == 20||detection.id == 24||detection.id == 13){
+            if(detection.id == 20||detection.id == 24){
                 if(detection.metadata!= null)
                     return new Pose( detection.robotPose.getPosition().x , detection.robotPose.getPosition().y , detection.robotPose.getOrientation().getYaw(AngleUnit.DEGREES));
 //                            Pose((0) + Math.sin(f.getPose().getX() - detection.ftcPose.x) - poses.CamOff.getX(), (0) + Math.cos(detection.ftcPose.y) - poses.CamOff.getY(),(detection.ftcPose.yaw));

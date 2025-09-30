@@ -93,15 +93,15 @@ public class TeleOpControlled extends LinearOpMode {
             Pose rawPose = rawPose();
             Pose FTCPOSE = ftcPose();
 
-            if (currentPose!= null)  telemetry.addData("Robotpose X,Y,H", Math.round(currentPose.getX()) + " " + currentPose.getY() + " " + currentPose.getHeading());
+            //if (currentPose!= null)  telemetry.addData("Robotpose X,Y,H", Math.round(currentPose.getX()) + " " + currentPose.getY() + " " + currentPose.getHeading());
 
-            if (rawPose != null)    telemetry.addData("Rawpose X,Y,H", rawPose.getX() + " " + rawPose.getY() + " " + rawPose.getHeading());
+            //if (rawPose != null)    telemetry.addData("Rawpose X,Y,H", rawPose.getX() + " " + rawPose.getY() + " " + rawPose.getHeading());
 
-            if (FTCPOSE != null)    telemetry.addData("FTCPOSE X,Y,H", FTCPOSE.getX() + " " + FTCPOSE.getY() + " " + FTCPOSE.getHeading());
+            if (FTCPOSE != null)    telemetry.addData("FTCPOSE X,Y,H", (int)(FTCPOSE.getX()*100)/100.0 + ", " + (int)(FTCPOSE.getY()*100)/100.0 + ", " + (int)(FTCPOSE.getHeading()*100)/100.0);
 
 
-            telemetry.addData("Current test",currentPose == null);
-            telemetry.addData("Raw test",rawPose == null);
+            //telemetry.addData("Current test",currentPose == null);
+            //telemetry.addData("Raw test",rawPose == null);
             telemetry.addData("FTC test",FTCPOSE == null);
 
 
@@ -151,9 +151,9 @@ public class TeleOpControlled extends LinearOpMode {
     public  Pose ftcPose(){
         List<AprilTagDetection> detections = aprilTag.getDetections();
         for (AprilTagDetection detection : detections){
-            if(detection.id == 23||detection.id == 24){
+            if(detection.id == 20||detection.id == 24){
                 if(detection.metadata!= null)
-                    return new Pose( detection.ftcPose.x , detection.ftcPose.y , detection.ftcPose.yaw);
+                    return new Pose(detection.ftcPose.y , detection.ftcPose.x , -detection.ftcPose.bearing);
                 else
                     telemetry.addData("FTC-Metadata", "null");
             }
