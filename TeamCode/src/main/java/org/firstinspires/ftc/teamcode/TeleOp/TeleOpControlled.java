@@ -116,30 +116,23 @@ public class TeleOpControlled extends LinearOpMode {
 
 
 
-
+            /*maybe else breakPath so you have to hold a in order
+              to actually do the entire path to allow for mid-path
+              interruption in case there's anything in the way */
             if (gamepad1.a){
-
                 f.followPath(toLaunch);
                 automated = true;
 
             }
-            if (automated && (gamepad1.b || !f.isBusy())){
-                f.startTeleopDrive();
-                automated = false;
-
-                frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+            else if (automated) {
+                f.startTeleopDrive(true);
+                brakeMotors();
+                automated=false;
             }
-
 
             telemetry.addData("GOINGTOLAUNCH MAINLOOP", f.isBusy());
 
-            /*maybe else breakPath so you have to hold start in order
-              to actually do the entire path to allow for mid-path
-              interupption in case there's anything in the way */
+
             if(gamepad1.right_bumper)
                 intakeServo.setPower(1);
             else if (gamepad1.left_bumper) {
@@ -168,6 +161,14 @@ public class TeleOpControlled extends LinearOpMode {
 
         }
     }
+
+    private void brakeMotors(){
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+
     public void initAprilTag(){
         aprilTag = new AprilTagProcessor.Builder()
                 .setDrawAxes(true)
