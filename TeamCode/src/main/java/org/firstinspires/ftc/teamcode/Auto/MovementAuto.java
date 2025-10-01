@@ -177,7 +177,7 @@ public class MovementAuto extends OpMode {
 
         intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
         intakeServo.setPower(0);
-        index = -1;
+        index = 0;
     }
 
     @Override

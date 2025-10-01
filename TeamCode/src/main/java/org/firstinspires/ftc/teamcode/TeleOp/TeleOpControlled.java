@@ -126,12 +126,12 @@ public class TeleOpControlled extends LinearOpMode {
             /*maybe else breakPath so you have to hold a in order
               to actually do the entire path to allow for mid-path
               interruption in case there's anything in the way */
-            if (gamepad1.a){
+            if (gamepad1.a && !automated){
                 f.followPath(toLaunch);
                 automated = true;
 
             }
-            else if (automated) {
+            else if (!gamepad1.a && automated) {
                 f.startTeleopDrive(true);
                 brakeMotors();
                 automated=false;
