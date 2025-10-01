@@ -61,7 +61,7 @@ public class TeleOpControlled extends LinearOpMode {
         intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
 
         f = Constants.createFollower(hardwareMap);
-        f.setStartingPose(new Pose());
+        f.setStartingPose(SharedData.toTeleopPose);
         f.update();
 
         toLaunch = f.pathBuilder()
@@ -83,7 +83,7 @@ public class TeleOpControlled extends LinearOpMode {
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        f.startTeleopDrive();
+        f.startTeleopDrive(true);
 
         while (opModeIsActive()) {
             f.update();
@@ -126,6 +126,12 @@ public class TeleOpControlled extends LinearOpMode {
             if (automated && (gamepad1.b || !f.isBusy())){
                 f.startTeleopDrive();
                 automated = false;
+
+                frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
             }
 
 
@@ -156,7 +162,7 @@ public class TeleOpControlled extends LinearOpMode {
 
             telemetry.addData("FTC test",FTCPOSE == null);
 
-
+            SharedData.toTeleopPose = f.getPose();
 
             telemetry.update();
 

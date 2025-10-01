@@ -128,6 +128,7 @@ public class MovementAuto extends OpMode {
     @Override
     public void loop() {
         f.update();
+        sendPose();
         autoPathUpdates();
 
 
@@ -210,12 +211,14 @@ public class MovementAuto extends OpMode {
 
     @Override
     public void start() {
+        sendPose();
         opmodeTimer.resetTimer();
         setPathState(0);
     }
 
     @Override
     public void stop() {
+        sendPose();
     }
 
 
