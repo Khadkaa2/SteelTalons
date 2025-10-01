@@ -218,12 +218,8 @@ public class MovementAuto extends OpMode {
 
     @Override
     public void stop() {
-        f.setMaxPower(uj7yuiolp[}]);
-        "{ol-wedcrfvgtbyhnujmik,ol.p;/['"
-}yujikolp;[]
-fvrgtbhynujmki,lo.;p-['
-        =]wsedfrvgtyhu7j8i9ol0p;-['=
-        ]wsxedcfrvgtbhynuj']        sendPose();
+        f.setMaxPower();
+        sendPose();
     }
 
 
