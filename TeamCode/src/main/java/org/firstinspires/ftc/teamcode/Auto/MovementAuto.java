@@ -41,6 +41,7 @@ import java.util.List;
 
 @Autonomous
 public class MovementAuto extends OpMode {
+
     private Follower f;
     //private Telemetry telemetryA;
     public PanelsTelemetry panels = PanelsTelemetry.INSTANCE;
@@ -105,8 +106,7 @@ public class MovementAuto extends OpMode {
         this.pathState = pState;
         pathTimer.resetTimer();
     }
-    private void sort(boolean[] storage)
-    {
+    private void sort(boolean[] storage) {
 
         if(!sorting) {
             if (storage[index]) {
@@ -118,8 +118,7 @@ public class MovementAuto extends OpMode {
             }
         }
     }
-    private boolean[] detect()
-    {
+    private boolean[] detect() {
         boolean[] order = new boolean[3];
         //color sensor stuff
         return order;
@@ -140,15 +139,16 @@ public class MovementAuto extends OpMode {
         panels.getTelemetry().addData("y", f.getPose().getY());
         panels.getTelemetry().update();
 
-        if(sorting)
-        {
+        if(sorting) {
             //set servo pos here
         }
         // #5 is holder -> time it takes to sort one ball
         if(sortTimer.getElapsedTimeSeconds()>5) {
         sort(detect());
         }
+
         telemetry.addData("Path State", pathState);
+
         if(pathState == 3||pathState == 6)
             intakeServo.setPower(1);
         else
@@ -283,7 +283,7 @@ public class MovementAuto extends OpMode {
                 //Pickup 1
                 if (!f.isBusy()) {
                     f.followPath(two, true);
-                    f.setMaxPower(.5);
+                    f.setMaxPower(.1);
                     setPathState(3);
                     sendPose();
                 }
@@ -310,7 +310,7 @@ public class MovementAuto extends OpMode {
                 //Pickup 2
                 if (!f.isBusy()) {
                     f.followPath(five, true);
-                    f.setMaxPower(.5);
+                    f.setMaxPower(.1);
                     setPathState(6);
                     sendPose();
                 }
