@@ -4,6 +4,7 @@ import com.bylazar.telemetry.PanelsTelemetry;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -53,6 +54,9 @@ public class TeleOpControlled extends LinearOpMode {
 
     private Pose currentPose = null;
 
+    private boolean reversedControls = false;
+
+
     public void runOpMode() throws InterruptedException {
         frontLeft = hardwareMap.get(DcMotorEx.class, "leftFront");
         frontRight = hardwareMap.get(DcMotorEx.class, "rightFront");
@@ -61,7 +65,7 @@ public class TeleOpControlled extends LinearOpMode {
         intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
 
         f = Constants.createFollower(hardwareMap);
-        f.setStartingPose(SharedData.toTeleopPose);
+        f.setStartingPose(SharedData.toTeleopPose ==null ? new Pose() : SharedData.toTeleopPose);
         f.update();
 
         toLaunch = f.pathBuilder()
@@ -70,6 +74,7 @@ public class TeleOpControlled extends LinearOpMode {
                 .build();
 
         initAprilTag();
+
 
         waitForStart();
 
@@ -94,14 +99,16 @@ public class TeleOpControlled extends LinearOpMode {
 
             double denominator = Math.max(Math.max(Math.abs(x), Math.abs(y)), rx);
 
-            if (!automated) {
+            if (!automated ) {
                 f.setTeleOpDrive(
                         -gamepad1.left_stick_y,
                         -gamepad1.left_stick_x,
-                        gamepad1.right_stick_x,
-                        true
+                        -gamepad1.right_stick_x,
+                        false
                 );
             }
+//
+
 
 //            double frontLeftPower = (y + x + rx); /// (denominator * speedCoef);
 //            double backLeftPower = (y - x + rx); /// (denominator * speedCoef);
@@ -119,12 +126,12 @@ public class TeleOpControlled extends LinearOpMode {
             /*maybe else breakPath so you have to hold a in order
               to actually do the entire path to allow for mid-path
               interruption in case there's anything in the way */
-            if (gamepad1.a){
+            if (gamepad1.a && !automated){
                 f.followPath(toLaunch);
                 automated = true;
 
             }
-            else if (automated) {
+            else if (!gamepad1.a && automated) {
                 f.startTeleopDrive(true);
                 brakeMotors();
                 automated=false;
