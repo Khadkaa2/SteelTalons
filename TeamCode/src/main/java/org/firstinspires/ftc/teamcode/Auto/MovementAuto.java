@@ -218,7 +218,7 @@ public class MovementAuto extends OpMode {
 
     @Override
     public void stop() {
-        
+
         sendPose();
     }
 
