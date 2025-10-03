@@ -30,6 +30,7 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @TeleOp
@@ -46,7 +47,7 @@ public class TeleOpControlled extends LinearOpMode {
     private Follower f;
     private boolean automated = false;
     private PathChain toLaunch, toPark;
-
+    private AprilTagDetection currentDetection;
     private PanelsTelemetry panels = PanelsTelemetry.INSTANCE;
 
     private static AprilTagProcessor aprilTag;
@@ -141,7 +142,7 @@ public class TeleOpControlled extends LinearOpMode {
 
 
 
-
+            setCurr();
 
             //Intake
             if(gamepad1.right_bumper)
@@ -151,10 +152,14 @@ public class TeleOpControlled extends LinearOpMode {
             else
                 intakeServo.setPower(0);
 
-            telemetry.addData("Pattern", SharedData.greenIndex);
-            telemetry.addData("FOLLOWER X",f.getPose().getX());
-            telemetry.addData("FOLLOWER Y",f.getPose().getY());
-            telemetry.addData("FOLLOWER Heading",f.getPose().getHeading());
+//          telemetry.addData("Pattern", SharedData.greenIndex);
+//          telemetry.addData("FOLLOWER X",f.getPose().getX());
+//          telemetry.addData("FOLLOWER Y",f.getPose().getY());
+//          telemetry.addData("FOLLOWER Heading",f.getPose().getHeading());
+            telemetry.addData("TAGX", currentDetection.ftcPose().getX() );
+            telemetry.addData("TAGY", currentDetection.ftcPose().getY() );
+            telemetry.addData("TAGH", currentDetection.ftcPose().getHeading());
+
 
             SharedData.toTeleopPose = f.getPose();
 
@@ -181,7 +186,19 @@ public class TeleOpControlled extends LinearOpMode {
         visionPortal = builder.build();
     }
 
+    public void setCurr(){
+        ArrayList<AprilTagDetection> detections = new ArrayList<>();
 
+        try {
+            this.currentDetection = detections.get(0);
+
+
+        }
+        catch Exception e
+        (
+                telemetry.addData("NO TAG DETECTED", "BUM");
+        )
+}
 
 
 }
