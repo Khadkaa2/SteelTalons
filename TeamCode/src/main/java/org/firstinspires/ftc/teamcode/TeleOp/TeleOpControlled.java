@@ -75,8 +75,6 @@ public class TeleOpControlled extends LinearOpMode {
         toPark = f.pathBuilder()
                 .addPath(new BezierLine(f.getPose() , poses.parkPose))
                 .setLinearHeadingInterpolation(f.getPose().getHeading(), poses.parkPose.getHeading())
-                .setTValueConstraint(1)
-                .setHeadingConstraint(1)
                 .build();
 
         initAprilTag();
