@@ -74,7 +74,8 @@ public class TeleOpControlled extends LinearOpMode {
 
         toPark = f.pathBuilder()
                 .addPath(new BezierLine(f.getPose() , poses.parkPose))
-                .setLinearHeadingInterpolation(f.getPose().getHeading(), poses.parkPose.getHeading())
+                .setConstantHeadingInterpolation(poses.parkPose.getHeading())
+                .setHeadingConstraint(0)
                 .build();
 
         initAprilTag();
@@ -181,19 +182,6 @@ public class TeleOpControlled extends LinearOpMode {
     }
 
 
-    public  Pose ftcPose(){
-        List<AprilTagDetection> detections = aprilTag.getDetections();
-        for (AprilTagDetection detection : detections){
-            if(detection.id == 23||detection.id == 24){
-                if(detection.metadata!= null)
-                    return new Pose( detection.ftcPose.x , detection.ftcPose.y , detection.ftcPose.bearing);
-                else
-                    telemetry.addData("FTC-Metadata", "null");
-            }
-        }
-
-        return null;
-    }
 
 
 }
