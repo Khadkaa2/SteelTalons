@@ -156,9 +156,11 @@ public class TeleOpControlled extends LinearOpMode {
 //          telemetry.addData("FOLLOWER X",f.getPose().getX());
 //          telemetry.addData("FOLLOWER Y",f.getPose().getY());
 //          telemetry.addData("FOLLOWER Heading",f.getPose().getHeading());
-            telemetry.addData("TAGX", currentDetection.ftcPose().getX() );
-            telemetry.addData("TAGY", currentDetection.ftcPose().getY() );
-            telemetry.addData("TAGH", currentDetection.ftcPose().getHeading());
+            telemetry.addData("TAGX", currentDetection.ftcPose.x );
+            telemetry.addData("TAGY", currentDetection.ftcPose.y );
+            telemetry.addData("TAGH", currentDetection.ftcPose.yaw);
+            telemetry.addData("TAGB", currentDetection.ftcPose.bearing);
+            telemetry.addData("TAGR" , currentDetection.ftcPose.range);
 
 
             SharedData.toTeleopPose = f.getPose();
@@ -191,13 +193,10 @@ public class TeleOpControlled extends LinearOpMode {
 
         try {
             this.currentDetection = detections.get(0);
-
-
         }
-        catch Exception e
-        (
-                telemetry.addData("NO TAG DETECTED", "BUM");
-        )
+        catch (Exception e) {
+            telemetry.addData("NO TAG DETECTED", true);
+        }
 }
 
 
