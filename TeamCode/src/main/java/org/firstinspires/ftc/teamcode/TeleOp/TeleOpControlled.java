@@ -39,23 +39,22 @@ public class TeleOpControlled extends LinearOpMode {
     private DcMotorEx backLeft = null;
     private DcMotorEx backRight = null;
     private CRServo intakeServo;
+
+
+
     private PoseConstants poses =  new PoseConstants();
-
+    private Follower f;
     private boolean automated = false;
-
-    private PathChain toLaunch;
+    private PathChain toLaunch, toPark;
 
     private PanelsTelemetry panels = PanelsTelemetry.INSTANCE;
-
-    private Follower f;
 
     private static AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
 
-    private Pose currentPose = null;
+    private double speedMultiplier;
 
-    private boolean reversedControls = false;
-
+    private Timer slowDelay;
 
     public void runOpMode() throws InterruptedException {
         frontLeft = hardwareMap.get(DcMotorEx.class, "leftFront");
@@ -73,8 +72,16 @@ public class TeleOpControlled extends LinearOpMode {
                 .setLinearHeadingInterpolation(f.getPose().getHeading() , poses.LAUNCH_POSE.getHeading())
                 .build();
 
+        toPark = f.pathBuilder()
+                .addPath(new BezierLine(f.getPose() , poses.parkPose))
+                .setLinearHeadingInterpolation(f.getPose().getHeading(), poses.parkPose.getHeading())
+                .build();
+
         initAprilTag();
 
+        speedMultiplier = 1;
+        slowDelay = new Timer();
+        slowDelay.resetTimer();
 
         waitForStart();
 
@@ -92,75 +99,61 @@ public class TeleOpControlled extends LinearOpMode {
 
         while (opModeIsActive()) {
             f.update();
-
-            double y = -gamepad1.left_stick_y;
-            double x = gamepad1.left_stick_x;
-            double rx = gamepad1.right_stick_x;
-
-            double denominator = Math.max(Math.max(Math.abs(x), Math.abs(y)), rx);
-
+            //TeleOp Drive
             if (!automated ) {
                 f.setTeleOpDrive(
-                        -gamepad1.left_stick_y,
-                        -gamepad1.left_stick_x,
-                        -gamepad1.right_stick_x,
+                        -gamepad1.left_stick_y * speedMultiplier,
+                        -gamepad1.left_stick_x * speedMultiplier,
+                        -gamepad1.right_stick_x * speedMultiplier,
                         false
                 );
             }
-//
 
+            //Slow mode
+            if(gamepad1.y && slowDelay.getElapsedTimeSeconds()>.5) {
+                slowDelay.resetTimer();
+                if(speedMultiplier == 1)
+                    speedMultiplier = .1;
+                else
+                    speedMultiplier = 1;
+            }
 
-//            double frontLeftPower = (y + x + rx); /// (denominator * speedCoef);
-//            double backLeftPower = (y - x + rx); /// (denominator * speedCoef);
-//            double frontRightPower = (y - x - rx); /// (denominator * speedCoef);
-//            double backRightPower = (y + x - rx); /// (denominator * speedCoef);
-
-//            frontLeft.setPower(frontLeftPower);
-//            backLeft.setPower(backLeftPower);
-//            frontRight.setPower(frontRightPower);
-//            backRight.setPower(backRightPower);
-            telemetry.addData("Pattern", SharedData.greenIndex);
-
-
-
-            /*maybe else breakPath so you have to hold a in order
-              to actually do the entire path to allow for mid-path
-              interruption in case there's anything in the way */
+            //Auto Pathing to Launch
             if (gamepad1.a && !automated){
                 f.followPath(toLaunch);
                 automated = true;
 
             }
-            else if (!gamepad1.a && automated) {
+            //Auto Pathing to Park
+            else if (gamepad1.x && !automated){
+                f.followPath(toPark);
+                automated = true;
+
+            }
+            //exits automated pathing
+            else if ((!gamepad1.a && !gamepad1.x) && automated) {
                 f.startTeleopDrive(true);
                 brakeMotors();
                 automated=false;
             }
 
-            telemetry.addData("GOINGTOLAUNCH MAINLOOP", f.isBusy());
 
 
+
+
+
+            //Intake
             if(gamepad1.right_bumper)
                 intakeServo.setPower(1);
-            else if (gamepad1.left_bumper) {
+            else if (gamepad1.left_bumper)
                 intakeServo.setPower(-1);
-            }
             else
                 intakeServo.setPower(0);
 
-
-
-            Pose FTCPOSE = ftcPose();
-
-
-
-            if (FTCPOSE != null)    telemetry.addData("FTCPOSE X,Y,H", FTCPOSE.getX() + ", " + FTCPOSE.getY() + " " + FTCPOSE.getHeading());
-
+            telemetry.addData("Pattern", SharedData.greenIndex);
             telemetry.addData("FOLLOWER X",f.getPose().getX());
             telemetry.addData("FOLLOWER Y",f.getPose().getY());
             telemetry.addData("FOLLOWER Heading",f.getPose().getHeading());
-
-            telemetry.addData("FTC test",FTCPOSE == null);
 
             SharedData.toTeleopPose = f.getPose();
 
