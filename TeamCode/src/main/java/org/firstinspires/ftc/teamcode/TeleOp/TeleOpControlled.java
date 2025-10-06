@@ -3,29 +3,24 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
-import com.pedropathing.geometry.PedroCoordinates;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.CRServo;
+
+import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.teamcode.Auto.PoseConstants;
 
-import com.pedropathing.paths.PathConstraints;
-
-import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 
 import org.firstinspires.ftc.teamcode.SharedData;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -33,13 +28,8 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
-import com.pedropathing.ftc.InvertedFTCCoordinates;
-import com.pedropathing.ftc.PoseConverter;
-import com.pedropathing.ftc.FTCCoordinates;
-
 
 import java.util.ArrayList;
-import java.util.List;
 
 @TeleOp
 public class TeleOpControlled extends LinearOpMode {
@@ -48,11 +38,8 @@ public class TeleOpControlled extends LinearOpMode {
     private DcMotorEx backLeft = null;
     private DcMotorEx backRight = null;
     private CRServo intakeServo;
+    private ColorSensor entranceColor;
 
-
-    private Pose2D aprilTagPose= new Pose2D(DistanceUnit.INCH,0,0,AngleUnit.DEGREES, 0);
-    private Pose ftcStandard = PoseConverter.pose2DToPose(aprilTagPose,InvertedFTCCoordinates.INSTANCE);
-    private Pose pedroPose = ftcStandard.getAsCoordinateSystem(PedroCoordinates.INSTANCE);
 
 
     private PoseConstants poses =  new PoseConstants();
@@ -69,12 +56,24 @@ public class TeleOpControlled extends LinearOpMode {
 
     private Timer slowDelay;
 
+    private ColorSensed previousColor = ColorSensed.NO_COLOR;
+
+    public enum ColorSensed
+    {
+        GREEN,
+        PURPLE,
+        NO_COLOR
+    }
+
     public void runOpMode() throws InterruptedException {
         frontLeft = hardwareMap.get(DcMotorEx.class, "leftFront");
         frontRight = hardwareMap.get(DcMotorEx.class, "rightFront");
         backLeft = hardwareMap.get(DcMotorEx.class, "leftBack");
         backRight = hardwareMap.get(DcMotorEx.class, "rightBack");
         intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
+        entranceColor = hardwareMap.get(ColorSensor.class, "intakeColorSensor");
+
+        ColorSensed[] storage = {ColorSensed.NO_COLOR,ColorSensed.NO_COLOR,ColorSensed.NO_COLOR};
 
         f = Constants.createFollower(hardwareMap);
         f.setStartingPose(SharedData.toTeleopPose ==null ? new Pose() : SharedData.toTeleopPose);
@@ -98,6 +97,8 @@ public class TeleOpControlled extends LinearOpMode {
         slowDelay.resetTimer();
 
         waitForStart();
+
+        entranceColor.enableLed(true);
 
         frontRight.setDirection(DcMotorEx.Direction.FORWARD);
         backRight.setDirection(DcMotorEx.Direction.FORWARD);
@@ -154,7 +155,7 @@ public class TeleOpControlled extends LinearOpMode {
 
 
 
-
+            setCurr();
 
             //Intake
             if(gamepad1.right_bumper)
@@ -164,52 +165,34 @@ public class TeleOpControlled extends LinearOpMode {
             else
                 intakeServo.setPower(0);
 
-            aprilTagPose = robotPose();
-            telemetry.addData("RAW APRIL X" , aprilTagPose.getX(DistanceUnit.INCH));
-            telemetry.addData("RAW APRIL Y" , aprilTagPose.getY(DistanceUnit.INCH));
-            telemetry.addData("RAW APRIL H" , aprilTagPose.getHeading(AngleUnit.DEGREES));
+
+            ColorSensed currentColor = detectColor();
+            if(previousColor != currentColor) {
+                if(storage[0] == ColorSensed.NO_COLOR)
+                    storage[0] = currentColor;
+                else if(storage[1] == ColorSensed.NO_COLOR)
+                    storage[1] = currentColor;
+                else if(storage[2] == ColorSensed.NO_COLOR)
+                    storage[2] = currentColor;
+            }
+            previousColor = currentColor;
 
 
-            ftcStandard = PoseConverter.pose2DToPose(aprilTagPose, InvertedFTCCoordinates.INSTANCE);
-            pedroPose = ftcStandard.getAsCoordinateSystem(PedroCoordinates.INSTANCE);
-            telemetry.addData("PEDRO X" , pedroPose.getX());
-            telemetry.addData("PEDRO Y" , pedroPose.getY());
-            telemetry.addData("PEDRO H" , pedroPose.getPose().getPose().getPose().getPose()
-                    .getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose()
-                    .getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose()
-                    .getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose()
-                    .getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose()
-                    .getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose()
-                    .getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose()
-                    .getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose()
-                    .getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose()
-                    .getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose()
-                    .getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose()
-                    .getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose()
-                    .getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose()
-                    .getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getHeading());
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//          telemetry.addData("Pattern", SharedData.greenIndex);
+//          telemetry.addData("FOLLOWER X",f.getPose().getX());
+//          telemetry.addData("FOLLOWER Y",f.getPose().getY());
+//          telemetry.addData("FOLLOWER Heading",f.getPose().getHeading());
+//            telemetry.addData("TAGX", currentDetection.ftcPose.x );
+//            telemetry.addData("TAGY", currentDetection.ftcPose.y );
+//            telemetry.addData("TAGH", currentDetection.ftcPose.yaw);
+//            telemetry.addData("TAGB", currentDetection.ftcPose.bearing);
+//            telemetry.addData("TAGR" , currentDetection.ftcPose.range);
+            telemetry.addData("Entrance Color", detectColor());
+            telemetry.addData("hue", JavaUtil.rgbToHue(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
+            telemetry.addData("Storage", storage[0] + ", " + storage[1] + ", "+storage[2]);
             SharedData.toTeleopPose = f.getPose();
 
             telemetry.update();
-
         }
     }
 
@@ -231,20 +214,29 @@ public class TeleOpControlled extends LinearOpMode {
         visionPortal = builder.build();
     }
 
-    public  Pose2D robotPose(){
-        List<AprilTagDetection> detections = aprilTag.getDetections();
-        for (AprilTagDetection detection : detections){
-            if(detection.id == 20||detection.id == 24){
-                if(detection.metadata!= null)
-                    return new Pose2D(DistanceUnit.INCH, detection.ftcPose.x, detection.ftcPose.y, AngleUnit.DEGREES, detection.ftcPose.bearing);
-//                            Pose((0) + Math.sin(f.getPose().getX() - detection.ftcPose.x) - poses.CamOff.getX(), (0) + Math.cos(detection.ftcPose.y) - poses.CamOff.getY(),(detection.ftcPose.yaw));
-                else
-                    telemetry.addData("Metadata", "null");
-            }
-        }
+    public void setCurr(){
+        ArrayList<AprilTagDetection> detections = new ArrayList<>();
 
-        return null;
+        try {
+            this.currentDetection = detections.get(0);
+        }
+        catch (Exception e) {
+            telemetry.addData("NO TAG DETECTED", true);
+        }
     }
+
+    public ColorSensed detectColor()
+    {
+        double hue = JavaUtil.rgbToHue(entranceColor.red(), entranceColor.green(), entranceColor.blue());
+        if(hue < 180 && hue > 120)
+            return ColorSensed.GREEN;
+        if(hue > 200 && hue < 260)
+            return ColorSensed.PURPLE;
+        return ColorSensed.NO_COLOR;
+    }
+
 }
+
+
 
 
