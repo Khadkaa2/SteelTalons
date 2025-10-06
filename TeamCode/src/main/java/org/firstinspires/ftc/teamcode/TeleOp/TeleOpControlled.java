@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
+import com.pedropathing.geometry.PedroCoordinates;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -32,7 +33,7 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
-import com.pedropathing.ftc.InvertedCoordinates;
+import com.pedropathing.ftc.InvertedFTCCoordinates;
 import com.pedropathing.ftc.PoseConverter;
 import com.pedropathing.ftc.FTCCoordinates;
 
@@ -48,6 +49,10 @@ public class TeleOpControlled extends LinearOpMode {
     private DcMotorEx backRight = null;
     private CRServo intakeServo;
 
+
+    private Pose2D aprilTagPose= new Pose2D(DistanceUnit.INCH,0,0,AngleUnit.DEGREES, 0);
+    private Pose ftcStandard = PoseConverter.pose2DToPose(aprilTagPose,InvertedFTCCoordinates.INSTANCE);
+    private Pose pedroPose = ftcStandard.getAsCoordinateSystem(PedroCoordinates.INSTANCE);
 
 
     private PoseConstants poses =  new PoseConstants();
@@ -149,7 +154,7 @@ public class TeleOpControlled extends LinearOpMode {
 
 
 
-            setCurr();
+
 
             //Intake
             if(gamepad1.right_bumper)
@@ -159,15 +164,46 @@ public class TeleOpControlled extends LinearOpMode {
             else
                 intakeServo.setPower(0);
 
-//          telemetry.addData("Pattern", SharedData.greenIndex);
-//          telemetry.addData("FOLLOWER X",f.getPose().getX());
-//          telemetry.addData("FOLLOWER Y",f.getPose().getY());
-//          telemetry.addData("FOLLOWER Heading",f.getPose().getHeading());
-            telemetry.addData("TAGX", currentDetection.ftcPose.x );
-            telemetry.addData("TAGY", currentDetection.ftcPose.y );
-            telemetry.addData("TAGH", currentDetection.ftcPose.yaw);
-            telemetry.addData("TAGB", currentDetection.ftcPose.bearing);
-            telemetry.addData("TAGR" , currentDetection.ftcPose.range);
+            aprilTagPose = robotPose();
+            telemetry.addData("RAW APRIL X" , aprilTagPose.getX(DistanceUnit.INCH));
+            telemetry.addData("RAW APRIL Y" , aprilTagPose.getY(DistanceUnit.INCH));
+            telemetry.addData("RAW APRIL H" , aprilTagPose.getHeading(AngleUnit.DEGREES));
+
+
+            ftcStandard = PoseConverter.pose2DToPose(aprilTagPose, InvertedFTCCoordinates.INSTANCE);
+            pedroPose = ftcStandard.getAsCoordinateSystem(PedroCoordinates.INSTANCE);
+            telemetry.addData("PEDRO X" , pedroPose.getX());
+            telemetry.addData("PEDRO Y" , pedroPose.getY());
+            telemetry.addData("PEDRO H" , pedroPose.getPose().getPose().getPose().getPose()
+                    .getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose()
+                    .getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose()
+                    .getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose()
+                    .getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose()
+                    .getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose()
+                    .getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose()
+                    .getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose()
+                    .getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose()
+                    .getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose()
+                    .getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose()
+                    .getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose()
+                    .getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose()
+                    .getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getPose().getHeading());
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
             SharedData.toTeleopPose = f.getPose();
@@ -195,18 +231,20 @@ public class TeleOpControlled extends LinearOpMode {
         visionPortal = builder.build();
     }
 
-    public void setCurr(){
-        ArrayList<AprilTagDetection> detections = new ArrayList<>();
-
-        try {
-            this.currentDetection = detections.get(0);
+    public  Pose2D robotPose(){
+        List<AprilTagDetection> detections = aprilTag.getDetections();
+        for (AprilTagDetection detection : detections){
+            if(detection.id == 20||detection.id == 24){
+                if(detection.metadata!= null)
+                    return new Pose2D(DistanceUnit.INCH, detection.ftcPose.x, detection.ftcPose.y, AngleUnit.DEGREES, detection.ftcPose.bearing);
+//                            Pose((0) + Math.sin(f.getPose().getX() - detection.ftcPose.x) - poses.CamOff.getX(), (0) + Math.cos(detection.ftcPose.y) - poses.CamOff.getY(),(detection.ftcPose.yaw));
+                else
+                    telemetry.addData("Metadata", "null");
+            }
         }
-        catch (Exception e) {
-            telemetry.addData("NO TAG DETECTED", true);
-        }
-}
 
-
+        return null;
+    }
 }
 
 
