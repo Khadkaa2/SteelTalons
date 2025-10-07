@@ -3,6 +3,12 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
+import com.pedropathing.geometry.PedroCoordinates;
+import com.pedropathing.ftc.InvertedFTCCoordinates;
+import com.pedropathing.ftc.PoseConverter;
+import com.pedropathing.ftc.FTCCoordinates;
+
+
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -42,8 +48,11 @@ public class TeleOpControlled extends LinearOpMode {
     private ColorSensor entranceColor;
 
 
+    private Pose2D aprilTagPose = new Pose2D(DistanceUnit.INCH, 0, 0, AngleUnit.DEGREES, 0);
+    private Pose ftcStandard = PoseConverter.pose2DToPose(aprilTagPose, InvertedFTCCoordinates.INSTANCE);
+    private Pose pedroPose = ftcStandard.getAsCoordinateSystem(PedroCoordinates.INSTANCE);
 
-    private PoseConstants poses =  new PoseConstants();
+    private PoseConstants poses = new PoseConstants();
     private Follower f;
     private boolean automated = false;
     private PathChain toLaunch, toPark;
@@ -69,16 +78,16 @@ public class TeleOpControlled extends LinearOpMode {
 
 
         f = Constants.createFollower(hardwareMap);
-        f.setStartingPose(SharedData.toTeleopPose ==null ? new Pose() : SharedData.toTeleopPose);
+        f.setStartingPose(SharedData.toTeleopPose == null ? new Pose() : SharedData.toTeleopPose);
         f.update();
 
         toLaunch = f.pathBuilder()
-                .addPath(new BezierLine(f.getPose(),poses.LAUNCH_POSE))
-                .setLinearHeadingInterpolation(f.getPose().getHeading() , poses.LAUNCH_POSE.getHeading())
+                .addPath(new BezierLine(f.getPose(), poses.LAUNCH_POSE))
+                .setLinearHeadingInterpolation(f.getPose().getHeading(), poses.LAUNCH_POSE.getHeading())
                 .build();
 
         toPark = f.pathBuilder()
-                .addPath(new BezierLine(f.getPose() , poses.parkPose))
+                .addPath(new BezierLine(f.getPose(), poses.parkPose))
                 .setConstantHeadingInterpolation(poses.parkPose.getHeading())
                 .setHeadingConstraint(0)
                 .build();
@@ -108,7 +117,7 @@ public class TeleOpControlled extends LinearOpMode {
         while (opModeIsActive()) {
             f.update();
             //TeleOp Drive
-            if (!automated ) {
+            if (!automated) {
                 f.setTeleOpDrive(
                         -gamepad1.left_stick_y * speedMultiplier,
                         -gamepad1.left_stick_x * speedMultiplier,
@@ -118,22 +127,22 @@ public class TeleOpControlled extends LinearOpMode {
             }
 
             //Slow mode
-            if(gamepad1.y && slowDelay.getElapsedTimeSeconds()>.5) {
+            if (gamepad1.y && slowDelay.getElapsedTimeSeconds() > .5) {
                 slowDelay.resetTimer();
-                if(speedMultiplier == 1)
+                if (speedMultiplier == 1)
                     speedMultiplier = .1;
                 else
                     speedMultiplier = 1;
             }
 
             //Auto Pathing to Launch
-            if (gamepad1.a && !automated){
+            if (gamepad1.a && !automated) {
                 f.followPath(toLaunch);
                 automated = true;
 
             }
             //Auto Pathing to Park
-            else if (gamepad1.x && !automated){
+            else if (gamepad1.x && !automated) {
                 f.followPath(toPark);
                 automated = true;
 
@@ -142,16 +151,12 @@ public class TeleOpControlled extends LinearOpMode {
             else if ((!gamepad1.a && !gamepad1.x) && automated) {
                 f.startTeleopDrive(true);
                 brakeMotors();
-                automated=false;
+                automated = false;
             }
 
 
-
-
-            setCurr();
-
             //Intake
-            if(gamepad1.right_bumper)
+            if (gamepad1.right_bumper)
                 intakeServo.setPower(1);
             else if (gamepad1.left_bumper)
                 intakeServo.setPower(-1);
@@ -160,12 +165,12 @@ public class TeleOpControlled extends LinearOpMode {
 
 
             ColorSensed currentColor = detectColor();
-            if(previousColor != currentColor) {
-                if(SharedData.storage[0] == ColorSensed.NO_COLOR)
+            if (previousColor != currentColor) {
+                if (SharedData.storage[0] == ColorSensed.NO_COLOR)
                     SharedData.storage[0] = currentColor;
-                else if(SharedData.storage[1] == ColorSensed.NO_COLOR)
+                else if (SharedData.storage[1] == ColorSensed.NO_COLOR)
                     SharedData.storage[1] = currentColor;
-                else if(SharedData.storage[2] == ColorSensed.NO_COLOR)
+                else if (SharedData.storage[2] == ColorSensed.NO_COLOR)
                     SharedData.storage[2] = currentColor;
             }
             previousColor = currentColor;
@@ -180,6 +185,21 @@ public class TeleOpControlled extends LinearOpMode {
 //            telemetry.addData("TAGH", currentDetection.ftcPose.yaw);
 //            telemetry.addData("TAGB", currentDetection.ftcPose.bearing);
 //            telemetry.addData("TAGR" , currentDetection.ftcPose.range);
+
+
+            aprilTagPose = robotPose();
+            telemetry.addData("RAW APRIL X", aprilTagPose.getX(DistanceUnit.INCH));
+            telemetry.addData("RAW APRIL Y", aprilTagPose.getY(DistanceUnit.INCH));
+            telemetry.addData("RAW APRIL H", aprilTagPose.getHeading(AngleUnit.DEGREES));
+
+
+            ftcStandard = PoseConverter.pose2DToPose(aprilTagPose, InvertedFTCCoordinates.INSTANCE);
+            pedroPose = ftcStandard.getAsCoordinateSystem(PedroCoordinates.INSTANCE);
+            telemetry.addData("PEDRO X", pedroPose.getX());
+            telemetry.addData("PEDRO Y", pedroPose.getY());
+            telemetry.addData("PEDRO H", pedroPose.getPose().getHeading());
+
+
             telemetry.addData("Entrance Color", detectColor());
             telemetry.addData("hue", JavaUtil.rgbToHue(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
             telemetry.addData("Storage", SharedData.storage[0] + ", " + SharedData.storage[1] + ", " + SharedData.storage[2]);
@@ -189,14 +209,14 @@ public class TeleOpControlled extends LinearOpMode {
         }
     }
 
-    private void brakeMotors(){
+    private void brakeMotors() {
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    public void initAprilTag(){
+    public void initAprilTag() {
         aprilTag = new AprilTagProcessor.Builder()
                 .setDrawAxes(true)
                 .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
@@ -207,29 +227,38 @@ public class TeleOpControlled extends LinearOpMode {
         visionPortal = builder.build();
     }
 
-    public void setCurr(){
+    public void setCurr() {
         ArrayList<AprilTagDetection> detections = new ArrayList<>();
 
         try {
             this.currentDetection = detections.get(0);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             telemetry.addData("NO TAG DETECTED", true);
         }
     }
 
-    public ColorSensed detectColor()
-    {
+    public ColorSensed detectColor() {
         double hue = JavaUtil.rgbToHue(entranceColor.red(), entranceColor.green(), entranceColor.blue());
-        if(hue < 180 && hue > 120)
+        if (hue < 180 && hue > 120)
             return ColorSensed.GREEN;
-        if(hue > 200 && hue < 260)
+        if (hue > 200 && hue < 260)
             return ColorSensed.PURPLE;
         return ColorSensed.NO_COLOR;
     }
 
+    public Pose2D robotPose() {
+        List<AprilTagDetection> detections = aprilTag.getDetections();
+        for (AprilTagDetection detection : detections) {
+            if (detection.id == 20 || detection.id == 24) {
+                if (detection.metadata != null)
+                    return new Pose2D(DistanceUnit.INCH, detection.ftcPose.x, detection.ftcPose.y, AngleUnit.DEGREES, detection.ftcPose.bearing);
+
+                else
+                    telemetry.addData("Metadata", "null");
+            }
+        }
+    }
+
 }
-
-
 
 
