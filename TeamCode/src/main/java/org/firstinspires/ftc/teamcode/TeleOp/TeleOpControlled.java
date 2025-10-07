@@ -67,9 +67,11 @@ public class TeleOpControlled extends LinearOpMode {
 
     private double speedMultiplier;
 
-    private Timer slowDelay, colorTimer;
+    private Timer slowDelay, colorTimer, launchTimer;
 
     private ColorSensed previousColor = ColorSensed.NO_COLOR;
+
+    boolean fullStorage;
 
     public void runOpMode() throws InterruptedException {
         frontLeft = hardwareMap.get(DcMotorEx.class, "leftFront");
@@ -83,7 +85,10 @@ public class TeleOpControlled extends LinearOpMode {
         intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
         entranceColor = hardwareMap.get(ColorSensor.class, "intakeColorSensor");
         sortMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        sortMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        sortMotor.setTargetPosition(0);
+        sortMotor.setTargetPositionTolerance(10);
+        sortMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        sortMotor.setPower(1);
 
         f = Constants.createFollower(hardwareMap);
         f.setStartingPose(SharedData.toTeleopPose == null ? new Pose() : SharedData.toTeleopPose);
@@ -105,11 +110,13 @@ public class TeleOpControlled extends LinearOpMode {
         speedMultiplier = 1;
         slowDelay = new Timer();
         colorTimer = new Timer();
+        launchTimer = new Timer();
         colorTimer.resetTimer();
         slowDelay.resetTimer();
 
-        waitForStart();
 
+        waitForStart();
+        launchTimer.resetTimer();
         entranceColor.enableLed(true);
 
         frontRight.setDirection(DcMotorEx.Direction.FORWARD);
@@ -172,28 +179,76 @@ public class TeleOpControlled extends LinearOpMode {
                 intakeServo.setPower(-1);
             else
                 intakeServo.setPower(0);
-            if (gamepad1.right_trigger > .2){
-                sortMotor.setPower(gamepad1.right_trigger/2);
+
+//            if(gamepad1.dpad_up) {
+//                setStoragePos(0, false);
+//                SharedData.storage[0] = ColorSensed.NO_COLOR;
+//            }
+//            else if(gamepad1.dpad_right) {
+//                setStoragePos(1, false);
+//                SharedData.storage[1] = ColorSensed.NO_COLOR;
+//            }
+//            else if(gamepad1.dpad_down) {
+//                setStoragePos(2, false);
+//                SharedData.storage[2] = ColorSensed.NO_COLOR;
+//            }
+
+            if(launchTimer.getElapsedTimeSeconds()>1){
+                //green
+                if (gamepad1.dpad_up) {
+                    launchTimer.resetTimer();
+                    int ind = -1;
+                    if (SharedData.storage[0] == ColorSensed.GREEN)
+                        ind = 0;
+                    else if (SharedData.storage[1] == ColorSensed.GREEN)
+                        ind = 1;
+                    else if (SharedData.storage[2] == ColorSensed.GREEN)
+                        ind = 2;
+                    if (ind != -1) {
+                        setStoragePos(ind, false);
+                        SharedData.storage[ind] = ColorSensed.NO_COLOR;
+                    }
+                }
+                //purple
+                else if (gamepad1.dpad_down) {
+                    launchTimer.resetTimer();
+                    int ind = -1;
+                    if (SharedData.storage[0] == ColorSensed.PURPLE)
+                        ind = 0;
+                    else if (SharedData.storage[1] == ColorSensed.PURPLE)
+                        ind = 1;
+                    else if (SharedData.storage[2] == ColorSensed.PURPLE)
+                        ind = 2;
+                    if (ind != -1) {
+                        setStoragePos(ind, false);
+                        SharedData.storage[ind] = ColorSensed.NO_COLOR;
+                    }
+                }
             }
-            else if (gamepad1.left_trigger > .2) {
-                sortMotor.setPower(-gamepad1.left_trigger / 1.3);
-            }
-            else sortMotor.setPower(0);
 
-
-
-
-
+//            if (gamepad1.right_trigger > .2){
+//                sortMotor.setPower(gamepad1.right_trigger/2);
+//            }
+//            else if (gamepad1.left_trigger > .2) {
+//                sortMotor.setPower(-gamepad1.left_trigger / 1.3);
+//            }
+//            else sortMotor.setPower(0);
 
             ColorSensed currentColor = detectColor();
             if (previousColor != currentColor && colorTimer.getElapsedTimeSeconds() > .5) {
                 colorTimer.resetTimer();
-                if (SharedData.storage[0] == ColorSensed.NO_COLOR)
+                if (SharedData.storage[0] == ColorSensed.NO_COLOR && currentColor != ColorSensed.NO_COLOR) {
                     SharedData.storage[0] = currentColor;
-                else if (SharedData.storage[1] == ColorSensed.NO_COLOR)
+                    setStoragePos(0, true);
+                } else if (SharedData.storage[1] == ColorSensed.NO_COLOR && currentColor != ColorSensed.NO_COLOR) {
                     SharedData.storage[1] = currentColor;
-                else if (SharedData.storage[2] == ColorSensed.NO_COLOR)
+                    setStoragePos(1, true);
+                } else if (SharedData.storage[2] == ColorSensed.NO_COLOR && currentColor != ColorSensed.NO_COLOR) {
                     SharedData.storage[2] = currentColor;
+                    setStoragePos(2, true);
+                }
+                else
+                    fullStorage = true;
             }
             previousColor = currentColor;
 
@@ -232,6 +287,27 @@ public class TeleOpControlled extends LinearOpMode {
             SharedData.toTeleopPose = f.getPose();
 
             telemetry.update();
+        }
+    }
+
+    public void setStoragePos(int slot, boolean intake){
+        int ticks = 1426;
+        if(intake) {
+            if (slot == 0) {
+                sortMotor.setTargetPosition(0);
+            } else if (slot == 1) {
+                sortMotor.setTargetPosition(ticks / 3);
+            } else if (slot == 2) {
+                sortMotor.setTargetPosition(2 * ticks / 3);
+            }
+        }else{
+            if (slot == 0) {
+                sortMotor.setTargetPosition(ticks/2);
+            } else if (slot == 1) {
+                sortMotor.setTargetPosition(-ticks/6);
+            } else if (slot == 2) {
+                sortMotor.setTargetPosition(ticks / 6);
+            }
         }
     }
 

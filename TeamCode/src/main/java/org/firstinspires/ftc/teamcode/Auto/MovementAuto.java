@@ -105,8 +105,7 @@ public class MovementAuto extends OpMode {
         return null;
     }
 
-    public ColorSensed detectColor()
-    {
+    public ColorSensed detectColor() {
         double hue = JavaUtil.rgbToHue(entranceColor.red(), entranceColor.green(), entranceColor.blue());
         if(hue < 180 && hue > 120)
             return ColorSensed.GREEN;
@@ -226,7 +225,6 @@ public class MovementAuto extends OpMode {
 
         sendPose();
     }
-
 
     public void buildPaths() {
         start = new Path(new BezierLine(poses.START_POSE, poses.LAUNCH_POSE));
