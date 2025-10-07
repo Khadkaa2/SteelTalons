@@ -19,6 +19,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.CRServo;
 
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.Auto.PoseConstants;
 
 import com.pedropathing.paths.PathChain;
@@ -37,6 +38,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
 @TeleOp
 public class TeleOpControlled extends LinearOpMode {
@@ -257,6 +259,7 @@ public class TeleOpControlled extends LinearOpMode {
                     telemetry.addData("Metadata", "null");
             }
         }
+        return null;
     }
 
 }
