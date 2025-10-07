@@ -46,6 +46,7 @@ public class TeleOpControlled extends LinearOpMode {
     private DcMotorEx frontRight = null;
     private DcMotorEx backLeft = null;
     private DcMotorEx backRight = null;
+    private DcMotorEx sortMotor = null;
     private CRServo intakeServo;
     private ColorSensor entranceColor;
 
@@ -66,7 +67,7 @@ public class TeleOpControlled extends LinearOpMode {
 
     private double speedMultiplier;
 
-    private Timer slowDelay;
+    private Timer slowDelay, colorTimer;
 
     private ColorSensed previousColor = ColorSensed.NO_COLOR;
 
@@ -75,9 +76,14 @@ public class TeleOpControlled extends LinearOpMode {
         frontRight = hardwareMap.get(DcMotorEx.class, "rightFront");
         backLeft = hardwareMap.get(DcMotorEx.class, "leftBack");
         backRight = hardwareMap.get(DcMotorEx.class, "rightBack");
+        sortMotor = hardwareMap.get(DcMotorEx.class, "sortMotor");
+
+
+
         intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
         entranceColor = hardwareMap.get(ColorSensor.class, "intakeColorSensor");
-
+        sortMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        sortMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         f = Constants.createFollower(hardwareMap);
         f.setStartingPose(SharedData.toTeleopPose == null ? new Pose() : SharedData.toTeleopPose);
@@ -98,6 +104,8 @@ public class TeleOpControlled extends LinearOpMode {
 
         speedMultiplier = 1;
         slowDelay = new Timer();
+        colorTimer = new Timer();
+        colorTimer.resetTimer();
         slowDelay.resetTimer();
 
         waitForStart();
@@ -164,10 +172,22 @@ public class TeleOpControlled extends LinearOpMode {
                 intakeServo.setPower(-1);
             else
                 intakeServo.setPower(0);
+            if (gamepad1.right_trigger > .2){
+                sortMotor.setPower(gamepad1.right_trigger/2);
+            }
+            else if (gamepad1.left_trigger > .2) {
+                sortMotor.setPower(-gamepad1.left_trigger / 1.3);
+            }
+            else sortMotor.setPower(0);
+
+
+
+
 
 
             ColorSensed currentColor = detectColor();
-            if (previousColor != currentColor) {
+            if (previousColor != currentColor && colorTimer.getElapsedTimeSeconds() > .5) {
+                colorTimer.resetTimer();
                 if (SharedData.storage[0] == ColorSensed.NO_COLOR)
                     SharedData.storage[0] = currentColor;
                 else if (SharedData.storage[1] == ColorSensed.NO_COLOR)
@@ -188,11 +208,14 @@ public class TeleOpControlled extends LinearOpMode {
 //            telemetry.addData("TAGB", currentDetection.ftcPose.bearing);
 //            telemetry.addData("TAGR" , currentDetection.ftcPose.range);
 
+            telemetry.addData("sort ticks", sortMotor.getCurrentPosition());
 
-            aprilTagPose = robotPose();
-            telemetry.addData("RAW APRIL X", aprilTagPose.getX(DistanceUnit.INCH));
-            telemetry.addData("RAW APRIL Y", aprilTagPose.getY(DistanceUnit.INCH));
-            telemetry.addData("RAW APRIL H", aprilTagPose.getHeading(AngleUnit.DEGREES));
+            if (robotPose() != null) {
+                aprilTagPose = robotPose();
+            }
+            telemetry.addData("ROBOT APRIL X", aprilTagPose.getX(DistanceUnit.INCH));
+            telemetry.addData("ROBOT APRIL Y", aprilTagPose.getY(DistanceUnit.INCH));
+            telemetry.addData("ROBOT APRIL H", aprilTagPose.getHeading(AngleUnit.DEGREES));
 
 
             ftcStandard = PoseConverter.pose2DToPose(aprilTagPose, InvertedFTCCoordinates.INSTANCE);
@@ -200,6 +223,7 @@ public class TeleOpControlled extends LinearOpMode {
             telemetry.addData("PEDRO X", pedroPose.getX());
             telemetry.addData("PEDRO Y", pedroPose.getY());
             telemetry.addData("PEDRO H", pedroPose.getPose().getHeading());
+
 
 
             telemetry.addData("Entrance Color", detectColor());
@@ -231,6 +255,7 @@ public class TeleOpControlled extends LinearOpMode {
 
     public void setCurr() {
         ArrayList<AprilTagDetection> detections = new ArrayList<>();
+
 
         try {
             this.currentDetection = detections.get(0);

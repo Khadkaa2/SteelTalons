@@ -51,7 +51,7 @@ public class MovementAuto extends OpMode {
 
     private PoseConstants poses = new PoseConstants();
 
-    private Timer pathTimer, actionTimer, opmodeTimer;
+    private Timer pathTimer, actionTimer, opmodeTimer, colorTimer;
     private int pathState;
 
 
@@ -146,7 +146,8 @@ public class MovementAuto extends OpMode {
 
 
         ColorSensed currentColor = detectColor();
-        if(previousColor != currentColor) {
+        if(previousColor != currentColor && colorTimer.getElapsedTimeSeconds()>.5) {
+            colorTimer.resetTimer();
             if(SharedData.storage[0] == ColorSensed.NO_COLOR)
                 SharedData.storage[0] = currentColor;
             else if(SharedData.storage[1] == ColorSensed.NO_COLOR)
@@ -160,6 +161,7 @@ public class MovementAuto extends OpMode {
 
     @Override
     public void init() {
+
         SharedData.reset();
         initAprilTag();
 //        telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -168,6 +170,7 @@ public class MovementAuto extends OpMode {
         pathTimer = new Timer();
         actionTimer = new Timer();
         opmodeTimer = new Timer();
+        colorTimer = new Timer();
         opmodeTimer.resetTimer();
 
         f = Constants.createFollower(hardwareMap);
@@ -177,6 +180,7 @@ public class MovementAuto extends OpMode {
 
         intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
         entranceColor = hardwareMap.get(ColorSensor.class, "intakeColorSensor");
+
         intakeServo.setPower(0);
         index = 0;
     }
