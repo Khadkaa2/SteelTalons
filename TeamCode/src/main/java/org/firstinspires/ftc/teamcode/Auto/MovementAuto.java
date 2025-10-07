@@ -51,7 +51,7 @@ public class MovementAuto extends OpMode {
 
     private PoseConstants poses = new PoseConstants();
 
-    private Timer pathTimer, actionTimer, opmodeTimer, sortTimer;
+    private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
 
 
@@ -60,8 +60,6 @@ public class MovementAuto extends OpMode {
 
     private static AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
-
-    private boolean sorting = false;
 
     int index;
 
@@ -121,23 +119,6 @@ public class MovementAuto extends OpMode {
         this.pathState = pState;
         pathTimer.resetTimer();
     }
-    private void sort(boolean[] storage) {
-
-        if(!sorting) {
-            if (storage[index]) {
-                sorting = false;
-            }
-            else {
-                sorting = true;
-                sortTimer.resetTimer();
-            }
-        }
-    }
-    private boolean[] detect() {
-        boolean[] order = new boolean[3];
-        //color sensor stuff
-        return order;
-    }
 
     @Override
     public void loop() {
@@ -155,13 +136,6 @@ public class MovementAuto extends OpMode {
         telemetry.addData("Storage", SharedData.storage[0] + ", " + SharedData.storage[1] + ", " + SharedData.storage[2]);
         panels.getTelemetry().update();
 
-        if(sorting) {
-            //set servo pos here
-        }
-        // #5 is holder -> time it takes to sort one ball
-        if(sortTimer.getElapsedTimeSeconds()>5) {
-        sort(detect());
-        }
 
         telemetry.addData("Path State", pathState);
 
@@ -195,8 +169,6 @@ public class MovementAuto extends OpMode {
         actionTimer = new Timer();
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();
-        sortTimer = new Timer();
-
 
         f = Constants.createFollower(hardwareMap);
         f.setStartingPose(poses.START_POSE);
