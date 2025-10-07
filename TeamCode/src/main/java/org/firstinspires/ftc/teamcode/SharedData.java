@@ -6,9 +6,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 public class SharedData {
     public static int greenIndex = 0;
     public static Pose toTeleopPose;
+    public static ColorSensed[] storage = {ColorSensed.NO_COLOR,ColorSensed.NO_COLOR,ColorSensed.NO_COLOR};
     public static void reset()
     {
-
-        greenIndex = -1;
+        greenIndex = 0;
+        storage[0] = ColorSensed.NO_COLOR;
+        storage[1] = ColorSensed.NO_COLOR;
+        storage[2] = ColorSensed.NO_COLOR;
     }
+
+
 }

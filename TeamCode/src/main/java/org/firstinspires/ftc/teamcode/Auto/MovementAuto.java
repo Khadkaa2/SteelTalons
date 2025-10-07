@@ -5,6 +5,7 @@ import com.pedropathing.geometry.BezierPoint;
 import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.Auto.PoseConstants;
+import org.firstinspires.ftc.teamcode.ColorSensed;
 import org.firstinspires.ftc.teamcode.SharedData;
 import org.firstinspires.ftc.teamcode.pedroPathing.Tuning;
 import com.bylazar.telemetry.PanelsTelemetry;
@@ -27,6 +29,7 @@ import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -63,14 +66,16 @@ public class MovementAuto extends OpMode {
     int index;
 
     CRServo intakeServo = null;
+    private ColorSensor entranceColor;
 
     Pose currentPose = null;
+
+    private ColorSensed previousColor = ColorSensed.NO_COLOR;
 
     public void initAprilTag(){
          aprilTag = new AprilTagProcessor.Builder()
                 .setDrawAxes(true)
-                .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
-                 .setTagLibrary(AprilTagGameDatabase.getCurrentGameTagLibrary())
+                .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES).setTagLibrary(AprilTagGameDatabase.getCurrentGameTagLibrary())
                 .build();
         VisionPortal.Builder builder = new VisionPortal.Builder();
         builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
@@ -100,6 +105,16 @@ public class MovementAuto extends OpMode {
         }
 
         return null;
+    }
+
+    public ColorSensed detectColor()
+    {
+        double hue = JavaUtil.rgbToHue(entranceColor.red(), entranceColor.green(), entranceColor.blue());
+        if(hue < 180 && hue > 120)
+            return ColorSensed.GREEN;
+        if(hue > 200 && hue < 260)
+            return ColorSensed.PURPLE;
+        return ColorSensed.NO_COLOR;
     }
 
     public void setPathState(int pState) {
@@ -137,6 +152,7 @@ public class MovementAuto extends OpMode {
         panels.getTelemetry().addData("heading", f.getPose().getHeading());
         panels.getTelemetry().addData("x", f.getPose().getX());
         panels.getTelemetry().addData("y", f.getPose().getY());
+        telemetry.addData("Storage", SharedData.storage[0] + ", " + SharedData.storage[1] + ", " + SharedData.storage[2]);
         panels.getTelemetry().update();
 
         if(sorting) {
@@ -153,6 +169,18 @@ public class MovementAuto extends OpMode {
             intakeServo.setPower(1);
         else
             intakeServo.setPower(0);
+
+
+        ColorSensed currentColor = detectColor();
+        if(previousColor != currentColor) {
+            if(SharedData.storage[0] == ColorSensed.NO_COLOR)
+                SharedData.storage[0] = currentColor;
+            else if(SharedData.storage[1] == ColorSensed.NO_COLOR)
+                SharedData.storage[1] = currentColor;
+            else if(SharedData.storage[2] == ColorSensed.NO_COLOR)
+                SharedData.storage[2] = currentColor;
+        }
+        previousColor = currentColor;
 
     }
 
@@ -176,6 +204,7 @@ public class MovementAuto extends OpMode {
         buildPaths();
 
         intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
+        entranceColor = hardwareMap.get(ColorSensor.class, "intakeColorSensor");
         intakeServo.setPower(0);
         index = 0;
     }

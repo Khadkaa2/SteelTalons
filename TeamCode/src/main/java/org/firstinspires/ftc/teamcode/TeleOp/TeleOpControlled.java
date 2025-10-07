@@ -22,6 +22,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+import org.firstinspires.ftc.teamcode.ColorSensed;
 import org.firstinspires.ftc.teamcode.SharedData;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -58,13 +59,6 @@ public class TeleOpControlled extends LinearOpMode {
 
     private ColorSensed previousColor = ColorSensed.NO_COLOR;
 
-    public enum ColorSensed
-    {
-        GREEN,
-        PURPLE,
-        NO_COLOR
-    }
-
     public void runOpMode() throws InterruptedException {
         frontLeft = hardwareMap.get(DcMotorEx.class, "leftFront");
         frontRight = hardwareMap.get(DcMotorEx.class, "rightFront");
@@ -73,7 +67,6 @@ public class TeleOpControlled extends LinearOpMode {
         intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
         entranceColor = hardwareMap.get(ColorSensor.class, "intakeColorSensor");
 
-        ColorSensed[] storage = {ColorSensed.NO_COLOR,ColorSensed.NO_COLOR,ColorSensed.NO_COLOR};
 
         f = Constants.createFollower(hardwareMap);
         f.setStartingPose(SharedData.toTeleopPose ==null ? new Pose() : SharedData.toTeleopPose);
@@ -168,12 +161,12 @@ public class TeleOpControlled extends LinearOpMode {
 
             ColorSensed currentColor = detectColor();
             if(previousColor != currentColor) {
-                if(storage[0] == ColorSensed.NO_COLOR)
-                    storage[0] = currentColor;
-                else if(storage[1] == ColorSensed.NO_COLOR)
-                    storage[1] = currentColor;
-                else if(storage[2] == ColorSensed.NO_COLOR)
-                    storage[2] = currentColor;
+                if(SharedData.storage[0] == ColorSensed.NO_COLOR)
+                    SharedData.storage[0] = currentColor;
+                else if(SharedData.storage[1] == ColorSensed.NO_COLOR)
+                    SharedData.storage[1] = currentColor;
+                else if(SharedData.storage[2] == ColorSensed.NO_COLOR)
+                    SharedData.storage[2] = currentColor;
             }
             previousColor = currentColor;
 
@@ -189,7 +182,7 @@ public class TeleOpControlled extends LinearOpMode {
 //            telemetry.addData("TAGR" , currentDetection.ftcPose.range);
             telemetry.addData("Entrance Color", detectColor());
             telemetry.addData("hue", JavaUtil.rgbToHue(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
-            telemetry.addData("Storage", storage[0] + ", " + storage[1] + ", "+storage[2]);
+            telemetry.addData("Storage", SharedData.storage[0] + ", " + SharedData.storage[1] + ", " + SharedData.storage[2]);
             SharedData.toTeleopPose = f.getPose();
 
             telemetry.update();
