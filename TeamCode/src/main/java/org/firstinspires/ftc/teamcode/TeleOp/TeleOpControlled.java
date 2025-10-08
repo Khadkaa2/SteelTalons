@@ -277,8 +277,10 @@ public class TeleOpControlled extends LinearOpMode {
             telemetry.addData("PEDRO Y", pedroPose.getY());
             telemetry.addData("PEDRO H", pedroPose.getPose().getHeading());
 
-
-
+            telemetry.addData("F X", f.getPose().getX());
+            telemetry.addData("F Y", f.getPose().getY());
+            telemetry.addData("F H", f.getPose().getHeading());
+            telemetry.addLine("");
             telemetry.addData("Entrance Color", detectColor());
             telemetry.addData("hue", JavaUtil.rgbToHue(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
             telemetry.addData("Storage", SharedData.storage[0] + ", " + SharedData.storage[1] + ", " + SharedData.storage[2]);
