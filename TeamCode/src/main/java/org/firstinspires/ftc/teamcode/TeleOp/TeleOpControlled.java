@@ -329,17 +329,6 @@ public class TeleOpControlled extends LinearOpMode {
         visionPortal = builder.build();
     }
 
-    public void setCurr() {
-        ArrayList<AprilTagDetection> detections = new ArrayList<>();
-
-
-        try {
-            this.currentDetection = detections.get(0);
-        } catch (Exception e) {
-            telemetry.addData("NO TAG DETECTED", true);
-        }
-    }
-
     public ColorSensed detectColor() {
         double hue = JavaUtil.rgbToHue(entranceColor.red(), entranceColor.green(), entranceColor.blue());
         if (hue < 180 && hue > 120)
