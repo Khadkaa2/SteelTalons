@@ -19,6 +19,9 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.CRServo;
 
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.Auto.PoseConstants;
 
@@ -51,9 +54,6 @@ public class TeleOpControlled extends LinearOpMode {
     private ColorSensor entranceColor;
 
 
-    private Pose2D aprilTagPose = new Pose2D(DistanceUnit.INCH, 0, 0, AngleUnit.DEGREES, 0);
-    private Pose ftcStandard = PoseConverter.pose2DToPose(aprilTagPose, InvertedFTCCoordinates.INSTANCE);
-    private Pose pedroPose = ftcStandard.getAsCoordinateSystem(PedroCoordinates.INSTANCE);
 
     private PoseConstants poses = new PoseConstants();
     private Follower f;
@@ -61,6 +61,8 @@ public class TeleOpControlled extends LinearOpMode {
     private PathChain toLaunch, toPark;
     private AprilTagDetection currentDetection;
     private PanelsTelemetry panels = PanelsTelemetry.INSTANCE;
+
+    private Orientation rot;
 
     private static AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
@@ -70,8 +72,6 @@ public class TeleOpControlled extends LinearOpMode {
     private Timer slowDelay, colorTimer, launchTimer;
 
     private ColorSensed previousColor = ColorSensed.NO_COLOR;
-
-    boolean fullStorage;
 
     public void runOpMode() throws InterruptedException {
         frontLeft = hardwareMap.get(DcMotorEx.class, "leftFront");
@@ -84,14 +84,13 @@ public class TeleOpControlled extends LinearOpMode {
 
         intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
         entranceColor = hardwareMap.get(ColorSensor.class, "intakeColorSensor");
-        sortMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        sortMotor.setTargetPosition(0);
+        sortMotor.setTargetPosition(sortMotor.getCurrentPosition());
         sortMotor.setTargetPositionTolerance(10);
         sortMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         sortMotor.setPower(1);
 
         f = Constants.createFollower(hardwareMap);
-        f.setStartingPose(SharedData.toTeleopPose == null ? new Pose() : SharedData.toTeleopPose);
+        f.setStartingPose(SharedData.toTeleopPose == null ? poses.START_POSE : SharedData.toTeleopPose);
         f.update();
 
         toLaunch = f.pathBuilder()
@@ -247,8 +246,6 @@ public class TeleOpControlled extends LinearOpMode {
                     SharedData.storage[2] = currentColor;
                     setStoragePos(2, true);
                 }
-                else
-                    fullStorage = true;
             }
             previousColor = currentColor;
 
@@ -265,16 +262,17 @@ public class TeleOpControlled extends LinearOpMode {
 
             telemetry.addData("sort ticks", sortMotor.getCurrentPosition());
 
+            Pose2D aprilTagPose = new Pose2D(DistanceUnit.INCH, 0,0,AngleUnit.DEGREES,0);
+            Pose pedroPose = new Pose(0,0,0);
             if (robotPose() != null) {
                 aprilTagPose = robotPose();
+                Pose ftcStandard = PoseConverter.pose2DToPose(aprilTagPose, InvertedFTCCoordinates.INSTANCE);
+                pedroPose = ftcStandard.getAsCoordinateSystem(PedroCoordinates.INSTANCE);
             }
             telemetry.addData("ROBOT APRIL X", aprilTagPose.getX(DistanceUnit.INCH));
             telemetry.addData("ROBOT APRIL Y", aprilTagPose.getY(DistanceUnit.INCH));
             telemetry.addData("ROBOT APRIL H", aprilTagPose.getHeading(AngleUnit.DEGREES));
 
-
-            ftcStandard = PoseConverter.pose2DToPose(aprilTagPose, InvertedFTCCoordinates.INSTANCE);
-            pedroPose = ftcStandard.getAsCoordinateSystem(PedroCoordinates.INSTANCE);
             telemetry.addData("PEDRO X", pedroPose.getX());
             telemetry.addData("PEDRO Y", pedroPose.getY());
             telemetry.addData("PEDRO H", pedroPose.getPose().getHeading());
@@ -342,9 +340,10 @@ public class TeleOpControlled extends LinearOpMode {
         List<AprilTagDetection> detections = aprilTag.getDetections();
         for (AprilTagDetection detection : detections) {
             if (detection.id == 20 || detection.id == 24) {
-                if (detection.metadata != null)
-                    return new Pose2D(DistanceUnit.INCH, detection.ftcPose.x, detection.ftcPose.y, AngleUnit.DEGREES, detection.ftcPose.bearing);
-
+                if (detection.metadata != null) {
+                    rot = Orientation.getOrientation(detection.rawPose.R, AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+                    return new Pose2D(DistanceUnit.INCH, detection.rawPose.x, detection.rawPose.y, AngleUnit.DEGREES, rot.firstAngle);
+                }
                 else
                     telemetry.addData("Metadata", "null");
             }

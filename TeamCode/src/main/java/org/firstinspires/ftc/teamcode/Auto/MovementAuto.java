@@ -30,6 +30,8 @@ import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -51,7 +53,7 @@ public class MovementAuto extends OpMode {
 
     private PoseConstants poses = new PoseConstants();
 
-    private Timer pathTimer, actionTimer, opmodeTimer, colorTimer;
+    private Timer pathTimer, actionTimer, opmodeTimer, colorTimer, launchTimer;
     private int pathState;
 
 
@@ -63,10 +65,15 @@ public class MovementAuto extends OpMode {
 
     int index;
 
-    CRServo intakeServo = null;
+    private CRServo intakeServo = null;
     private ColorSensor entranceColor;
+    private DcMotorEx sortMotor = null;
 
     Pose currentPose = null;
+
+    boolean launching = false;
+
+    int timesLaunched = 0;
 
     private ColorSensed previousColor = ColorSensed.NO_COLOR;
 
@@ -119,6 +126,27 @@ public class MovementAuto extends OpMode {
         pathTimer.resetTimer();
     }
 
+    public void setStoragePos(int slot, boolean intake){
+        int ticks = 1426;
+        if(intake) {
+            if (slot == 0) {
+                sortMotor.setTargetPosition(0);
+            } else if (slot == 1) {
+                sortMotor.setTargetPosition(ticks / 3);
+            } else if (slot == 2) {
+                sortMotor.setTargetPosition(2 * ticks / 3);
+            }
+        }else{
+            if (slot == 0) {
+                sortMotor.setTargetPosition(ticks/2);
+            } else if (slot == 1) {
+                sortMotor.setTargetPosition(-ticks/6);
+            } else if (slot == 2) {
+                sortMotor.setTargetPosition(ticks / 6);
+            }
+        }
+    }
+
     @Override
     public void loop() {
         f.update();
@@ -145,17 +173,63 @@ public class MovementAuto extends OpMode {
 
 
         ColorSensed currentColor = detectColor();
-        if(previousColor != currentColor && colorTimer.getElapsedTimeSeconds()>.5) {
+        if (previousColor != currentColor && colorTimer.getElapsedTimeSeconds() > .5) {
             colorTimer.resetTimer();
-            if(SharedData.storage[0] == ColorSensed.NO_COLOR)
+            if (SharedData.storage[0] == ColorSensed.NO_COLOR && currentColor != ColorSensed.NO_COLOR) {
                 SharedData.storage[0] = currentColor;
-            else if(SharedData.storage[1] == ColorSensed.NO_COLOR)
+                setStoragePos(0, true);
+            } else if (SharedData.storage[1] == ColorSensed.NO_COLOR && currentColor != ColorSensed.NO_COLOR) {
                 SharedData.storage[1] = currentColor;
-            else if(SharedData.storage[2] == ColorSensed.NO_COLOR)
+                setStoragePos(1, true);
+            } else if (SharedData.storage[2] == ColorSensed.NO_COLOR && currentColor != ColorSensed.NO_COLOR) {
                 SharedData.storage[2] = currentColor;
+                setStoragePos(2, true);
+            }
         }
         previousColor = currentColor;
 
+        if(launching && launchTimer.getElapsedTimeSeconds()>1) {
+            int ind = -1;
+            if(timesLaunched == SharedData.greenIndex) {
+                ind = getGreenIndex();
+            }
+            else
+            {
+                ind = getPurpleIndex();
+            }
+
+            if(ind != -1) {
+                setStoragePos(ind, false);
+                timesLaunched ++;
+                if(timesLaunched == 3)
+                    timesLaunched = 0;
+                launchTimer.resetTimer();
+                SharedData.storage[ind] = ColorSensed.NO_COLOR;
+            }
+        }
+
+    }
+
+    public int getGreenIndex() {
+        int temp = -1;
+        if (SharedData.storage[0] == ColorSensed.GREEN)
+            temp = 0;
+        else if (SharedData.storage[1] == ColorSensed.GREEN)
+            temp = 1;
+        else if (SharedData.storage[2] == ColorSensed.GREEN)
+            temp = 2;
+        return temp;
+    }
+
+    public int getPurpleIndex() {
+        int temp = -1;
+        if (SharedData.storage[0] == ColorSensed.PURPLE)
+            temp = 0;
+        else if (SharedData.storage[1] == ColorSensed.PURPLE)
+            temp = 1;
+        else if (SharedData.storage[2] == ColorSensed.PURPLE)
+            temp = 2;
+        return temp;
     }
 
     @Override
@@ -170,6 +244,7 @@ public class MovementAuto extends OpMode {
         actionTimer = new Timer();
         opmodeTimer = new Timer();
         colorTimer = new Timer();
+        launchTimer = new Timer();
         opmodeTimer.resetTimer();
 
         f = Constants.createFollower(hardwareMap);
@@ -179,6 +254,12 @@ public class MovementAuto extends OpMode {
 
         intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
         entranceColor = hardwareMap.get(ColorSensor.class, "intakeColorSensor");
+        sortMotor = hardwareMap.get(DcMotorEx.class, "sortMotor");
+
+        sortMotor.setTargetPosition(0);
+        sortMotor.setTargetPositionTolerance(10);
+        sortMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        sortMotor.setPower(1);
 
         intakeServo.setPower(0);
         index = 0;
@@ -260,7 +341,6 @@ public class MovementAuto extends OpMode {
         end.setLinearHeadingInterpolation(poses.LAUNCH_POSE.getHeading(), poses.END_POSE.getHeading());
     }
 
-
     private void sendPose(){
         SharedData.toTeleopPose = f.getPose();
 
@@ -281,7 +361,9 @@ public class MovementAuto extends OpMode {
                     f.followPath(one, true);
                     setPathState(2);
                     sendPose();
-                }
+                    launching = false;
+                } else if(!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 1)
+                    launching = true;
                 break;
             case 2:
                 //Pickup 1
@@ -308,7 +390,8 @@ public class MovementAuto extends OpMode {
                     setPathState(5);
                     sendPose();
 
-                }
+                }else if(!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 1)
+                    launching = true;
                 break;
             case 5:
                 //Pickup 2
@@ -334,7 +417,8 @@ public class MovementAuto extends OpMode {
                     f.followPath(end, true);
                     setPathState(8);
                     sendPose();
-                }
+                }else if(!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 1)
+                    launching = true;
                 break;
             case 8:
                 if (!f.isBusy()) {
