@@ -179,19 +179,6 @@ public class TeleOpControlled extends LinearOpMode {
             else
                 intakeServo.setPower(0);
 
-//            if(gamepad1.dpad_up) {
-//                setStoragePos(0, false);
-//                SharedData.storage[0] = ColorSensed.NO_COLOR;
-//            }
-//            else if(gamepad1.dpad_right) {
-//                setStoragePos(1, false);
-//                SharedData.storage[1] = ColorSensed.NO_COLOR;
-//            }
-//            else if(gamepad1.dpad_down) {
-//                setStoragePos(2, false);
-//                SharedData.storage[2] = ColorSensed.NO_COLOR;
-//            }
-
             if(launchTimer.getElapsedTimeSeconds()>1){
                 //green
                 if (gamepad1.dpad_up) {
@@ -224,14 +211,6 @@ public class TeleOpControlled extends LinearOpMode {
                     }
                 }
             }
-
-//            if (gamepad1.right_trigger > .2){
-//                sortMotor.setPower(gamepad1.right_trigger/2);
-//            }
-//            else if (gamepad1.left_trigger > .2) {
-//                sortMotor.setPower(-gamepad1.left_trigger / 1.3);
-//            }
-//            else sortMotor.setPower(0);
 
             ColorSensed currentColor = detectColor();
             if (previousColor != currentColor && colorTimer.getElapsedTimeSeconds() > .5) {
@@ -283,6 +262,10 @@ public class TeleOpControlled extends LinearOpMode {
             telemetry.addLine("");
             telemetry.addData("Entrance Color", detectColor());
             telemetry.addData("hue", JavaUtil.rgbToHue(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
+            telemetry.addData("r", entranceColor.red());
+            telemetry.addData("g", entranceColor.green());
+            telemetry.addData("b", entranceColor.blue());
+            telemetry.addData("saturation", JavaUtil.rgbToSaturation(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
             telemetry.addData("Storage", SharedData.storage[0] + ", " + SharedData.storage[1] + ", " + SharedData.storage[2]);
             SharedData.toTeleopPose = f.getPose();
 
@@ -331,9 +314,10 @@ public class TeleOpControlled extends LinearOpMode {
 
     public ColorSensed detectColor() {
         double hue = JavaUtil.rgbToHue(entranceColor.red(), entranceColor.green(), entranceColor.blue());
-        if (hue < 180 && hue > 120)
+        double saturation = JavaUtil.rgbToSaturation(entranceColor.red(), entranceColor.green(), entranceColor.blue());
+        if (hue < 180 && hue > 120 && saturation > .5)
             return ColorSensed.GREEN;
-        if (hue > 200 && hue < 260)
+        if (hue > 200 && hue < 260 && saturation > .35)
             return ColorSensed.PURPLE;
         return ColorSensed.NO_COLOR;
     }

@@ -160,6 +160,7 @@ public class MovementAuto extends OpMode {
         panels.getTelemetry().addData("heading", f.getPose().getHeading());
         panels.getTelemetry().addData("x", f.getPose().getX());
         panels.getTelemetry().addData("y", f.getPose().getY());
+        telemetry.addData("Sort Encoder", sortMotor.getCurrentPosition());
         telemetry.addData("Storage", SharedData.storage[0] + ", " + SharedData.storage[1] + ", " + SharedData.storage[2]);
         panels.getTelemetry().update();
 
@@ -389,7 +390,7 @@ public class MovementAuto extends OpMode {
                     f.followPath(four, true);
                     setPathState(5);
                     sendPose();
-
+                    launching = false;
                 }else if(!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 1)
                     launching = true;
                 break;
@@ -417,6 +418,7 @@ public class MovementAuto extends OpMode {
                     f.followPath(end, true);
                     setPathState(8);
                     sendPose();
+                    launching = false;
                 }else if(!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 1)
                     launching = true;
                 break;
