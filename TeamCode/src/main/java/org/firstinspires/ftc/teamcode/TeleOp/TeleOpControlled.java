@@ -210,6 +210,9 @@ public class TeleOpControlled extends LinearOpMode {
                         SharedData.storage[ind] = ColorSensed.NO_COLOR;
                     }
                 }
+                else if (gamepad1.dpad_left){
+                    SharedData.emptyStorage();
+                }
             }
 
             ColorSensed currentColor = detectColor();
