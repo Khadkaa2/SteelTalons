@@ -169,7 +169,7 @@ public class TeleOpControlled extends LinearOpMode {
             //dpad up for green
             //dpad down for purple
             //dpad left to clear storage (for testing)
-            if(launchTimer.getElapsedTimeSeconds()>1){
+            if(launchTimer.getElapsedTimeSeconds()>3){
                 launching = false;
                 //green
                 if (gamepad1.dpad_up) {
@@ -291,7 +291,8 @@ public class TeleOpControlled extends LinearOpMode {
             telemetry.addData("saturation", JavaUtil.rgbToSaturation(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
             telemetry.addData("Storage", SharedData.storage[0] + ", " + SharedData.storage[1] + ", " + SharedData.storage[2]);
             telemetry.addData("sort ticks", sortMotor.getCurrentPosition());
-            telemetry.addData("ColorTimer", colorTimer.getElapsedTimeSeconds());
+            telemetry.addData("Color Timer", colorTimer.getElapsedTimeSeconds());
+            telemetry.addData("Launch Timer", launchTimer.getElapsedTimeSeconds());
 
 
             SharedData.toTeleopPose = f.getPose();
