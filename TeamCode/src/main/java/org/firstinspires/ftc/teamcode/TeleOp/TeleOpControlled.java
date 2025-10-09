@@ -45,15 +45,9 @@ import java.util.List;
 
 @TeleOp
 public class TeleOpControlled extends LinearOpMode {
-    private DcMotorEx frontLeft = null;
-    private DcMotorEx frontRight = null;
-    private DcMotorEx backLeft = null;
-    private DcMotorEx backRight = null;
     private DcMotorEx sortMotor = null;
     private CRServo intakeServo;
     private ColorSensor entranceColor;
-
-
 
     private PoseConstants poses = new PoseConstants();
     private Follower f;
@@ -74,25 +68,24 @@ public class TeleOpControlled extends LinearOpMode {
     private ColorSensed previousColor = ColorSensed.NO_COLOR;
 
     public void runOpMode() throws InterruptedException {
-        frontLeft = hardwareMap.get(DcMotorEx.class, "leftFront");
-        frontRight = hardwareMap.get(DcMotorEx.class, "rightFront");
-        backLeft = hardwareMap.get(DcMotorEx.class, "leftBack");
-        backRight = hardwareMap.get(DcMotorEx.class, "rightBack");
+
+        //init hardware
         sortMotor = hardwareMap.get(DcMotorEx.class, "sortMotor");
-
-
-
         intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
         entranceColor = hardwareMap.get(ColorSensor.class, "intakeColorSensor");
+
+        //init sortMotor
         sortMotor.setTargetPosition(sortMotor.getCurrentPosition());
         sortMotor.setTargetPositionTolerance(10);
         sortMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         sortMotor.setPower(1);
 
+        //init follower
         f = Constants.createFollower(hardwareMap);
         f.setStartingPose(SharedData.toTeleopPose == null ? poses.START_POSE : SharedData.toTeleopPose);
         f.update();
 
+        //create paths
         toLaunch = f.pathBuilder()
                 .addPath(new BezierLine(f.getPose(), poses.LAUNCH_POSE))
                 .setLinearHeadingInterpolation(f.getPose().getHeading(), poses.LAUNCH_POSE.getHeading())
@@ -106,33 +99,24 @@ public class TeleOpControlled extends LinearOpMode {
 
         initAprilTag();
 
+        //init timers/constants
         speedMultiplier = 1;
         slowDelay = new Timer();
         colorTimer = new Timer();
         launchTimer = new Timer();
         colorTimer.resetTimer();
         slowDelay.resetTimer();
-
+        launchTimer.resetTimer();
 
         waitForStart();
-        launchTimer.resetTimer();
+
         entranceColor.enableLed(true);
-
-        frontRight.setDirection(DcMotorEx.Direction.FORWARD);
-        backRight.setDirection(DcMotorEx.Direction.FORWARD);
-        frontLeft.setDirection(DcMotorEx.Direction.REVERSE);
-        backLeft.setDirection(DcMotorEx.Direction.REVERSE);
-
-        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         f.startTeleopDrive(true);
 
         while (opModeIsActive()) {
             f.update();
-            //TeleOp Drive
+            //TeleOp Drive (field oriented)
             if (!automated) {
                 f.setTeleOpDrive(
                         -gamepad1.left_stick_y * speedMultiplier,
@@ -142,7 +126,7 @@ public class TeleOpControlled extends LinearOpMode {
                 );
             }
 
-            //Slow mode
+            //Slow mode (.1 speed)
             if (gamepad1.y && slowDelay.getElapsedTimeSeconds() > .5) {
                 slowDelay.resetTimer();
                 if (speedMultiplier == 1)
@@ -166,12 +150,12 @@ public class TeleOpControlled extends LinearOpMode {
             //exits automated pathing
             else if ((!gamepad1.a && !gamepad1.x) && automated) {
                 f.startTeleopDrive(true);
-                brakeMotors();
                 automated = false;
             }
 
 
-            //Intake
+            //Intake powers
+            //may want to set it so that it is always slightly intakes if necessary later
             if (gamepad1.right_bumper)
                 intakeServo.setPower(1);
             else if (gamepad1.left_bumper)
@@ -179,6 +163,10 @@ public class TeleOpControlled extends LinearOpMode {
             else
                 intakeServo.setPower(0);
 
+            //Checks if it has been enough time since last launch
+            //dpad up for green
+            //dpad down for purple
+            //dpad left to clear storage (for testing)
             if(launchTimer.getElapsedTimeSeconds()>1){
                 //green
                 if (gamepad1.dpad_up) {
@@ -215,6 +203,10 @@ public class TeleOpControlled extends LinearOpMode {
                 }
             }
 
+            //Senses if a ball is in the intake area
+            //Sets sorting position to open area on detection
+            //need to figure out a way to swap off of the slot to open slot after intake rather that directly before
+            //-> distance sensor -> check if ball is in area after sensing stops
             ColorSensed currentColor = detectColor();
             if (previousColor != currentColor && colorTimer.getElapsedTimeSeconds() > .5) {
                 colorTimer.resetTimer();
@@ -242,8 +234,8 @@ public class TeleOpControlled extends LinearOpMode {
 //            telemetry.addData("TAGB", currentDetection.ftcPose.bearing);
 //            telemetry.addData("TAGR" , currentDetection.ftcPose.range);
 
-            telemetry.addData("sort ticks", sortMotor.getCurrentPosition());
 
+            //april tag testing (I think)
             Pose2D aprilTagPose = new Pose2D(DistanceUnit.INCH, 0,0,AngleUnit.DEGREES,0);
             Pose pedroPose = new Pose(0,0,0);
             if (robotPose() != null) {
@@ -251,6 +243,9 @@ public class TeleOpControlled extends LinearOpMode {
                 Pose ftcStandard = PoseConverter.pose2DToPose(aprilTagPose, InvertedFTCCoordinates.INSTANCE);
                 pedroPose = ftcStandard.getAsCoordinateSystem(PedroCoordinates.INSTANCE);
             }
+
+            //telemetry for April Tag
+
             telemetry.addData("ROBOT APRIL X", aprilTagPose.getX(DistanceUnit.INCH));
             telemetry.addData("ROBOT APRIL Y", aprilTagPose.getY(DistanceUnit.INCH));
             telemetry.addData("ROBOT APRIL H", aprilTagPose.getHeading(AngleUnit.DEGREES));
@@ -262,14 +257,19 @@ public class TeleOpControlled extends LinearOpMode {
             telemetry.addData("F X", f.getPose().getX());
             telemetry.addData("F Y", f.getPose().getY());
             telemetry.addData("F H", f.getPose().getHeading());
-            telemetry.addLine("");
-            telemetry.addData("Entrance Color", detectColor());
-            telemetry.addData("hue", JavaUtil.rgbToHue(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
-            telemetry.addData("r", entranceColor.red());
-            telemetry.addData("g", entranceColor.green());
-            telemetry.addData("b", entranceColor.blue());
-            telemetry.addData("saturation", JavaUtil.rgbToSaturation(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
-            telemetry.addData("Storage", SharedData.storage[0] + ", " + SharedData.storage[1] + ", " + SharedData.storage[2]);
+
+            //telemetry for Color Sensor and Storage
+
+//            telemetry.addData("Entrance Color", detectColor());
+//            telemetry.addData("hue", JavaUtil.rgbToHue(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
+//            telemetry.addData("r", entranceColor.red());
+//            telemetry.addData("g", entranceColor.green());
+//            telemetry.addData("b", entranceColor.blue());
+//            telemetry.addData("saturation", JavaUtil.rgbToSaturation(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
+//            telemetry.addData("Storage", SharedData.storage[0] + ", " + SharedData.storage[1] + ", " + SharedData.storage[2]);
+//            telemetry.addData("sort ticks", sortMotor.getCurrentPosition());
+
+
             SharedData.toTeleopPose = f.getPose();
 
             telemetry.update();
@@ -286,7 +286,7 @@ public class TeleOpControlled extends LinearOpMode {
             } else if (slot == 2) {
                 sortMotor.setTargetPosition(2 * ticks / 3);
             }
-        }else{
+        }else {
             if (slot == 0) {
                 sortMotor.setTargetPosition(ticks/2);
             } else if (slot == 1) {
@@ -295,13 +295,6 @@ public class TeleOpControlled extends LinearOpMode {
                 sortMotor.setTargetPosition(ticks / 6);
             }
         }
-    }
-
-    private void brakeMotors() {
-        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     public void initAprilTag() {
@@ -318,7 +311,7 @@ public class TeleOpControlled extends LinearOpMode {
     public ColorSensed detectColor() {
         double hue = JavaUtil.rgbToHue(entranceColor.red(), entranceColor.green(), entranceColor.blue());
         double saturation = JavaUtil.rgbToSaturation(entranceColor.red(), entranceColor.green(), entranceColor.blue());
-        if (hue < 180 && hue > 120 && saturation > .5)
+        if (hue < 180 && hue > 120 && saturation > .4)
             return ColorSensed.GREEN;
         if (hue > 200 && hue < 260 && saturation > .35)
             return ColorSensed.PURPLE;
