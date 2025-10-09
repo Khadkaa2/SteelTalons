@@ -67,6 +67,8 @@ public class TeleOpControlled extends LinearOpMode {
 
     private ColorSensed previousColor = ColorSensed.NO_COLOR;
 
+    private boolean launching;
+
     public void runOpMode() throws InterruptedException {
 
         //init hardware
@@ -168,6 +170,7 @@ public class TeleOpControlled extends LinearOpMode {
             //dpad down for purple
             //dpad left to clear storage (for testing)
             if(launchTimer.getElapsedTimeSeconds()>1){
+                launching = false;
                 //green
                 if (gamepad1.dpad_up) {
                     launchTimer.resetTimer();
@@ -202,6 +205,9 @@ public class TeleOpControlled extends LinearOpMode {
                     SharedData.emptyStorage();
                 }
             }
+            else{
+                launching = true;
+            }
 
             //Senses if a ball is in the intake area
             //Sets sorting position to open area on detection
@@ -226,7 +232,7 @@ public class TeleOpControlled extends LinearOpMode {
 
                     }
                 }
-            }else if(currentColor == ColorSensed.NO_COLOR && colorTimer.getElapsedTimeSeconds() > .75){
+            }else if(currentColor == ColorSensed.NO_COLOR && colorTimer.getElapsedTimeSeconds() > .75 && !launching){
 
                 if(SharedData.storage[0] == ColorSensed.NO_COLOR)
                     setStoragePos(0, true);
