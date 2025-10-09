@@ -48,34 +48,24 @@ import java.util.List;
 public class MovementAuto extends OpMode {
 
     private Follower f;
-    //private Telemetry telemetryA;
     public PanelsTelemetry panels = PanelsTelemetry.INSTANCE;
-
-    private PoseConstants poses = new PoseConstants();
-
     private Timer pathTimer, actionTimer, opmodeTimer, colorTimer, launchTimer;
     private int pathState;
-
-
+    private PoseConstants poses = new PoseConstants();
+    Pose currentPose = null;
     private Path start, end, p, point;
     private PathChain one, two, three, four, five, six;
-
     private static AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
-
     int index;
-
     private CRServo intakeServo = null;
     private ColorSensor entranceColor;
     private DcMotorEx sortMotor = null;
-
-    Pose currentPose = null;
-
     boolean launching = false;
-
     int timesLaunched = 0;
-
     private ColorSensed previousColor = ColorSensed.NO_COLOR;
+
+
 
     public void initAprilTag(){
          aprilTag = new AprilTagProcessor.Builder()
@@ -114,9 +104,10 @@ public class MovementAuto extends OpMode {
 
     public ColorSensed detectColor() {
         double hue = JavaUtil.rgbToHue(entranceColor.red(), entranceColor.green(), entranceColor.blue());
-        if(hue < 180 && hue > 120)
+        double saturation = JavaUtil.rgbToSaturation(entranceColor.red(), entranceColor.green(), entranceColor.blue());
+        if (hue < 180 && hue > 120 && saturation > .4)
             return ColorSensed.GREEN;
-        if(hue > 200 && hue < 260)
+        if (hue > 200 && hue < 260 && saturation > .35)
             return ColorSensed.PURPLE;
         return ColorSensed.NO_COLOR;
     }
@@ -167,12 +158,13 @@ public class MovementAuto extends OpMode {
 
         telemetry.addData("Path State", pathState);
 
+        //sets servo to intake
         if(pathState == 3||pathState == 6)
             intakeServo.setPower(1);
         else
             intakeServo.setPower(0);
 
-
+        //detects color and sets storage position
         ColorSensed currentColor = detectColor();
         if (previousColor != currentColor && colorTimer.getElapsedTimeSeconds() > .5) {
             colorTimer.resetTimer();
@@ -189,6 +181,8 @@ public class MovementAuto extends OpMode {
         }
         previousColor = currentColor;
 
+        //detects if ready to launch and set storage position
+        //need to adapt code so that if multiple greens/ not enough purples are inputted, it will still launch what it has
         if(launching && launchTimer.getElapsedTimeSeconds()>1) {
             int ind = -1;
             if(timesLaunched == SharedData.greenIndex) {
@@ -211,6 +205,9 @@ public class MovementAuto extends OpMode {
 
     }
 
+
+    //gets the index of a green ball (not the closest)
+    //Need to adapt code to set position to nearest green ball
     public int getGreenIndex() {
         int temp = -1;
         if (SharedData.storage[0] == ColorSensed.GREEN)
@@ -222,6 +219,8 @@ public class MovementAuto extends OpMode {
         return temp;
     }
 
+    //gets the index of a purple ball (not the closest)
+    //Need to adapt code to set position to nearest purple ball
     public int getPurpleIndex() {
         int temp = -1;
         if (SharedData.storage[0] == ColorSensed.PURPLE)
@@ -238,9 +237,7 @@ public class MovementAuto extends OpMode {
 
         SharedData.reset();
         initAprilTag();
-//        telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
-//        telemetryA.addLine("data");
-//        telemetryA.update();
+
         pathTimer = new Timer();
         actionTimer = new Timer();
         opmodeTimer = new Timer();
@@ -268,29 +265,26 @@ public class MovementAuto extends OpMode {
 
     @Override
     public void init_loop() {
-        //detect
+        //detect AprilTag motif and set green index in SharedData
         int ID = figureID();
 
         if (ID == 21) {
             index = 0;
         } else if (ID == 22) {
             index = 1;
-        } else if (ID == 23) index = 2;
-        telemetry.addData("Green Index", index );
+        } else if (ID == 23)
+            index = 2;
+
         SharedData.greenIndex = index;
+        telemetry.addData("Green Index", index );
 
 
-            currentPose = robotPose();
-
-
+        currentPose = robotPose();
         if (currentPose!= null){
-
             telemetry.addData("X",currentPose.getX());
             telemetry.addData("Y",currentPose.getY());
             telemetry.addData("H",currentPose.getHeading());
         }
-
-        telemetry.addData("test",currentPose == null);
 
         telemetry.update();
     }
@@ -304,7 +298,6 @@ public class MovementAuto extends OpMode {
 
     @Override
     public void stop() {
-
         sendPose();
     }
 
