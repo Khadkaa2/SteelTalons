@@ -63,11 +63,13 @@ public class TeleOpControlled extends LinearOpMode {
 
     private double speedMultiplier;
 
-    private Timer slowDelay, colorTimer, launchTimer;
+    private Timer slowDelay, colorTimer, launchTimer, detectColorTimer;
 
     private ColorSensed previousColor = ColorSensed.NO_COLOR;
 
     private boolean launching;
+
+    ColorSensed currentColor = ColorSensed.NO_COLOR;
 
     public void runOpMode() throws InterruptedException {
 
@@ -106,9 +108,11 @@ public class TeleOpControlled extends LinearOpMode {
         slowDelay = new Timer();
         colorTimer = new Timer();
         launchTimer = new Timer();
+        detectColorTimer = new Timer();
         colorTimer.resetTimer();
         slowDelay.resetTimer();
         launchTimer.resetTimer();
+        detectColorTimer.resetTimer();
 
         waitForStart();
 
@@ -169,8 +173,7 @@ public class TeleOpControlled extends LinearOpMode {
             //dpad up for green
             //dpad down for purple
             //dpad left to clear storage (for testing)
-            if(launchTimer.getElapsedTimeSeconds()>3){
-                launching = false;
+            if(launchTimer.getElapsedTimeSeconds()>2){
                 //green
                 if (gamepad1.dpad_up) {
                     launchTimer.resetTimer();
@@ -213,7 +216,12 @@ public class TeleOpControlled extends LinearOpMode {
             //Sets sorting position to open area on detection
             //need to figure out a way to swap off of the slot to open slot after intake rather that directly before
             //-> distance sensor -> check if ball is in area after sensing stops
-            ColorSensed currentColor = detectColor();
+            if(detectColorTimer.getElapsedTimeSeconds()>.2) {
+                currentColor = detectColor();
+                detectColorTimer.resetTimer();
+            }
+
+//            ColorSensed currentColor = ColorSensed.NO_COLOR;
             if (previousColor != currentColor && colorTimer.getElapsedTimeSeconds() > .5) {
                 colorTimer.resetTimer();
                 if(currentColor != ColorSensed.NO_COLOR) {
@@ -232,7 +240,7 @@ public class TeleOpControlled extends LinearOpMode {
 
                     }
                 }
-            }else if(currentColor == ColorSensed.NO_COLOR && colorTimer.getElapsedTimeSeconds() > .75 && !launching){
+            }else if(currentColor == ColorSensed.NO_COLOR && colorTimer.getElapsedTimeSeconds() > .5 && launchTimer.getElapsedTimeSeconds() > 2){
 
                 if(SharedData.storage[0] == ColorSensed.NO_COLOR)
                     setStoragePos(0, true);
@@ -246,18 +254,6 @@ public class TeleOpControlled extends LinearOpMode {
             }
             previousColor = currentColor;
 
-
-//          telemetry.addData("Pattern", SharedData.greenIndex);
-//          telemetry.addData("FOLLOWER X",f.getPose().getX());
-//          telemetry.addData("FOLLOWER Y",f.getPose().getY());
-//          telemetry.addData("FOLLOWER Heading",f.getPose().getHeading());
-//            telemetry.addData("TAGX", currentDetection.ftcPose.x );
-//            telemetry.addData("TAGY", currentDetection.ftcPose.y );
-//            telemetry.addData("TAGH", currentDetection.ftcPose.yaw);
-//            telemetry.addData("TAGB", currentDetection.ftcPose.bearing);
-//            telemetry.addData("TAGR" , currentDetection.ftcPose.range);
-
-
             //april tag testing (I think)
 //            Pose2D aprilTagPose = new Pose2D(DistanceUnit.INCH, 0,0,AngleUnit.DEGREES,0);
 //            Pose pedroPose = new Pose(0,0,0);
@@ -267,37 +263,10 @@ public class TeleOpControlled extends LinearOpMode {
 //                pedroPose = ftcStandard.getAsCoordinateSystem(PedroCoordinates.INSTANCE);
 //            }
 //
-//            //telemetry for April Tag
-//
-//            telemetry.addData("ROBOT APRIL X", aprilTagPose.getX(DistanceUnit.INCH));
-//            telemetry.addData("ROBOT APRIL Y", aprilTagPose.getY(DistanceUnit.INCH));
-//            telemetry.addData("ROBOT APRIL H", aprilTagPose.getHeading(AngleUnit.DEGREES));
-//
-//            telemetry.addData("PEDRO X", pedroPose.getX());
-//            telemetry.addData("PEDRO Y", pedroPose.getY());
-//            telemetry.addData("PEDRO H", pedroPose.getPose().getHeading());
-//
-//            telemetry.addData("F X", f.getPose().getX());
-//            telemetry.addData("F Y", f.getPose().getY());
-//            telemetry.addData("F H", f.getPose().getHeading());
-
-            //telemetry for Color Sensor and Storage
-
-            telemetry.addData("Entrance Color", detectColor());
-            telemetry.addData("hue", JavaUtil.rgbToHue(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
-            telemetry.addData("r", entranceColor.red());
-            telemetry.addData("g", entranceColor.green());
-            telemetry.addData("b", entranceColor.blue());
-            telemetry.addData("saturation", JavaUtil.rgbToSaturation(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
-            telemetry.addData("Storage", SharedData.storage[0] + ", " + SharedData.storage[1] + ", " + SharedData.storage[2]);
-            telemetry.addData("sort ticks", sortMotor.getCurrentPosition());
-            telemetry.addData("Color Timer", colorTimer.getElapsedTimeSeconds());
-            telemetry.addData("Launch Timer", launchTimer.getElapsedTimeSeconds());
-
+            tele();
 
             SharedData.toTeleopPose = f.getPose();
 
-            telemetry.update();
         }
     }
 
@@ -341,6 +310,49 @@ public class TeleOpControlled extends LinearOpMode {
         if (hue > 200 && hue < 260 && saturation > .55)
             return ColorSensed.PURPLE;
         return ColorSensed.NO_COLOR;
+    }
+
+    public void tele()
+    {
+        telemetry.addData("Pattern", SharedData.greenIndex);
+//            telemetry.addData("FOLLOWER X",f.getPose().getX());
+//            telemetry.addData("FOLLOWER Y",f.getPose().getY());
+//            telemetry.addData("FOLLOWER Heading",f.getPose().getHeading());
+//            telemetry.addData("TAGX", currentDetection.ftcPose.x );
+//            telemetry.addData("TAGY", currentDetection.ftcPose.y );
+//            telemetry.addData("TAGH", currentDetection.ftcPose.yaw);
+//            telemetry.addData("TAGB", currentDetection.ftcPose.bearing);
+//            telemetry.addData("TAGR" , currentDetection.ftcPose.range);
+
+
+
+//            telemetry for April Tag
+//
+//            telemetry.addData("ROBOT APRIL X", aprilTagPose.getX(DistanceUnit.INCH));
+//            telemetry.addData("ROBOT APRIL Y", aprilTagPose.getY(DistanceUnit.INCH));
+//            telemetry.addData("ROBOT APRIL H", aprilTagPose.getHeading(AngleUnit.DEGREES));
+//
+//            telemetry.addData("PEDRO X", pedroPose.getX());
+//            telemetry.addData("PEDRO Y", pedroPose.getY());
+//            telemetry.addData("PEDRO H", pedroPose.getPose().getHeading());
+//
+//            telemetry.addData("F X", f.getPose().getX());
+//            telemetry.addData("F Y", f.getPose().getY());
+//            telemetry.addData("F H", f.getPose().getHeading());
+
+              //telemetry for Color Sensor and Storage
+//
+//            telemetry.addData("Entrance Color", detectColor());
+//            telemetry.addData("hue", JavaUtil.rgbToHue(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
+//            telemetry.addData("r", entranceColor.red());
+//            telemetry.addData("g", entranceColor.green());
+//            telemetry.addData("b", entranceColor.blue());
+//            telemetry.addData("saturation", JavaUtil.rgbToSaturation(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
+        telemetry.addData("Storage", SharedData.storage[0] + ", " + SharedData.storage[1] + ", " + SharedData.storage[2]);
+//            telemetry.addData("sort ticks", sortMotor.getCurrentPosition());
+//            telemetry.addData("Color Timer", colorTimer.getElapsedTimeSeconds());
+//            telemetry.addData("Launch Timer", launchTimer.getElapsedTimeSeconds());
+        telemetry.update();
     }
 
 //    public Pose2D robotPose() {
