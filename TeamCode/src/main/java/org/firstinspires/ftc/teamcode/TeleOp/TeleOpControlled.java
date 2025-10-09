@@ -53,13 +53,13 @@ public class TeleOpControlled extends LinearOpMode {
     private Follower f;
     private boolean automated = false;
     private PathChain toLaunch, toPark;
-    private AprilTagDetection currentDetection;
+    //private AprilTagDetection currentDetection;
     private PanelsTelemetry panels = PanelsTelemetry.INSTANCE;
 
     private Orientation rot;
 
-    private static AprilTagProcessor aprilTag;
-    private VisionPortal visionPortal;
+    //private static AprilTagProcessor aprilTag;
+    //private VisionPortal visionPortal;
 
     private double speedMultiplier;
 
@@ -97,7 +97,7 @@ public class TeleOpControlled extends LinearOpMode {
                 .setHeadingConstraint(0)
                 .build();
 
-        initAprilTag();
+//        initAprilTag();
 
         //init timers/constants
         speedMultiplier = 1;
@@ -210,15 +210,32 @@ public class TeleOpControlled extends LinearOpMode {
             ColorSensed currentColor = detectColor();
             if (previousColor != currentColor && colorTimer.getElapsedTimeSeconds() > .5) {
                 colorTimer.resetTimer();
-                if (SharedData.storage[0] == ColorSensed.NO_COLOR && currentColor != ColorSensed.NO_COLOR) {
-                    SharedData.storage[0] = currentColor;
+                if(currentColor != ColorSensed.NO_COLOR) {
+
+                    if (SharedData.storage[0] == ColorSensed.NO_COLOR) {
+                        SharedData.storage[0] = currentColor;
+                        setStoragePos(0, true);
+                    } else if (SharedData.storage[1] == ColorSensed.NO_COLOR) {
+                        SharedData.storage[1] = currentColor;
+                        setStoragePos(1, true);
+                    } else if (SharedData.storage[2] == ColorSensed.NO_COLOR) {
+                        SharedData.storage[2] = currentColor;
+                        setStoragePos(2, true);
+                    } else {
+                        //outtake
+
+                    }
+                }
+            }else if(currentColor == ColorSensed.NO_COLOR && colorTimer.getElapsedTimeSeconds() > .75){
+
+                if(SharedData.storage[0] == ColorSensed.NO_COLOR)
                     setStoragePos(0, true);
-                } else if (SharedData.storage[1] == ColorSensed.NO_COLOR && currentColor != ColorSensed.NO_COLOR) {
-                    SharedData.storage[1] = currentColor;
+                else if(SharedData.storage[1] == ColorSensed.NO_COLOR)
                     setStoragePos(1, true);
-                } else if (SharedData.storage[2] == ColorSensed.NO_COLOR && currentColor != ColorSensed.NO_COLOR) {
-                    SharedData.storage[2] = currentColor;
+                else if(SharedData.storage[2] == ColorSensed.NO_COLOR)
                     setStoragePos(2, true);
+                else {
+                    //outtake
                 }
             }
             previousColor = currentColor;
@@ -236,38 +253,39 @@ public class TeleOpControlled extends LinearOpMode {
 
 
             //april tag testing (I think)
-            Pose2D aprilTagPose = new Pose2D(DistanceUnit.INCH, 0,0,AngleUnit.DEGREES,0);
-            Pose pedroPose = new Pose(0,0,0);
-            if (robotPose() != null) {
-                aprilTagPose = robotPose();
-                Pose ftcStandard = PoseConverter.pose2DToPose(aprilTagPose, InvertedFTCCoordinates.INSTANCE);
-                pedroPose = ftcStandard.getAsCoordinateSystem(PedroCoordinates.INSTANCE);
-            }
-
-            //telemetry for April Tag
-
-            telemetry.addData("ROBOT APRIL X", aprilTagPose.getX(DistanceUnit.INCH));
-            telemetry.addData("ROBOT APRIL Y", aprilTagPose.getY(DistanceUnit.INCH));
-            telemetry.addData("ROBOT APRIL H", aprilTagPose.getHeading(AngleUnit.DEGREES));
-
-            telemetry.addData("PEDRO X", pedroPose.getX());
-            telemetry.addData("PEDRO Y", pedroPose.getY());
-            telemetry.addData("PEDRO H", pedroPose.getPose().getHeading());
-
-            telemetry.addData("F X", f.getPose().getX());
-            telemetry.addData("F Y", f.getPose().getY());
-            telemetry.addData("F H", f.getPose().getHeading());
+//            Pose2D aprilTagPose = new Pose2D(DistanceUnit.INCH, 0,0,AngleUnit.DEGREES,0);
+//            Pose pedroPose = new Pose(0,0,0);
+//            if (robotPose() != null) {
+//                aprilTagPose = robotPose();
+//                Pose ftcStandard = PoseConverter.pose2DToPose(aprilTagPose, InvertedFTCCoordinates.INSTANCE);
+//                pedroPose = ftcStandard.getAsCoordinateSystem(PedroCoordinates.INSTANCE);
+//            }
+//
+//            //telemetry for April Tag
+//
+//            telemetry.addData("ROBOT APRIL X", aprilTagPose.getX(DistanceUnit.INCH));
+//            telemetry.addData("ROBOT APRIL Y", aprilTagPose.getY(DistanceUnit.INCH));
+//            telemetry.addData("ROBOT APRIL H", aprilTagPose.getHeading(AngleUnit.DEGREES));
+//
+//            telemetry.addData("PEDRO X", pedroPose.getX());
+//            telemetry.addData("PEDRO Y", pedroPose.getY());
+//            telemetry.addData("PEDRO H", pedroPose.getPose().getHeading());
+//
+//            telemetry.addData("F X", f.getPose().getX());
+//            telemetry.addData("F Y", f.getPose().getY());
+//            telemetry.addData("F H", f.getPose().getHeading());
 
             //telemetry for Color Sensor and Storage
 
-//            telemetry.addData("Entrance Color", detectColor());
-//            telemetry.addData("hue", JavaUtil.rgbToHue(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
-//            telemetry.addData("r", entranceColor.red());
-//            telemetry.addData("g", entranceColor.green());
-//            telemetry.addData("b", entranceColor.blue());
-//            telemetry.addData("saturation", JavaUtil.rgbToSaturation(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
-//            telemetry.addData("Storage", SharedData.storage[0] + ", " + SharedData.storage[1] + ", " + SharedData.storage[2]);
-//            telemetry.addData("sort ticks", sortMotor.getCurrentPosition());
+            telemetry.addData("Entrance Color", detectColor());
+            telemetry.addData("hue", JavaUtil.rgbToHue(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
+            telemetry.addData("r", entranceColor.red());
+            telemetry.addData("g", entranceColor.green());
+            telemetry.addData("b", entranceColor.blue());
+            telemetry.addData("saturation", JavaUtil.rgbToSaturation(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
+            telemetry.addData("Storage", SharedData.storage[0] + ", " + SharedData.storage[1] + ", " + SharedData.storage[2]);
+            telemetry.addData("sort ticks", sortMotor.getCurrentPosition());
+            telemetry.addData("ColorTimer", colorTimer.getElapsedTimeSeconds());
 
 
             SharedData.toTeleopPose = f.getPose();
@@ -297,41 +315,41 @@ public class TeleOpControlled extends LinearOpMode {
         }
     }
 
-    public void initAprilTag() {
-        aprilTag = new AprilTagProcessor.Builder()
-                .setDrawAxes(true)
-                .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
-                .build();
-        VisionPortal.Builder builder = new VisionPortal.Builder();
-        builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
-        builder.addProcessor(aprilTag);
-        visionPortal = builder.build();
-    }
+//    public void initAprilTag() {
+//        aprilTag = new AprilTagProcessor.Builder()
+//                .setDrawAxes(true)
+//                .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
+//                .build();
+//        VisionPortal.Builder builder = new VisionPortal.Builder();
+//        builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
+//        builder.addProcessor(aprilTag);
+//        visionPortal = builder.build();
+//    }
 
     public ColorSensed detectColor() {
         double hue = JavaUtil.rgbToHue(entranceColor.red(), entranceColor.green(), entranceColor.blue());
         double saturation = JavaUtil.rgbToSaturation(entranceColor.red(), entranceColor.green(), entranceColor.blue());
-        if (hue < 180 && hue > 120 && saturation > .4)
+        if (hue < 180 && hue > 120 && saturation > .6)
             return ColorSensed.GREEN;
-        if (hue > 200 && hue < 260 && saturation > .35)
+        if (hue > 200 && hue < 260 && saturation > .55)
             return ColorSensed.PURPLE;
         return ColorSensed.NO_COLOR;
     }
 
-    public Pose2D robotPose() {
-        List<AprilTagDetection> detections = aprilTag.getDetections();
-        for (AprilTagDetection detection : detections) {
-            if (detection.id == 20 || detection.id == 24) {
-                if (detection.metadata != null) {
-                    rot = Orientation.getOrientation(detection.rawPose.R, AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
-                    return new Pose2D(DistanceUnit.INCH, detection.rawPose.x, detection.rawPose.y, AngleUnit.DEGREES, rot.firstAngle);
-                }
-                else
-                    telemetry.addData("Metadata", "null");
-            }
-        }
-        return null;
-    }
+//    public Pose2D robotPose() {
+//        List<AprilTagDetection> detections = aprilTag.getDetections();
+//        for (AprilTagDetection detection : detections) {
+//            if (detection.id == 20 || detection.id == 24) {
+//                if (detection.metadata != null) {
+//                    rot = Orientation.getOrientation(detection.rawPose.R, AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+//                    return new Pose2D(DistanceUnit.INCH, detection.rawPose.x, detection.rawPose.y, AngleUnit.DEGREES, rot.firstAngle);
+//                }
+//                else
+//                    telemetry.addData("Metadata", "null");
+//            }
+//        }
+//        return null;
+//    }
 
 }
 
