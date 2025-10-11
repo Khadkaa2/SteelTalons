@@ -53,21 +53,20 @@ public class TeleOpControlled extends LinearOpMode {
     private Follower f;
     private boolean automated = false;
     private PathChain toLaunch, toPark;
-    //private AprilTagDetection currentDetection;
+
     private PanelsTelemetry panels = PanelsTelemetry.INSTANCE;
 
     private Orientation rot;
 
     //private static AprilTagProcessor aprilTag;
     //private VisionPortal visionPortal;
+    //private AprilTagDetection currentDetection;
 
     private double speedMultiplier;
 
     private Timer slowDelay, colorTimer, launchTimer, detectColorTimer;
 
     private ColorSensed previousColor = ColorSensed.NO_COLOR;
-
-    private boolean launching;
 
     ColorSensed currentColor = ColorSensed.NO_COLOR;
 
@@ -122,6 +121,7 @@ public class TeleOpControlled extends LinearOpMode {
 
         while (opModeIsActive()) {
             f.update();
+
             //TeleOp Drive (field oriented)
             if (!automated) {
                 f.setTeleOpDrive(
@@ -145,13 +145,11 @@ public class TeleOpControlled extends LinearOpMode {
             if (gamepad1.a && !automated) {
                 f.followPath(toLaunch);
                 automated = true;
-
             }
             //Auto Pathing to Park
             else if (gamepad1.x && !automated) {
                 f.followPath(toPark);
                 automated = true;
-
             }
             //exits automated pathing
             else if ((!gamepad1.a && !gamepad1.x) && automated) {
@@ -174,7 +172,7 @@ public class TeleOpControlled extends LinearOpMode {
             //dpad down for purple
             //dpad left to clear storage (for testing)
             if(launchTimer.getElapsedTimeSeconds()>2){
-                //green
+                //launches green
                 if (gamepad1.dpad_up) {
                     launchTimer.resetTimer();
                     int ind = -1;
@@ -189,7 +187,8 @@ public class TeleOpControlled extends LinearOpMode {
                         SharedData.storage[ind] = ColorSensed.NO_COLOR;
                     }
                 }
-                //purple
+
+                //launches purple
                 else if (gamepad1.dpad_down) {
                     launchTimer.resetTimer();
                     int ind = -1;
@@ -204,28 +203,26 @@ public class TeleOpControlled extends LinearOpMode {
                         SharedData.storage[ind] = ColorSensed.NO_COLOR;
                     }
                 }
+
+                //empties storage
                 else if (gamepad1.dpad_left){
                     SharedData.emptyStorage();
                 }
             }
-            else{
-                launching = true;
-            }
 
             //Senses if a ball is in the intake area
             //Sets sorting position to open area on detection
-            //need to figure out a way to swap off of the slot to open slot after intake rather that directly before
-            //-> distance sensor -> check if ball is in area after sensing stops
+            //only detects every .2 seconds to reduce input lag
             if(detectColorTimer.getElapsedTimeSeconds()>.2) {
                 currentColor = detectColor();
                 detectColorTimer.resetTimer();
             }
 
-//            ColorSensed currentColor = ColorSensed.NO_COLOR;
+            //sets the slot position and color of the ball in storage
             if (previousColor != currentColor && colorTimer.getElapsedTimeSeconds() > .5) {
                 colorTimer.resetTimer();
-                if(currentColor != ColorSensed.NO_COLOR) {
 
+                if(currentColor != ColorSensed.NO_COLOR) {
                     if (SharedData.storage[0] == ColorSensed.NO_COLOR) {
                         SharedData.storage[0] = currentColor;
                         setStoragePos(0, true);
@@ -235,12 +232,12 @@ public class TeleOpControlled extends LinearOpMode {
                     } else if (SharedData.storage[2] == ColorSensed.NO_COLOR) {
                         SharedData.storage[2] = currentColor;
                         setStoragePos(2, true);
-                    } else {
-                        //outtake
-
                     }
                 }
-            }else if(currentColor == ColorSensed.NO_COLOR && colorTimer.getElapsedTimeSeconds() > .5 && launchTimer.getElapsedTimeSeconds() > 2){
+            }
+
+            //swaps to open slot (if available)
+            else if(currentColor == ColorSensed.NO_COLOR && colorTimer.getElapsedTimeSeconds() > .5 && launchTimer.getElapsedTimeSeconds() > 2){
 
                 if(SharedData.storage[0] == ColorSensed.NO_COLOR)
                     setStoragePos(0, true);
@@ -248,9 +245,6 @@ public class TeleOpControlled extends LinearOpMode {
                     setStoragePos(1, true);
                 else if(SharedData.storage[2] == ColorSensed.NO_COLOR)
                     setStoragePos(2, true);
-                else {
-                    //outtake
-                }
             }
             previousColor = currentColor;
 
@@ -263,8 +257,8 @@ public class TeleOpControlled extends LinearOpMode {
 //                pedroPose = ftcStandard.getAsCoordinateSystem(PedroCoordinates.INSTANCE);
 //            }
 //
-            tele();
 
+            tele();
             SharedData.toTeleopPose = f.getPose();
 
         }
@@ -314,7 +308,6 @@ public class TeleOpControlled extends LinearOpMode {
 
     public void tele()
     {
-        telemetry.addData("Pattern", SharedData.greenIndex);
 //            telemetry.addData("FOLLOWER X",f.getPose().getX());
 //            telemetry.addData("FOLLOWER Y",f.getPose().getY());
 //            telemetry.addData("FOLLOWER Heading",f.getPose().getHeading());
@@ -348,10 +341,11 @@ public class TeleOpControlled extends LinearOpMode {
 //            telemetry.addData("g", entranceColor.green());
 //            telemetry.addData("b", entranceColor.blue());
 //            telemetry.addData("saturation", JavaUtil.rgbToSaturation(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
-        telemetry.addData("Storage", SharedData.storage[0] + ", " + SharedData.storage[1] + ", " + SharedData.storage[2]);
 //            telemetry.addData("sort ticks", sortMotor.getCurrentPosition());
 //            telemetry.addData("Color Timer", colorTimer.getElapsedTimeSeconds());
 //            telemetry.addData("Launch Timer", launchTimer.getElapsedTimeSeconds());
+        telemetry.addData("Pattern", SharedData.greenIndex);
+        telemetry.addData("Storage", SharedData.storage[0] + ", " + SharedData.storage[1] + ", " + SharedData.storage[2]);
         telemetry.update();
     }
 
