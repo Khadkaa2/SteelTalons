@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-import org.firstinspires.ftc.teamcode.Auto.PoseConstants;
+import org.firstinspires.ftc.teamcode.Auto.RedPoseConstants;
 import org.firstinspires.ftc.teamcode.ColorSensed;
 import org.firstinspires.ftc.teamcode.SharedData;
 import org.firstinspires.ftc.teamcode.pedroPathing.Tuning;
@@ -44,14 +44,14 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
-@Autonomous
+@Autonomous(name = "Red Autonomous")
 public class MovementAuto extends OpMode {
 
     private Follower f;
     public PanelsTelemetry panels = PanelsTelemetry.INSTANCE;
     private Timer pathTimer, actionTimer, opmodeTimer, colorTimer, launchTimer;
     private int pathState;
-    private PoseConstants poses = new PoseConstants();
+    private RedPoseConstants poses = new RedPoseConstants();
     Pose currentPose = null;
     private Path start, end, p, point;
     private PathChain one, two, three, four, five, six;

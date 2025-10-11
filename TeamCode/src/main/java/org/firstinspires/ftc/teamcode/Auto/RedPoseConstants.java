@@ -4,7 +4,7 @@ package org.firstinspires.ftc.teamcode.Auto;
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.Pose;
 @Configurable
-public class PoseConstants {
+public class RedPoseConstants {
     public static Pose START_POSE = new Pose(48,0,Math.toRadians(270));
     public static Pose LAUNCH_POSE = new Pose(48,6,Math.toRadians(240));
     public static Pose ALIGN1_POSE = new Pose(31.5,27,Math.toRadians(180));

@@ -23,7 +23,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
-import org.firstinspires.ftc.teamcode.Auto.PoseConstants;
+import org.firstinspires.ftc.teamcode.Auto.RedPoseConstants;
 
 import com.pedropathing.paths.PathChain;
 
@@ -49,7 +49,7 @@ public class TeleOpControlled extends LinearOpMode {
     private CRServo intakeServo;
     private ColorSensor entranceColor;
 
-    private PoseConstants poses = new PoseConstants();
+    private RedPoseConstants poses = new RedPoseConstants();
     private Follower f;
     private boolean automated = false;
     private PathChain toLaunch, toPark;
