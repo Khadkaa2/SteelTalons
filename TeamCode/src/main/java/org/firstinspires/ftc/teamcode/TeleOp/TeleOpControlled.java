@@ -54,6 +54,7 @@ public class TeleOpControlled extends LinearOpMode {
     private RedPoseConstants poses = new RedPoseConstants();
     private Follower f;
     private boolean automated = false;
+    private boolean intaking;
     private PathChain toLaunch, toPark;
 
     private PanelsTelemetry panels = PanelsTelemetry.INSTANCE;
@@ -66,7 +67,7 @@ public class TeleOpControlled extends LinearOpMode {
 
     private double speedMultiplier;
 
-    private Timer slowDelay, colorTimer, launchTimer, detectColorTimer;
+    private Timer slowDelay, colorTimer, launchTimer, detectColorTimer, intakeTimer;
 
     private ColorSensed previousColor = ColorSensed.NO_COLOR;
 
@@ -111,10 +112,12 @@ public class TeleOpControlled extends LinearOpMode {
         colorTimer = new Timer();
         launchTimer = new Timer();
         detectColorTimer = new Timer();
+        intakeTimer = new Timer();
         colorTimer.resetTimer();
         slowDelay.resetTimer();
         launchTimer.resetTimer();
         detectColorTimer.resetTimer();
+        intakeTimer.resetTimer();
 
         waitForStart();
 
@@ -163,12 +166,17 @@ public class TeleOpControlled extends LinearOpMode {
 
             //Intake powers
             //may want to set it so that it is always slightly intakes if necessary later
-            if (gamepad1.right_bumper)
-                intakeServo.setPower(1);
-            else if (gamepad1.left_bumper)
+
+            if (gamepad1.left_bumper || (intakeTimer.getElapsedTimeSeconds() < .75 && !intaking))
                 intakeServo.setPower(-1);
+            else if (gamepad1.right_bumper || (intakeTimer.getElapsedTimeSeconds() < .75 && intaking))
+                intakeServo.setPower(1);
             else
                 intakeServo.setPower(0);
+
+
+
+
 
             //Checks if it has been enough time since last launch
             //dpad up for green
@@ -228,6 +236,8 @@ public class TeleOpControlled extends LinearOpMode {
                 colorTimer.resetTimer();
 
                 if(currentColor != ColorSensed.NO_COLOR) {
+                    intakeTimer.resetTimer();
+                    intaking = true;
                     if (SharedData.storage[0] == ColorSensed.NO_COLOR) {
                         SharedData.storage[0] = currentColor;
                         setStoragePos(0, true);
@@ -237,6 +247,8 @@ public class TeleOpControlled extends LinearOpMode {
                     } else if (SharedData.storage[2] == ColorSensed.NO_COLOR) {
                         SharedData.storage[2] = currentColor;
                         setStoragePos(2, true);
+                    }else {
+                        intaking = false;
                     }
                 }
             }
@@ -245,11 +257,14 @@ public class TeleOpControlled extends LinearOpMode {
             else if(currentColor == ColorSensed.NO_COLOR && colorTimer.getElapsedTimeSeconds() > .5 && launchTimer.getElapsedTimeSeconds() > 3.5){
 
                 if(SharedData.storage[0] == ColorSensed.NO_COLOR)
+
                     setStoragePos(0, true);
                 else if(SharedData.storage[1] == ColorSensed.NO_COLOR)
                     setStoragePos(1, true);
                 else if(SharedData.storage[2] == ColorSensed.NO_COLOR)
                     setStoragePos(2, true);
+                else
+                    setStoragePos(1,false);
             }
             previousColor = currentColor;
 
