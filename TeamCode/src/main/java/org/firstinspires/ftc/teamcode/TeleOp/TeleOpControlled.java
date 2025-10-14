@@ -82,8 +82,9 @@ public class TeleOpControlled extends LinearOpMode {
         feeder = hardwareMap.get(CRServo.class,"feederServo");
 
         //init sortMotor
+        sortMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         sortMotor.setTargetPosition(sortMotor.getCurrentPosition());
-        sortMotor.setTargetPositionTolerance(10);
+        sortMotor.setTargetPositionTolerance(5);
         sortMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         sortMotor.setPower(1);
 
@@ -101,7 +102,6 @@ public class TeleOpControlled extends LinearOpMode {
         toPark = f.pathBuilder()
                 .addPath(new BezierLine(f.getPose(), poses.parkPose))
                 .setConstantHeadingInterpolation(poses.parkPose.getHeading())
-                .setHeadingConstraint(0)
                 .build();
 
 //        initAprilTag();
@@ -185,7 +185,7 @@ public class TeleOpControlled extends LinearOpMode {
             if(launchTimer.getElapsedTimeSeconds()>3.5){
                 //launches green
                 if (gamepad1.dpad_up) {
-                    launchTimer.resetTimer();
+
                     int ind = -1;
                     if (SharedData.storage[0] == ColorSensed.GREEN)
                         ind = 0;
@@ -194,6 +194,7 @@ public class TeleOpControlled extends LinearOpMode {
                     else if (SharedData.storage[2] == ColorSensed.GREEN)
                         ind = 2;
                     if (ind != -1) {
+                        launchTimer.resetTimer();
                         setStoragePos(ind, false);
                         SharedData.storage[ind] = ColorSensed.NO_COLOR;
                     }
@@ -201,7 +202,6 @@ public class TeleOpControlled extends LinearOpMode {
 
                 //launches purple
                 else if (gamepad1.dpad_down) {
-                    launchTimer.resetTimer();
                     int ind = -1;
                     if (SharedData.storage[0] == ColorSensed.PURPLE)
                         ind = 0;
@@ -210,6 +210,7 @@ public class TeleOpControlled extends LinearOpMode {
                     else if (SharedData.storage[2] == ColorSensed.PURPLE)
                         ind = 2;
                     if (ind != -1) {
+                        launchTimer.resetTimer();
                         setStoragePos(ind, false);
                         SharedData.storage[ind] = ColorSensed.NO_COLOR;
                     }
