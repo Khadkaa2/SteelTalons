@@ -47,6 +47,8 @@ import java.util.List;
 public class TeleOpControlled extends LinearOpMode {
     private DcMotorEx sortMotor = null;
     private CRServo intakeServo;
+    private CRServo feeder;
+
     private ColorSensor entranceColor;
 
     private RedPoseConstants poses = new RedPoseConstants();
@@ -76,6 +78,7 @@ public class TeleOpControlled extends LinearOpMode {
         sortMotor = hardwareMap.get(DcMotorEx.class, "sortMotor");
         intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
         entranceColor = hardwareMap.get(ColorSensor.class, "intakeColorSensor");
+        feeder = hardwareMap.get(CRServo.class,"feederServo");
 
         //init sortMotor
         sortMotor.setTargetPosition(sortMotor.getCurrentPosition());
@@ -171,7 +174,7 @@ public class TeleOpControlled extends LinearOpMode {
             //dpad up for green
             //dpad down for purple
             //dpad left to clear storage (for testing)
-            if(launchTimer.getElapsedTimeSeconds()>2){
+            if(launchTimer.getElapsedTimeSeconds()>3.5){
                 //launches green
                 if (gamepad1.dpad_up) {
                     launchTimer.resetTimer();
@@ -203,13 +206,15 @@ public class TeleOpControlled extends LinearOpMode {
                         SharedData.storage[ind] = ColorSensed.NO_COLOR;
                     }
                 }
-
                 //empties storage
                 else if (gamepad1.dpad_left){
                     SharedData.emptyStorage();
                 }
             }
-
+            if(launchTimer.getElapsedTimeSeconds()<3.5)
+                feeder.setPower(-1);
+            else
+                feeder.setPower(0);
             //Senses if a ball is in the intake area
             //Sets sorting position to open area on detection
             //only detects every .2 seconds to reduce input lag
@@ -237,7 +242,7 @@ public class TeleOpControlled extends LinearOpMode {
             }
 
             //swaps to open slot (if available)
-            else if(currentColor == ColorSensed.NO_COLOR && colorTimer.getElapsedTimeSeconds() > .5 && launchTimer.getElapsedTimeSeconds() > 2){
+            else if(currentColor == ColorSensed.NO_COLOR && colorTimer.getElapsedTimeSeconds() > .5 && launchTimer.getElapsedTimeSeconds() > 3.5){
 
                 if(SharedData.storage[0] == ColorSensed.NO_COLOR)
                     setStoragePos(0, true);
@@ -363,6 +368,11 @@ public class TeleOpControlled extends LinearOpMode {
 //        }
 //        return null;
 //    }
+
+
+
+
+
 
 }
 

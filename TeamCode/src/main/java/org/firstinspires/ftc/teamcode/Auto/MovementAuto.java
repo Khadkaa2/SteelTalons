@@ -68,7 +68,7 @@ public class MovementAuto extends OpMode {
 
 
     public void initAprilTag(){
-         aprilTag = new AprilTagProcessor.Builder()
+        aprilTag = new AprilTagProcessor.Builder()
                 .setDrawAxes(true)
                 .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES).setTagLibrary(AprilTagGameDatabase.getCurrentGameTagLibrary())
                 .build();
