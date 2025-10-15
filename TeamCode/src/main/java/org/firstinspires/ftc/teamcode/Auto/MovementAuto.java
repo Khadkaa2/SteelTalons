@@ -238,6 +238,8 @@ public class MovementAuto extends OpMode {
             else
                 feeder.setPower(0);
         }
+        else
+            feeder.setPower(0);
 
     }
 
@@ -277,6 +279,8 @@ public class MovementAuto extends OpMode {
         pathTimer = new Timer();
         actionTimer = new Timer();
         opmodeTimer = new Timer();
+        intakeTimer = new Timer();
+        detectColorTimer = new Timer();
         colorTimer = new Timer();
         launchTimer = new Timer();
         opmodeTimer.resetTimer();
