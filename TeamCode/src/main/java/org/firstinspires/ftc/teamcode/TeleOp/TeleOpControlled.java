@@ -184,7 +184,7 @@ public class TeleOpControlled extends LinearOpMode {
             //dpad left to clear storage (for testing)
             if(launchTimer.getElapsedTimeSeconds()>3.5){
                 //launches green
-                if (gamepad1.dpad_up) {
+                if (gamepad2.dpad_up) {
 
                     int ind = -1;
                     if (SharedData.storage[0] == ColorSensed.GREEN)
@@ -201,7 +201,7 @@ public class TeleOpControlled extends LinearOpMode {
                 }
 
                 //launches purple
-                else if (gamepad1.dpad_down) {
+                else if (gamepad2.dpad_down) {
                     int ind = -1;
                     if (SharedData.storage[0] == ColorSensed.PURPLE)
                         ind = 0;
@@ -216,7 +216,7 @@ public class TeleOpControlled extends LinearOpMode {
                     }
                 }
                 //empties storage
-                else if (gamepad1.dpad_left){
+                else if (gamepad2.dpad_left){
                     SharedData.emptyStorage();
                 }
             }

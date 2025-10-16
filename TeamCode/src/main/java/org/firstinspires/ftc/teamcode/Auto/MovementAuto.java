@@ -108,9 +108,9 @@ public class MovementAuto extends OpMode {
     public ColorSensed detectColor() {
         double hue = JavaUtil.rgbToHue(entranceColor.red(), entranceColor.green(), entranceColor.blue());
         double saturation = JavaUtil.rgbToSaturation(entranceColor.red(), entranceColor.green(), entranceColor.blue());
-        if (hue < 180 && hue > 120 && saturation > .4)
+        if (hue < 180 && hue > 120 && saturation > .6)
             return ColorSensed.GREEN;
-        if (hue > 200 && hue < 260 && saturation > .35)
+        if (hue > 200 && hue < 260 && saturation > .55)
             return ColorSensed.PURPLE;
         return ColorSensed.NO_COLOR;
     }
@@ -156,6 +156,9 @@ public class MovementAuto extends OpMode {
         panels.getTelemetry().addData("y", f.getPose().getY());
         telemetry.addData("Sort Encoder", sortMotor.getCurrentPosition());
         telemetry.addData("Storage", SharedData.storage[0] + ", " + SharedData.storage[1] + ", " + SharedData.storage[2]);
+        telemetry.addData("launching", launching);
+        telemetry.addData("cc", currentColor);
+        telemetry.addData("pc", previousColor);
         panels.getTelemetry().update();
 
 
@@ -178,7 +181,7 @@ public class MovementAuto extends OpMode {
         }
 
         //sets the slot position and color of the ball in storage
-        if (previousColor != currentColor && colorTimer.getElapsedTimeSeconds() > .5) {
+        if (!launching && previousColor != currentColor && colorTimer.getElapsedTimeSeconds() > .5) {
             colorTimer.resetTimer();
 
             if(currentColor != ColorSensed.NO_COLOR) {
@@ -200,10 +203,9 @@ public class MovementAuto extends OpMode {
         }
 
         //swaps to open slot (if available)
-        else if(currentColor == ColorSensed.NO_COLOR && colorTimer.getElapsedTimeSeconds() > .5 && launchTimer.getElapsedTimeSeconds() > 3.5){
+        else if(!launching && currentColor == ColorSensed.NO_COLOR && colorTimer.getElapsedTimeSeconds() > .5){
 
             if(SharedData.storage[0] == ColorSensed.NO_COLOR)
-
                 setStoragePos(0, true);
             else if(SharedData.storage[1] == ColorSensed.NO_COLOR)
                 setStoragePos(1, true);
@@ -235,10 +237,9 @@ public class MovementAuto extends OpMode {
                 launchTimer.resetTimer();
                 SharedData.storage[ind] = ColorSensed.NO_COLOR;
             }
-            else
-                feeder.setPower(0);
         }
-        else
+
+        if(!launching)
             feeder.setPower(0);
 
     }
@@ -406,7 +407,7 @@ public class MovementAuto extends OpMode {
                 //Pickup 1
                 if (!f.isBusy()) {
                     f.followPath(two, true);
-                    f.setMaxPower(.3);
+                    f.setMaxPower(.2);
                     setPathState(3);
                     sendPose();
                 }
@@ -434,7 +435,7 @@ public class MovementAuto extends OpMode {
                 //Pickup 2
                 if (!f.isBusy()) {
                     f.followPath(five, true);
-                    f.setMaxPower(.3);
+                    f.setMaxPower(.15);
                     setPathState(6);
                     sendPose();
                 }
