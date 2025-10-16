@@ -81,7 +81,7 @@ public class TeleOpControlled extends LinearOpMode {
         sortMotor = hardwareMap.get(DcMotorEx.class, "sortMotor");
         intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
         entranceColor = hardwareMap.get(ColorSensor.class, "intakeColorSensor");
-        feeder = hardwareMap.get(CRServo.class,"feederServo");
+        feeder = hardwareMap.get(CRServo.class, "feederServo");
 
         //init sortMotor
         sortMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -168,7 +168,6 @@ public class TeleOpControlled extends LinearOpMode {
 
             //Intake powers
             //may want to set it so that it is always slightly intakes if necessary later
-
             if (gamepad1.left_bumper || (intakeTimer.getElapsedTimeSeconds() < .75 && !intaking))
                 intakeServo.setPower(-1);
             else if (gamepad1.right_bumper || (intakeTimer.getElapsedTimeSeconds() < .75 && intaking))
@@ -176,110 +175,14 @@ public class TeleOpControlled extends LinearOpMode {
             else
                 intakeServo.setPower(0);
 
-
-
-
-
-            //Checks if it has been enough time since last launch
-            //dpad up for green
-            //dpad down for purple
-            //dpad left to clear storage (for testing)
-            if(launchTimer.getElapsedTimeSeconds()>3.5){
-                //launches green
-                if (gamepad2.dpad_up) {
-
-                    int ind = -1;
-                    if (SharedData.storage[0] == ColorSensed.GREEN)
-                        ind = 0;
-                    else if (SharedData.storage[1] == ColorSensed.GREEN)
-                        ind = 1;
-                    else if (SharedData.storage[2] == ColorSensed.GREEN)
-                        ind = 2;
-                    if (ind != -1) {
-                        launchTimer.resetTimer();
-                        setStoragePos(ind, false);
-                        SharedData.storage[ind] = ColorSensed.NO_COLOR;
-                    }
-                }
-
-                //launches purple
-                else if (gamepad2.dpad_down) {
-                    int ind = -1;
-                    if (SharedData.storage[0] == ColorSensed.PURPLE)
-                        ind = 0;
-                    else if (SharedData.storage[1] == ColorSensed.PURPLE)
-                        ind = 1;
-                    else if (SharedData.storage[2] == ColorSensed.PURPLE)
-                        ind = 2;
-                    if (ind != -1) {
-                        launchTimer.resetTimer();
-                        setStoragePos(ind, false);
-                        SharedData.storage[ind] = ColorSensed.NO_COLOR;
-                    }
-                }
-                //empties storage
-                else if (gamepad2.dpad_left){
-                    SharedData.emptyStorage();
-                }
-            }
-            if(launchTimer.getElapsedTimeSeconds()<3.5)
-                feeder.setPower(-1);
+            if (manual)
+                manualMode();
             else
-                feeder.setPower(0);
-            //Senses if a ball is in the intake area
-            //Sets sorting position to open area on detection
-            //only detects every .2 seconds to reduce input lag
-            if(detectColorTimer.getElapsedTimeSeconds()>.2) {
-                currentColor = detectColor();
-                detectColorTimer.resetTimer();
-            }
+                autoMode();
 
-            //sets the slot position and color of the ball in storage
-            if (previousColor != currentColor && colorTimer.getElapsedTimeSeconds() > .5) {
-                colorTimer.resetTimer();
+            if (gamepad1.xWasPressed())
+                manual = !manual;
 
-                if(currentColor != ColorSensed.NO_COLOR) {
-                    intakeTimer.resetTimer();
-                    intaking = true;
-                    if (SharedData.storage[0] == ColorSensed.NO_COLOR) {
-                        SharedData.storage[0] = currentColor;
-                        setStoragePos(0, true);
-                    } else if (SharedData.storage[1] == ColorSensed.NO_COLOR) {
-                        SharedData.storage[1] = currentColor;
-                        setStoragePos(1, true);
-                    } else if (SharedData.storage[2] == ColorSensed.NO_COLOR) {
-                        SharedData.storage[2] = currentColor;
-                        setStoragePos(2, true);
-                    }else {
-                        intaking = false;
-                    }
-                }
-            }
-
-            //swaps to open slot (if available)
-            else if(currentColor == ColorSensed.NO_COLOR && colorTimer.getElapsedTimeSeconds() > .5 && launchTimer.getElapsedTimeSeconds() > 3.5){
-
-                if(SharedData.storage[0] == ColorSensed.NO_COLOR)
-
-                    setStoragePos(0, true);
-                else if(SharedData.storage[1] == ColorSensed.NO_COLOR)
-                    setStoragePos(1, true);
-                else if(SharedData.storage[2] == ColorSensed.NO_COLOR)
-                    setStoragePos(2, true);
-                else
-                    setStoragePos(1,false);
-            }
-            previousColor = currentColor;
-
-            //april tag testing (I think)
-//            Pose2D aprilTagPose = new Pose2D(DistanceUnit.INCH, 0,0,AngleUnit.DEGREES,0);
-//            Pose pedroPose = new Pose(0,0,0);
-//            if (robotPose() != null) {
-//                aprilTagPose = robotPose();
-//                Pose ftcStandard = PoseConverter.pose2DToPose(aprilTagPose, InvertedFTCCoordinates.INSTANCE);
-//                pedroPose = ftcStandard.getAsCoordinateSystem(PedroCoordinates.INSTANCE);
-//            }
-//
 
             tele();
             SharedData.toTeleopPose = f.getPose();
@@ -287,9 +190,9 @@ public class TeleOpControlled extends LinearOpMode {
         }
     }
 
-    public void setStoragePos(int slot, boolean intake){
+    public void setStoragePos(int slot, boolean intake) {
         int ticks = 1426;
-        if(intake) {
+        if (intake) {
             if (slot == 0) {
                 sortMotor.setTargetPosition(0);
             } else if (slot == 1) {
@@ -297,11 +200,11 @@ public class TeleOpControlled extends LinearOpMode {
             } else if (slot == 2) {
                 sortMotor.setTargetPosition(2 * ticks / 3);
             }
-        }else {
+        } else {
             if (slot == 0) {
-                sortMotor.setTargetPosition(ticks/2);
+                sortMotor.setTargetPosition(ticks / 2);
             } else if (slot == 1) {
-                sortMotor.setTargetPosition(-ticks/6);
+                sortMotor.setTargetPosition(-ticks / 6);
             } else if (slot == 2) {
                 sortMotor.setTargetPosition(ticks / 6);
             }
@@ -340,7 +243,6 @@ public class TeleOpControlled extends LinearOpMode {
 //            telemetry.addData("TAGR" , currentDetection.ftcPose.range);
 
 
-
 //            telemetry for April Tag
 //
 //            telemetry.addData("ROBOT APRIL X", aprilTagPose.getX(DistanceUnit.INCH));
@@ -355,7 +257,7 @@ public class TeleOpControlled extends LinearOpMode {
 //            telemetry.addData("F Y", f.getPose().getY());
 //            telemetry.addData("F H", f.getPose().getHeading());
 
-              //telemetry for Color Sensor and Storage
+        //telemetry for Color Sensor and Storage
 //
 //            telemetry.addData("Entrance Color", detectColor());
 //            telemetry.addData("hue", JavaUtil.rgbToHue(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
@@ -368,6 +270,7 @@ public class TeleOpControlled extends LinearOpMode {
 //            telemetry.addData("Launch Timer", launchTimer.getElapsedTimeSeconds());
         telemetry.addData("Pattern", SharedData.greenIndex);
         telemetry.addData("Storage", SharedData.storage[0] + ", " + SharedData.storage[1] + ", " + SharedData.storage[2]);
+        telemetry.addData("Maunual Mode", manual);
         telemetry.update();
     }
 
@@ -386,20 +289,17 @@ public class TeleOpControlled extends LinearOpMode {
 //        return null;
 //    }
 
-    public void manualMode()
-    {
+    public void manualMode() {
 
         //this is the code for all the manualmode in teleop. There will be no automation for player2 in this mode
 
         //fan control
-        if (gamepad2.a){
+        if (gamepad2.a) {
             setStoragePos(0, !gamepad2.dpad_left);
-        }
-        else if (gamepad2.b){
-            setStoragePos(1,!gamepad2.dpad_left);
-        }
-        else if (gamepad2.y){
-            setStoragePos(2,!gamepad2.dpad_left);
+        } else if (gamepad2.b) {
+            setStoragePos(1, !gamepad2.dpad_left);
+        } else if (gamepad2.y) {
+            setStoragePos(2, !gamepad2.dpad_left);
         }
 
         //Launch motor theory code
@@ -413,25 +313,116 @@ public class TeleOpControlled extends LinearOpMode {
                 setLauncherAngle( far ? farStrength : closeStrength  );
         */
 
-
         //flapper
 
-        if (gamepad2.left_trigger >= .2){
+        if (gamepad2.left_trigger >= .2) {
             feeder.setPower(-1);
         }
 
 
-
-
-
-    }
-    public void autoMode()
-    {
-
     }
 
+    public void autoMode () {
+        //Checks if it has been enough time since last launch
+        //dpad up for green
+        //dpad down for purple
+        //dpad left to clear storage (for testing)
+        if(launchTimer.getElapsedTimeSeconds()>3.5){
+            //launches green
+            if (gamepad2.dpad_up) {
 
+                int ind = -1;
+                if (SharedData.storage[0] == ColorSensed.GREEN)
+                    ind = 0;
+                else if (SharedData.storage[1] == ColorSensed.GREEN)
+                    ind = 1;
+                else if (SharedData.storage[2] == ColorSensed.GREEN)
+                    ind = 2;
+                if (ind != -1) {
+                    launchTimer.resetTimer();
+                    setStoragePos(ind, false);
+                    SharedData.storage[ind] = ColorSensed.NO_COLOR;
+                }
+            }
 
+            //launches purple
+            else if (gamepad2.dpad_down) {
+                int ind = -1;
+                if (SharedData.storage[0] == ColorSensed.PURPLE)
+                    ind = 0;
+                else if (SharedData.storage[1] == ColorSensed.PURPLE)
+                    ind = 1;
+                else if (SharedData.storage[2] == ColorSensed.PURPLE)
+                    ind = 2;
+                if (ind != -1) {
+                    launchTimer.resetTimer();
+                    setStoragePos(ind, false);
+                    SharedData.storage[ind] = ColorSensed.NO_COLOR;
+                }
+            }
+            //empties storage
+            else if (gamepad2.dpad_left){
+                SharedData.emptyStorage();
+            }
+        }
+        if(launchTimer.getElapsedTimeSeconds()<3.5)
+            feeder.setPower(-1);
+        else
+            feeder.setPower(0);
+        //Senses if a ball is in the intake area
+        //Sets sorting position to open area on detection
+        //only detects every .2 seconds to reduce input lag
+        if(detectColorTimer.getElapsedTimeSeconds()>.2) {
+            currentColor = detectColor();
+            detectColorTimer.resetTimer();
+        }
+
+        //sets the slot position and color of the ball in storage
+        if (previousColor != currentColor && colorTimer.getElapsedTimeSeconds() > .5) {
+            colorTimer.resetTimer();
+
+            if(currentColor != ColorSensed.NO_COLOR) {
+                intakeTimer.resetTimer();
+                intaking = true;
+                if (SharedData.storage[0] == ColorSensed.NO_COLOR) {
+                    SharedData.storage[0] = currentColor;
+                    setStoragePos(0, true);
+                } else if (SharedData.storage[1] == ColorSensed.NO_COLOR) {
+                    SharedData.storage[1] = currentColor;
+                    setStoragePos(1, true);
+                } else if (SharedData.storage[2] == ColorSensed.NO_COLOR) {
+                    SharedData.storage[2] = currentColor;
+                    setStoragePos(2, true);
+                }else {
+                    intaking = false;
+                }
+            }
+        }
+
+        //swaps to open slot (if available)
+        else if(currentColor == ColorSensed.NO_COLOR && colorTimer.getElapsedTimeSeconds() > .5 && launchTimer.getElapsedTimeSeconds() > 3.5){
+
+            if(SharedData.storage[0] == ColorSensed.NO_COLOR)
+
+                setStoragePos(0, true);
+            else if(SharedData.storage[1] == ColorSensed.NO_COLOR)
+                setStoragePos(1, true);
+            else if(SharedData.storage[2] == ColorSensed.NO_COLOR)
+                setStoragePos(2, true);
+            else
+                setStoragePos(1,false);
+        }
+        previousColor = currentColor;
+
+        //april tag testing (I think)
+//            Pose2D aprilTagPose = new Pose2D(DistanceUnit.INCH, 0,0,AngleUnit.DEGREES,0);
+//            Pose pedroPose = new Pose(0,0,0);
+//            if (robotPose() != null) {
+//                aprilTagPose = robotPose();
+//                Pose ftcStandard = PoseConverter.pose2DToPose(aprilTagPose, InvertedFTCCoordinates.INSTANCE);
+//                pedroPose = ftcStandard.getAsCoordinateSystem(PedroCoordinates.INSTANCE);
+//            }
+    }
 
 }
 
