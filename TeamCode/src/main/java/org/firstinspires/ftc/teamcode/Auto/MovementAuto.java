@@ -242,6 +242,8 @@ public class MovementAuto extends OpMode {
         if(!launching)
             feeder.setPower(0);
 
+        
+
     }
 
 

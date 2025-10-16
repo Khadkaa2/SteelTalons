@@ -389,6 +389,41 @@ public class TeleOpControlled extends LinearOpMode {
     public void manualMode()
     {
 
+        //this is the code for all the manualmode in teleop. There will be no automation for player2 in this mode
+
+        //fan control
+        if (gamepad2.a){
+            setStoragePos(0, !gamepad2.dpad_left);
+        }
+        else if (gamepad2.b){
+            setStoragePos(1,!gamepad2.dpad_left);
+        }
+        else if (gamepad2.y){
+            setStoragePos(2,!gamepad2.dpad_left);
+        }
+
+        //Launch motor theory code
+        /* if (gamepad1.rightTrigger >= .2){
+                launchMotor.setPower( far ? farStrength : closeStrength );
+            }
+                    or
+
+           if (trigger >= .2){
+                launchMotor.setPower(1);
+                setLauncherAngle( far ? farStrength : closeStrength  );
+        */
+
+
+        //flapper
+
+        if (gamepad2.left_trigger >= .2){
+            feeder.setPower(-1);
+        }
+
+
+
+
+
     }
     public void autoMode()
     {
