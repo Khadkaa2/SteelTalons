@@ -54,7 +54,7 @@ public class TeleOpControlled extends LinearOpMode {
     private RedPoseConstants poses = new RedPoseConstants();
     private Follower f;
     private boolean automated = false;
-    private boolean intaking;
+    private boolean intaking = false;
     private PathChain toLaunch, toPark;
 
     private PanelsTelemetry panels = PanelsTelemetry.INSTANCE;
@@ -72,6 +72,8 @@ public class TeleOpControlled extends LinearOpMode {
     private ColorSensed previousColor = ColorSensed.NO_COLOR;
 
     ColorSensed currentColor = ColorSensed.NO_COLOR;
+
+    private boolean manual = false;
 
     public void runOpMode() throws InterruptedException {
 
@@ -327,8 +329,7 @@ public class TeleOpControlled extends LinearOpMode {
         return ColorSensed.NO_COLOR;
     }
 
-    public void tele()
-    {
+    public void tele() {
 //            telemetry.addData("FOLLOWER X",f.getPose().getX());
 //            telemetry.addData("FOLLOWER Y",f.getPose().getY());
 //            telemetry.addData("FOLLOWER Heading",f.getPose().getHeading());
@@ -385,7 +386,14 @@ public class TeleOpControlled extends LinearOpMode {
 //        return null;
 //    }
 
+    public void manualMode()
+    {
 
+    }
+    public void autoMode()
+    {
+
+    }
 
 
 
