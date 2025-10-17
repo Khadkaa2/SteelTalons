@@ -180,7 +180,7 @@ public class TeleOpControlled extends LinearOpMode {
             else
                 autoMode();
 
-            if (gamepad1.xWasPressed())
+            if (gamepad2.xWasPressed())
                 manual = !manual;
 
 
@@ -318,11 +318,41 @@ public class TeleOpControlled extends LinearOpMode {
         if (gamepad2.left_trigger >= .2) {
             feeder.setPower(-1);
         }
+        else{
+            feeder.setPower(0);
+        }
 
 
     }
 
     public void autoMode () {
+
+        //manual color setting
+        //hold right bumper and press a button for green
+        //hold left bumper and press a button for purple
+        //"a" for slot 0
+        //"b" for slot 1
+        //"y" for slot 2
+        if(gamepad2.right_bumper) {
+            if(gamepad2.a)
+                SharedData.storage[0] = ColorSensed.GREEN;
+            else if(gamepad2.b)
+                SharedData.storage[1] = ColorSensed.GREEN;
+            else if(gamepad2.y)
+            SharedData.storage[2] = ColorSensed.GREEN;
+        }
+        else if(gamepad2.left_bumper) {
+            if(gamepad2.a)
+                SharedData.storage[0] = ColorSensed.PURPLE;
+            else if(gamepad2.b)
+                SharedData.storage[1] = ColorSensed.PURPLE;
+            else if(gamepad2.y)
+                SharedData.storage[2] = ColorSensed.PURPLE;
+        }
+
+
+
+
         //Checks if it has been enough time since last launch
         //dpad up for green
         //dpad down for purple
