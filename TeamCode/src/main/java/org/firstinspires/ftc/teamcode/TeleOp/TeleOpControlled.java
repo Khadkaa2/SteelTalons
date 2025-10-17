@@ -45,7 +45,7 @@ import java.util.List;
 
 @TeleOp
 public class TeleOpControlled extends LinearOpMode {
-    private DcMotorEx sortMotor = null;
+    private DcMotorEx fan = null;
     private CRServo intakeServo;
     private CRServo feeder;
 
@@ -78,17 +78,17 @@ public class TeleOpControlled extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         //init hardware
-        sortMotor = hardwareMap.get(DcMotorEx.class, "sortMotor");
+        fan = hardwareMap.get(DcMotorEx.class, "sortMotor");
         intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
         entranceColor = hardwareMap.get(ColorSensor.class, "intakeColorSensor");
         feeder = hardwareMap.get(CRServo.class, "feederServo");
 
-        //init sortMotor
-        sortMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        sortMotor.setTargetPosition(sortMotor.getCurrentPosition());
-        sortMotor.setTargetPositionTolerance(5);
-        sortMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        sortMotor.setPower(1);
+        //init fan
+        fan.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        fan.setTargetPosition(fan.getCurrentPosition());
+        fan.setTargetPositionTolerance(5);
+        fan.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        fan.setPower(1);
 
         //init follower
         f = Constants.createFollower(hardwareMap);
@@ -194,19 +194,19 @@ public class TeleOpControlled extends LinearOpMode {
         int ticks = 1426;
         if (intake) {
             if (slot == 0) {
-                sortMotor.setTargetPosition(0);
+                fan.setTargetPosition(0);
             } else if (slot == 1) {
-                sortMotor.setTargetPosition(ticks / 3);
+                fan.setTargetPosition(ticks / 3);
             } else if (slot == 2) {
-                sortMotor.setTargetPosition(2 * ticks / 3);
+                fan.setTargetPosition(2 * ticks / 3);
             }
         } else {
             if (slot == 0) {
-                sortMotor.setTargetPosition(ticks / 2);
+                fan.setTargetPosition(ticks / 2);
             } else if (slot == 1) {
-                sortMotor.setTargetPosition(-ticks / 6);
+                fan.setTargetPosition(-ticks / 6);
             } else if (slot == 2) {
-                sortMotor.setTargetPosition(ticks / 6);
+                fan.setTargetPosition(ticks / 6);
             }
         }
     }
@@ -265,7 +265,7 @@ public class TeleOpControlled extends LinearOpMode {
 //            telemetry.addData("g", entranceColor.green());
 //            telemetry.addData("b", entranceColor.blue());
 //            telemetry.addData("saturation", JavaUtil.rgbToSaturation(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
-//            telemetry.addData("sort ticks", sortMotor.getCurrentPosition());
+//            telemetry.addData("sort ticks", fan.getCurrentPosition());
 //            telemetry.addData("Color Timer", colorTimer.getElapsedTimeSeconds());
 //            telemetry.addData("Launch Timer", launchTimer.getElapsedTimeSeconds());
         telemetry.addData("Pattern", SharedData.greenIndex);
@@ -321,6 +321,14 @@ public class TeleOpControlled extends LinearOpMode {
         else{
             feeder.setPower(0);
         }
+        
+        
+        // Two ways of manually moving the fan
+        
+        //sticks 
+        if (gamepad2.dpad_down) fan.setTargetPosition((int)(fan.getCurrentPosition() + gamepad2.right_stick_x*10));
+
+        
 
 
     }
