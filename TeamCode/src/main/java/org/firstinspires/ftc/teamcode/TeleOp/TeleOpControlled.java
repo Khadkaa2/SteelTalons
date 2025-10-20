@@ -75,6 +75,8 @@ public class TeleOpControlled extends LinearOpMode {
 
     private boolean manual = false;
 
+    private boolean feederFirstTime = true;
+
     public void runOpMode() throws InterruptedException {
 
         //init hardware
@@ -192,21 +194,42 @@ public class TeleOpControlled extends LinearOpMode {
 
     public void setStoragePos(int slot, boolean intake) {
         int ticks = 1426;
+        double absolutePos = fan.getCurrentPosition();
+        double relativePos = fan.getCurrentPosition() % ticks;
         if (intake) {
             if (slot == 0) {
-                fan.setTargetPosition(0);
+                if(((relativePos-0)/2)<(ticks /2))
+                    fan.setTargetPosition(0);
+                else
+                    fan.setTargetPosition(ticks);
             } else if (slot == 1) {
-                fan.setTargetPosition(ticks / 3);
+                if(((relativePos-(ticks/3))/2)<(ticks /2))
+                    fan.setTargetPosition(ticks/3);
+                else
+                    fan.setTargetPosition((int)(ticks * 4/3.0));
             } else if (slot == 2) {
-                fan.setTargetPosition(2 * ticks / 3);
+                if (((relativePos-(2*ticks/3))/2) < (ticks/2))
+                    fan.setTargetPosition(2 * ticks / 3);
+                else
+                    fan.setTargetPosition((int) (ticks * 5/3));
             }
         } else {
             if (slot == 0) {
-                fan.setTargetPosition(ticks / 2);
+                if ((relativePos-(ticks/2)) < (ticks/2))
+                    fan.setTargetPosition(ticks / 2);
+                else
+                    fan.setTargetPosition(ticks);
             } else if (slot == 1) {
-                fan.setTargetPosition(-ticks / 6);
+                if (((relativePos - (ticks/6)) < (ticks/2)))
+                    fan.setTargetPosition(-ticks / 6);
+                else
+                    fan.setTargetPosition(5*ticks/6);
+
             } else if (slot == 2) {
-                fan.setTargetPosition(ticks / 6);
+                if (((relativePos - (ticks/6)) < (ticks/2)))
+                    fan.setTargetPosition(ticks / 6);
+                else
+                    fan.setTargetPosition(7*ticks/6);
             }
         }
     }
@@ -269,10 +292,9 @@ public class TeleOpControlled extends LinearOpMode {
 //            telemetry.addData("Color Timer", colorTimer.getElapsedTimeSeconds());
 //            telemetry.addData("Launch Timer", launchTimer.getElapsedTimeSeconds());
         telemetry.addData("Pattern", SharedData.greenIndex);
-        telemetry.addLine(String.format("Storage: %s, %s, %s", SharedData.storage[0], SharedData.storage[1], SharedData.storage[2] ));
-        telemetry.addData("Maunual Mode", manual);
+        telemetry.addData("Storage", SharedData.storage[0] + ", " + SharedData.storage[1] + ", " + SharedData.storage[2]);
+        telemetry.addData("Manual Mode", manual);
         telemetry.update();
-
     }
 
 //    public Pose2D robotPose() {
@@ -404,10 +426,14 @@ public class TeleOpControlled extends LinearOpMode {
                 SharedData.emptyStorage();
             }
         }
-        if(launchTimer.getElapsedTimeSeconds()<3.5)
-            feeder.setPower(-1);
-        else
+        if(launchTimer.getElapsedTimeSeconds()<3.5) {
+            if(!feederFirstTime)
+                feeder.setPower(-1);
+        }
+        else {
             feeder.setPower(0);
+            feederFirstTime = false;
+        }
         //Senses if a ball is in the intake area
         //Sets sorting position to open area on detection
         //only detects every .2 seconds to reduce input lag
