@@ -194,24 +194,27 @@ public class TeleOpControlled extends LinearOpMode {
 
     public void setStoragePos(int slot, boolean intake) {
         int ticks = 1426;
-        double absolutePos = fan.getCurrentPosition();
-        double relativePos = fan.getCurrentPosition() % ticks;
+        int absolutePos = fan.getCurrentPosition();
+        int relativePos = fan.getCurrentPosition() % ticks;
         if (intake) {
             if (slot == 0) {
+                //this section good
                 if(Math.abs((relativePos))<(ticks /2))
-                    fan.setTargetPosition((int)(absolutePos-relativePos));
+                    fan.setTargetPosition((absolutePos-relativePos));
                 else
-                    fan.setTargetPosition(ticks+(int)(absolutePos-relativePos));
+                    fan.setTargetPosition((int)Math.signum(relativePos)*ticks+(absolutePos-relativePos));
             } else if (slot == 1) {
-                if(Math.abs((relativePos-(ticks/3)))<(ticks /2))
-                    fan.setTargetPosition(ticks/3+(int)(absolutePos-relativePos));
+                //might work (condition is now correct) (I think formulas are correct) (something messed up in testing)
+                if(Math.abs((relativePos+(ticks/3))) < (ticks/2 + ticks/3))
+                    fan.setTargetPosition((int)Math.signum(relativePos)*ticks/3+(absolutePos-relativePos));
                 else
-                    fan.setTargetPosition((int)(ticks * 4/3.0)+(int)(absolutePos-relativePos));
+                    fan.setTargetPosition((int)Math.signum(relativePos)*ticks * 4/3+(absolutePos-relativePos));
             } else if (slot == 2) {
-                if (Math.abs((relativePos-(2*ticks/3))) < (ticks/2))
-                    fan.setTargetPosition(2 * ticks / 3+(int)(absolutePos-relativePos));
+                //less likely than other sections but I coded it based off of the pattern. (something messed up in testing)
+                if (Math.abs((relativePos + (2*ticks/3))) < (ticks/2 + 2*ticks/3))
+                    fan.setTargetPosition((int)Math.signum(relativePos)*2*ticks/3 + (absolutePos-relativePos));
                 else
-                    fan.setTargetPosition((int) (ticks * 5/3.0)+(int)(absolutePos-relativePos));
+                    fan.setTargetPosition((int)Math.signum(relativePos)*ticks * 5/3+(absolutePos-relativePos));
             }
         } else {
             if (slot == 0) {
