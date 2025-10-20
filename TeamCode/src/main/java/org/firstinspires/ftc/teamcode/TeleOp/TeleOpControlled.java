@@ -199,19 +199,19 @@ public class TeleOpControlled extends LinearOpMode {
         if (intake) {
             if (slot == 0) {
                 if(Math.abs((relativePos))<(ticks /2))
-                    fan.setTargetPosition((int)Math.abs(absolutePos-relativePos));
+                    fan.setTargetPosition((int)(absolutePos-relativePos));
                 else
-                    fan.setTargetPosition(ticks+(int)Math.abs(absolutePos-relativePos));
+                    fan.setTargetPosition(ticks+(int)(absolutePos-relativePos));
             } else if (slot == 1) {
                 if(Math.abs((relativePos-(ticks/3)))<(ticks /2))
-                    fan.setTargetPosition(ticks/3+(int)Math.abs(absolutePos-relativePos));
+                    fan.setTargetPosition(ticks/3+(int)(absolutePos-relativePos));
                 else
-                    fan.setTargetPosition((int)(ticks * 4/3.0)+(int)Math.abs(absolutePos-relativePos));
+                    fan.setTargetPosition((int)(ticks * 4/3.0)+(int)(absolutePos-relativePos));
             } else if (slot == 2) {
                 if (Math.abs((relativePos-(2*ticks/3))) < (ticks/2))
-                    fan.setTargetPosition(2 * ticks / 3+(int)Math.abs(absolutePos-relativePos));
+                    fan.setTargetPosition(2 * ticks / 3+(int)(absolutePos-relativePos));
                 else
-                    fan.setTargetPosition((int) (ticks * 5/3.0)+(int)Math.abs(absolutePos-relativePos));
+                    fan.setTargetPosition((int) (ticks * 5/3.0)+(int)(absolutePos-relativePos));
             }
         } else {
             if (slot == 0) {
