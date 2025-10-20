@@ -269,9 +269,10 @@ public class TeleOpControlled extends LinearOpMode {
 //            telemetry.addData("Color Timer", colorTimer.getElapsedTimeSeconds());
 //            telemetry.addData("Launch Timer", launchTimer.getElapsedTimeSeconds());
         telemetry.addData("Pattern", SharedData.greenIndex);
-        telemetry.addData("Storage", SharedData.storage[0] + ", " + SharedData.storage[1] + ", " + SharedData.storage[2]);
+        telemetry.addLine(String.format("Storage: %s, %s, %s", SharedData.storage[0], SharedData.storage[1], SharedData.storage[2] ));
         telemetry.addData("Maunual Mode", manual);
         telemetry.update();
+
     }
 
 //    public Pose2D robotPose() {
