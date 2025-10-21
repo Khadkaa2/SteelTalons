@@ -77,6 +77,8 @@ public class TeleOpControlled extends LinearOpMode {
 
     private boolean feederFirstTime = true;
 
+    int slotGoal = -1;
+
     public void runOpMode() throws InterruptedException {
 
         //init hardware
@@ -196,47 +198,36 @@ public class TeleOpControlled extends LinearOpMode {
         int ticks = 1426;
         int absolutePos = fan.getCurrentPosition();
         int relativePos = fan.getCurrentPosition() % ticks;
+        int rotationOffset = absolutePos-relativePos;
+        int sign = (int)Math.signum(absolutePos == 0 ? 1 : absolutePos);
+        slotGoal = slot;
         if (intake) {
             if (slot == 0) {
-                //this section good
-                if (Math.abs((relativePos)) <= (ticks / 2))
-                    fan.setTargetPosition((absolutePos - relativePos));
-                else
-                    fan.setTargetPosition((int) Math.signum(absolutePos) * ticks + (absolutePos - relativePos));
+               if(relativePos <= ticks/2)
+                   fan.setTargetPosition(rotationOffset);
+               else
+                   fan.setTargetPosition(rotationOffset+ sign*ticks);
             } else if (slot == 1) {
-                //y-b wrong
-                fan.setTargetPosition((int) Math.signum(absolutePos) * ticks / 3 + (absolutePos - relativePos));
-//                if (Math.abs((relativePos + (ticks / 3))) <= (ticks / 2 + ticks / 3))
-//                    fan.setTargetPosition((int) Math.signum(absolutePos) * ticks / 3 + (absolutePos - relativePos));
-//                else
-//                    fan.setTargetPosition((int) Math.signum(absolutePos) * ticks * 4 / 3 + (absolutePos - relativePos));
-            } else if (slot == 2) {
-                //a-y and b-y wrong
-                if (Math.abs(relativePos - (ticks / 3)) <= ticks / 6)
-                    fan.setTargetPosition((int) Math.signum(absolutePos) * -1 * ticks / 3 + (absolutePos - relativePos));
+                if(relativePos <= 5*ticks/6)
+                    fan.setTargetPosition(rotationOffset+sign*ticks/3);
                 else
-                    fan.setTargetPosition((int) Math.signum(absolutePos) * ticks * 2 / 3 + (absolutePos - relativePos));
+                    fan.setTargetPosition(rotationOffset+sign*4*ticks/3);
+            } else if (slot == 2) {
+               if(relativePos >= ticks/6)
+                   fan.setTargetPosition(rotationOffset+sign*2*ticks/3);
+               else
+                   fan.setTargetPosition(rotationOffset-sign*ticks/3);
+
             }
         }
-//          else {
-//            if (slot == 0) {
-//                if ((relativePos-(ticks/2)) < (ticks/2))
-//                    fan.setTargetPosition(ticks / 2);
-//                else
-//                    fan.setTargetPosition(ticks);
-//            } else if (slot == 1) {
-//                if (((relativePos - (ticks/6)) < (ticks/2)))
-//                    fan.setTargetPosition(-ticks / 6);
-//                else
-//                    fan.setTargetPosition(5*ticks/6);
-//
-//            } else if (slot == 2) {
-//                if (((relativePos - (ticks/6)) < (ticks/2)))
-//                    fan.setTargetPosition(ticks / 6);
-//                else
-//                    fan.setTargetPosition(7*ticks/6);
-//            }
-//        }
+          else {
+            if (slot == 0) {
+                fan.setTargetPosition(rotationOffset + ticks/2);
+            } else if (slot == 1) {
+
+            } else if (slot == 2) {
+            }
+        }
     }
 
 //    public void initAprilTag() {
@@ -301,6 +292,7 @@ public class TeleOpControlled extends LinearOpMode {
         telemetry.addData("Manual Mode", manual);
         telemetry.addData("fanPos", fan.getCurrentPosition());
         telemetry.addData("fanTarget", fan.getTargetPosition());
+        telemetry.addData("Slot Goal", slotGoal);
         telemetry.update();
     }
 
@@ -324,11 +316,11 @@ public class TeleOpControlled extends LinearOpMode {
         //this is the code for all the manualmode in teleop. There will be no automation for player2 in this mode
 
         //fan control
-        if (gamepad2.aWasPressed()) {
+        if (gamepad2.a) {
             setStoragePos(0, !gamepad2.dpad_left);
-        } else if (gamepad2.bWasPressed()) {
+        } else if (gamepad2.b) {
             setStoragePos(1, !gamepad2.dpad_left);
-        } else if (gamepad2.yWasPressed()) {
+        } else if (gamepad2.y) {
             setStoragePos(2, !gamepad2.dpad_left);
         }
 
