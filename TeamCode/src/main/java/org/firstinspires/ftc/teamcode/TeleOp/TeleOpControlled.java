@@ -204,13 +204,13 @@ public class TeleOpControlled extends LinearOpMode {
                 else
                     fan.setTargetPosition((int)Math.signum(relativePos)*ticks+(absolutePos-relativePos));
             } else if (slot == 1) {
-                //might work (condition is now correct) (I think formulas are correct) (something messed up in testing)
+                //might work (condition is now correct) (I think formulas are correct)
                 if(Math.abs((relativePos+(ticks/3))) < (ticks/2 + ticks/3))
                     fan.setTargetPosition((int)Math.signum(relativePos)*ticks/3+(absolutePos-relativePos));
                 else
                     fan.setTargetPosition((int)Math.signum(relativePos)*ticks * 4/3+(absolutePos-relativePos));
             } else if (slot == 2) {
-                //less likely than other sections but I coded it based off of the pattern. (something messed up in testing)
+                //default needs to be -ticks/3
                 if (Math.abs((relativePos + (2*ticks/3))) < (ticks/2 + 2*ticks/3))
                     fan.setTargetPosition((int)Math.signum(relativePos)*2*ticks/3 + (absolutePos-relativePos));
                 else
