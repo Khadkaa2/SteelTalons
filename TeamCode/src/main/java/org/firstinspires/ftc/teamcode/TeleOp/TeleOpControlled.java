@@ -199,6 +199,8 @@ public class TeleOpControlled extends LinearOpMode {
         int absolutePos = fan.getCurrentPosition();
         int relativePos = fan.getCurrentPosition() % ticks;
         int rotationOffset = absolutePos-relativePos;
+
+        relativePos = Math.abs(relativePos);
         int sign = (int)Math.signum(absolutePos == 0 ? 1 : absolutePos);
         slotGoal = slot;
         if (intake) {
@@ -206,26 +208,33 @@ public class TeleOpControlled extends LinearOpMode {
                if(relativePos <= ticks/2)
                    fan.setTargetPosition(rotationOffset);
                else
-                   fan.setTargetPosition(rotationOffset+ sign*ticks);
+                   fan.setTargetPosition(rotationOffset + ticks);
             } else if (slot == 1) {
                 if(relativePos <= 5*ticks/6)
-                    fan.setTargetPosition(rotationOffset+sign*ticks/3);
+                    fan.setTargetPosition(rotationOffset + ticks/3);
                 else
-                    fan.setTargetPosition(rotationOffset+sign*4*ticks/3);
+                    fan.setTargetPosition(rotationOffset + 4*ticks/3);
             } else if (slot == 2) {
                if(relativePos >= ticks/6)
-                   fan.setTargetPosition(rotationOffset+sign*2*ticks/3);
+                   fan.setTargetPosition(rotationOffset + 2*ticks/3);
                else
-                   fan.setTargetPosition(rotationOffset-sign*ticks/3);
+                   fan.setTargetPosition(rotationOffset - ticks/3);
 
             }
         }
-          else {
+        else {
             if (slot == 0) {
                 fan.setTargetPosition(rotationOffset + ticks/2);
             } else if (slot == 1) {
-
+                if(relativePos >= ticks/3)
+                    fan.setTargetPosition(rotationOffset + 5*ticks/6);
+                else
+                    fan.setTargetPosition(rotationOffset - ticks/6);
             } else if (slot == 2) {
+                if(relativePos >= 2*ticks/3)
+                    fan.setTargetPosition(rotationOffset + 7*ticks/6);
+                else
+                    fan.setTargetPosition(rotationOffset + ticks/6);
             }
         }
     }
