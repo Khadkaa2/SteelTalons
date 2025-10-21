@@ -199,42 +199,44 @@ public class TeleOpControlled extends LinearOpMode {
         if (intake) {
             if (slot == 0) {
                 //this section good
-                if(Math.abs((relativePos))<(ticks /2))
-                    fan.setTargetPosition((absolutePos-relativePos));
+                if (Math.abs((relativePos)) <= (ticks / 2))
+                    fan.setTargetPosition((absolutePos - relativePos));
                 else
-                    fan.setTargetPosition((int)Math.signum(relativePos)*ticks+(absolutePos-relativePos));
+                    fan.setTargetPosition((int) Math.signum(absolutePos) * ticks + (absolutePos - relativePos));
             } else if (slot == 1) {
-                //might work (condition is now correct) (I think formulas are correct)
-                if(Math.abs((relativePos+(ticks/3))) < (ticks/2 + ticks/3))
-                    fan.setTargetPosition((int)Math.signum(relativePos)*ticks/3+(absolutePos-relativePos));
-                else
-                    fan.setTargetPosition((int)Math.signum(relativePos)*ticks * 4/3+(absolutePos-relativePos));
+                //y-b wrong
+                fan.setTargetPosition((int) Math.signum(absolutePos) * ticks / 3 + (absolutePos - relativePos));
+//                if (Math.abs((relativePos + (ticks / 3))) <= (ticks / 2 + ticks / 3))
+//                    fan.setTargetPosition((int) Math.signum(absolutePos) * ticks / 3 + (absolutePos - relativePos));
+//                else
+//                    fan.setTargetPosition((int) Math.signum(absolutePos) * ticks * 4 / 3 + (absolutePos - relativePos));
             } else if (slot == 2) {
-                //default needs to be -ticks/3
-                if (Math.abs((relativePos + (2*ticks/3))) < (ticks/2 + 2*ticks/3))
-                    fan.setTargetPosition((int)Math.signum(relativePos)*2*ticks/3 + (absolutePos-relativePos));
+                //a-y and b-y wrong
+                if (Math.abs(relativePos - (ticks / 3)) <= ticks / 6)
+                    fan.setTargetPosition((int) Math.signum(absolutePos) * -1 * ticks / 3 + (absolutePos - relativePos));
                 else
-                    fan.setTargetPosition((int)Math.signum(relativePos)*ticks * 5/3+(absolutePos-relativePos));
-            }
-        } else {
-            if (slot == 0) {
-                if ((relativePos-(ticks/2)) < (ticks/2))
-                    fan.setTargetPosition(ticks / 2);
-                else
-                    fan.setTargetPosition(ticks);
-            } else if (slot == 1) {
-                if (((relativePos - (ticks/6)) < (ticks/2)))
-                    fan.setTargetPosition(-ticks / 6);
-                else
-                    fan.setTargetPosition(5*ticks/6);
-
-            } else if (slot == 2) {
-                if (((relativePos - (ticks/6)) < (ticks/2)))
-                    fan.setTargetPosition(ticks / 6);
-                else
-                    fan.setTargetPosition(7*ticks/6);
+                    fan.setTargetPosition((int) Math.signum(absolutePos) * ticks * 2 / 3 + (absolutePos - relativePos));
             }
         }
+//          else {
+//            if (slot == 0) {
+//                if ((relativePos-(ticks/2)) < (ticks/2))
+//                    fan.setTargetPosition(ticks / 2);
+//                else
+//                    fan.setTargetPosition(ticks);
+//            } else if (slot == 1) {
+//                if (((relativePos - (ticks/6)) < (ticks/2)))
+//                    fan.setTargetPosition(-ticks / 6);
+//                else
+//                    fan.setTargetPosition(5*ticks/6);
+//
+//            } else if (slot == 2) {
+//                if (((relativePos - (ticks/6)) < (ticks/2)))
+//                    fan.setTargetPosition(ticks / 6);
+//                else
+//                    fan.setTargetPosition(7*ticks/6);
+//            }
+//        }
     }
 
 //    public void initAprilTag() {
@@ -297,6 +299,8 @@ public class TeleOpControlled extends LinearOpMode {
         telemetry.addData("Pattern", SharedData.greenIndex);
         telemetry.addLine(String.format("Storage: %s, %s, %s", SharedData.storage[0], SharedData.storage[1], SharedData.storage[2] ));
         telemetry.addData("Manual Mode", manual);
+        telemetry.addData("fanPos", fan.getCurrentPosition());
+        telemetry.addData("fanTarget", fan.getTargetPosition());
         telemetry.update();
     }
 
@@ -320,11 +324,11 @@ public class TeleOpControlled extends LinearOpMode {
         //this is the code for all the manualmode in teleop. There will be no automation for player2 in this mode
 
         //fan control
-        if (gamepad2.a) {
+        if (gamepad2.aWasPressed()) {
             setStoragePos(0, !gamepad2.dpad_left);
-        } else if (gamepad2.b) {
+        } else if (gamepad2.bWasPressed()) {
             setStoragePos(1, !gamepad2.dpad_left);
-        } else if (gamepad2.y) {
+        } else if (gamepad2.yWasPressed()) {
             setStoragePos(2, !gamepad2.dpad_left);
         }
 
@@ -352,7 +356,7 @@ public class TeleOpControlled extends LinearOpMode {
         // Two ways of manually moving the fan
         
         //sticks 
-        if (gamepad2.dpad_down) fan.setTargetPosition((int)(fan.getCurrentPosition() + gamepad2.right_stick_x*100000));
+        if (gamepad2.dpad_down) fan.setTargetPosition((int)(fan.getCurrentPosition() + gamepad2.right_stick_x*10));
 
         
 
