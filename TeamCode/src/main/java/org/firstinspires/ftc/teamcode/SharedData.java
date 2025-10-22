@@ -7,6 +7,7 @@ public class SharedData {
     public static int greenIndex = 0;
     public static Pose toTeleopPose;
     public static ColorSensed[] storage = {ColorSensed.GREEN,ColorSensed.PURPLE,ColorSensed.PURPLE};
+    public static boolean red = true;
     public static void reset() {
         greenIndex = 0;
         storage[0] = ColorSensed.GREEN;

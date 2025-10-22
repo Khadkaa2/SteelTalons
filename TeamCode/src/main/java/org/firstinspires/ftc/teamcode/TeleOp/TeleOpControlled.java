@@ -23,7 +23,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
-import org.firstinspires.ftc.teamcode.Auto.RedPoseConstants;
+import org.firstinspires.ftc.teamcode.Auto.PoseConstants;
+
 
 import com.pedropathing.paths.PathChain;
 
@@ -51,7 +52,7 @@ public class TeleOpControlled extends LinearOpMode {
 
     private ColorSensor entranceColor;
 
-    private RedPoseConstants poses = new RedPoseConstants();
+    private PoseConstants poses = new PoseConstants();
     private Follower f;
     private boolean automated = false;
     private boolean intaking = false;
@@ -80,6 +81,7 @@ public class TeleOpControlled extends LinearOpMode {
     int slotGoal = -1;
 
     public void runOpMode() throws InterruptedException {
+
 
         //init hardware
         fan = hardwareMap.get(DcMotorEx.class, "sortMotor");
@@ -140,8 +142,10 @@ public class TeleOpControlled extends LinearOpMode {
                         -gamepad1.left_stick_y * speedMultiplier,
                         -gamepad1.left_stick_x * speedMultiplier,
                         -gamepad1.right_stick_x * speedMultiplier,
-                        false
+                        false,
+                        SharedData.red ? 0 : Math.toRadians(180)
                 );
+
             }
 
             //Slow mode (.1 speed)
@@ -302,6 +306,7 @@ public class TeleOpControlled extends LinearOpMode {
         telemetry.addData("fanPos", fan.getCurrentPosition());
         telemetry.addData("fanTarget", fan.getTargetPosition());
         telemetry.addData("Slot Goal", slotGoal);
+        telemetry.addData("Side", SharedData.red ? "Red" : "Blue");
         telemetry.update();
     }
 

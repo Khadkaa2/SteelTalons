@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-import org.firstinspires.ftc.teamcode.Auto.RedPoseConstants;
+import org.firstinspires.ftc.teamcode.Auto.PoseConstants;
 import org.firstinspires.ftc.teamcode.ColorSensed;
 import org.firstinspires.ftc.teamcode.SharedData;
 import org.firstinspires.ftc.teamcode.pedroPathing.Tuning;
@@ -44,14 +44,14 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
-@Autonomous(name = "Red Autonomous")
+@Autonomous(name = "Autonomous")
 public class MovementAuto extends OpMode {
 
     private Follower f;
     public PanelsTelemetry panels = PanelsTelemetry.INSTANCE;
     private Timer pathTimer, actionTimer, opmodeTimer, colorTimer, launchTimer,intakeTimer, detectColorTimer;
     private int pathState;
-    private RedPoseConstants poses = new RedPoseConstants();
+    private PoseConstants poses = new PoseConstants();
     Pose currentPose = null;
     private Path start, end, p, point;
     private PathChain one, two, three, four, five, six;
@@ -159,6 +159,7 @@ public class MovementAuto extends OpMode {
         telemetry.addData("launching", launching);
         telemetry.addData("cc", currentColor);
         telemetry.addData("pc", previousColor);
+        telemetry.addData("Side", SharedData.red ? "Red" : "Blue");
         panels.getTelemetry().update();
 
 
@@ -218,7 +219,7 @@ public class MovementAuto extends OpMode {
 
         //detects if ready to launch and set storage position
         //need to adapt code so that if multiple greens/ not enough purples are inputted, it will still launch what it has
-        if(launching && launchTimer.getElapsedTimeSeconds()>3.5) {
+        if(launching && launchTimer.getElapsedTimeSeconds()>1) {
             int ind = -1;
             if(timesLaunched == SharedData.greenIndex) {
                 ind = getGreenIndex();
@@ -323,6 +324,7 @@ public class MovementAuto extends OpMode {
 
         SharedData.greenIndex = index;
         telemetry.addData("Green Index", index );
+        telemetry.addData("Side", SharedData.red ? "Red" : "Blue");
 
 
         currentPose = robotPose();
@@ -397,7 +399,7 @@ public class MovementAuto extends OpMode {
                 break;
             case 1:
                 //Align 1
-                if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 11.5) {
+                if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 4) {
                     f.followPath(one, true);
                     setPathState(2);
                     sendPose();
@@ -425,7 +427,7 @@ public class MovementAuto extends OpMode {
                 break;
             case 4:
                 //Align 2
-                if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 11.5) {
+                if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 4) {
                     f.followPath(four, true);
                     setPathState(5);
                     sendPose();
@@ -453,7 +455,7 @@ public class MovementAuto extends OpMode {
                 break;
             case 7:
                 //move to human area
-                if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 11.5) {
+                if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 4) {
                     f.followPath(end, true);
                     setPathState(8);
                     sendPose();
