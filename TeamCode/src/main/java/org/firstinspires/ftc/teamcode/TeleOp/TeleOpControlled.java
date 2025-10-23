@@ -199,14 +199,13 @@ public class TeleOpControlled extends LinearOpMode {
 
         }
     }
-
     public void setStoragePos(int slot, boolean intake) {
         int ticks = 1426;
         int absolutePos = fan.getCurrentPosition();
-        int relativePos = fan.getCurrentPosition() % ticks;
+        int relativePos = absolutePos % ticks;
         int rotationOffset = absolutePos-relativePos;
 
-        relativePos = Math.abs(relativePos);
+        relativePos = (relativePos+ticks) % ticks;
         int sign = (int)Math.signum(absolutePos == 0 ? 1 : absolutePos);
         slotGoal = slot;
         if (intake) {
