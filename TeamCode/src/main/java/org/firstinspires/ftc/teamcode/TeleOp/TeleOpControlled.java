@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
+
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
@@ -362,7 +364,16 @@ public class TeleOpControlled extends LinearOpMode {
         // Two ways of manually moving the fan
         
         //sticks 
-        if (gamepad2.dpad_down) fan.setTargetPosition((int)(fan.getCurrentPosition() + gamepad2.right_stick_x*10));
+        if (gamepad2.dpad_down) {
+            if (gamepad2.start){
+                fan.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+                fan.setTargetPosition(fan.getCurrentPosition());
+                fan.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                telemetry.addData("START" , gamepad2.start);
+            }
+            else fan.setTargetPosition((int) (fan.getCurrentPosition() + gamepad2.right_stick_x * 10));
+
+        }
 
         
 
