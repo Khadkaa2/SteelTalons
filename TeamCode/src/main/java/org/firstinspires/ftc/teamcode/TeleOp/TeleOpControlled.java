@@ -29,6 +29,8 @@ import org.firstinspires.ftc.teamcode.Auto.PoseConstants;
 
 
 import com.pedropathing.paths.PathChain;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -51,8 +53,12 @@ public class TeleOpControlled extends LinearOpMode {
     private DcMotorEx fan = null;
     private CRServo intakeServo;
     private CRServo feeder;
+    private DcMotorEx rightLaunch = null;
+    private DcMotorEx leftLaunch = null;
 
     private ColorSensor entranceColor;
+    private Servo launchAngle;
+
 
     private PoseConstants poses = new PoseConstants();
     private Follower f;
@@ -90,6 +96,18 @@ public class TeleOpControlled extends LinearOpMode {
         intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
         entranceColor = hardwareMap.get(ColorSensor.class, "intakeColorSensor");
         feeder = hardwareMap.get(CRServo.class, "feederServo");
+        rightLaunch = hardwareMap.get(DcMotorEx.class, "rightLaunch");
+        leftLaunch = hardwareMap.get(DcMotorEx.class, "leftLaunch");
+        //servo = hardwareMap.get(Servo.class, "angleMotor");
+
+        //make launchmotors track pos and brake
+        rightLaunch.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftLaunch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftLaunch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightLaunch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightLaunch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
 
         //init fan
         fan.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -302,12 +320,14 @@ public class TeleOpControlled extends LinearOpMode {
 //            telemetry.addData("Color Timer", colorTimer.getElapsedTimeSeconds());
 //            telemetry.addData("Launch Timer", launchTimer.getElapsedTimeSeconds());
         telemetry.addData("Pattern", SharedData.greenIndex);
-        telemetry.addLine(String.format("Storage: %s, %s, %s", SharedData.storage[0], SharedData.storage[1], SharedData.storage[2] ));
+        //telemetry.addLine(String.format("Storage: %s, %s, %s", SharedData.storage[0], SharedData.storage[1], SharedData.storage[2] ));
         telemetry.addData("Manual Mode", manual);
         telemetry.addData("fanPos", fan.getCurrentPosition());
         telemetry.addData("fanTarget", fan.getTargetPosition());
         telemetry.addData("Slot Goal", slotGoal);
         telemetry.addData("Side", SharedData.red ? "Red" : "Blue");
+        telemetry.addLine(String.format("LeftVel: %f\nRightVel: %f",leftLaunch.getVelocity(), rightLaunch.getVelocity() ));
+
         telemetry.update();
     }
 
@@ -340,6 +360,7 @@ public class TeleOpControlled extends LinearOpMode {
         }
 
         //Launch motor theory code
+
         /* if (gamepad1.rightTrigger >= .2){
                 launchMotor.setPower( far ? farStrength : closeStrength );
             }
@@ -361,7 +382,7 @@ public class TeleOpControlled extends LinearOpMode {
         
         
         // Two ways of manually moving the fan
-        
+
         //sticks 
         if (gamepad2.dpad_down) {
             if (gamepad2.start){
@@ -371,10 +392,12 @@ public class TeleOpControlled extends LinearOpMode {
                 telemetry.addData("START" , gamepad2.start);
             }
             else fan.setTargetPosition((int) (fan.getCurrentPosition() + gamepad2.right_stick_x * 10));
-
         }
 
-        
+        leftLaunch.setVelocity(-gamepad2.right_stick_y * 100000);
+        rightLaunch.setVelocity(-gamepad2.right_stick_y * 100000);
+
+
 
 
     }
