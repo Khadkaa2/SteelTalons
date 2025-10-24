@@ -223,7 +223,6 @@ public class TeleOpControlled extends LinearOpMode {
         int relativePos = absolutePos % ticks;
         int rotationOffset = absolutePos-relativePos;
 
-        relativePos = (relativePos+ticks) % ticks;
         int sign = (int)Math.signum(absolutePos == 0 ? 1 : absolutePos);
         slotGoal = slot;
         if (intake) {
