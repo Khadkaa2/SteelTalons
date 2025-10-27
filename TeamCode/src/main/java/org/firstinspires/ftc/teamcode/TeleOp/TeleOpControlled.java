@@ -475,8 +475,8 @@ public class TeleOpControlled extends LinearOpMode {
             if(!feederFirstTime) {
                 if(rightLaunch.getVelocity() >= 2400 && leftLaunch.getVelocity() >= 2400)
                     feeder.setPower(1);
-                rightLaunch.setVelocity(3000);
-                leftLaunch.setVelocity(3000);
+                rightLaunch.setVelocity(2600);
+                leftLaunch.setVelocity(2600);
             }
         }
         else {
