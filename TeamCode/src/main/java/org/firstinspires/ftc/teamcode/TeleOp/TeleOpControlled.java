@@ -102,9 +102,9 @@ public class TeleOpControlled extends LinearOpMode {
 
         //make launchmotors track pos and brake
         rightLaunch.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftLaunch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftLaunch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         leftLaunch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightLaunch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightLaunch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightLaunch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
@@ -319,7 +319,7 @@ public class TeleOpControlled extends LinearOpMode {
 //            telemetry.addData("Color Timer", colorTimer.getElapsedTimeSeconds());
 //            telemetry.addData("Launch Timer", launchTimer.getElapsedTimeSeconds());
         telemetry.addData("Pattern", SharedData.greenIndex);
-        //telemetry.addLine(String.format("Storage: %s, %s, %s", SharedData.storage[0], SharedData.storage[1], SharedData.storage[2] ));
+        telemetry.addLine(String.format("Storage: %s, %s, %s", SharedData.storage[0], SharedData.storage[1], SharedData.storage[2] ));
         telemetry.addData("Manual Mode", manual);
         telemetry.addData("fanPos", fan.getCurrentPosition());
         telemetry.addData("fanTarget", fan.getTargetPosition());
@@ -373,7 +373,7 @@ public class TeleOpControlled extends LinearOpMode {
         //flapper
 
         if (gamepad2.left_trigger >= .2) {
-            feeder.setPower(-1);
+            feeder.setPower(1);
         }
         else{
             feeder.setPower(0);
@@ -393,8 +393,8 @@ public class TeleOpControlled extends LinearOpMode {
             else fan.setTargetPosition((int) (fan.getCurrentPosition() + gamepad2.right_stick_x * 10));
         }
 
-        leftLaunch.setVelocity(-gamepad2.right_stick_y * 100000);
-        rightLaunch.setVelocity(-gamepad2.right_stick_y * 100000);
+        leftLaunch.setVelocity(gamepad2.right_trigger * 2500);
+        rightLaunch.setVelocity(gamepad2.right_trigger * 2500);
 
 
 
@@ -433,7 +433,7 @@ public class TeleOpControlled extends LinearOpMode {
         //dpad up for green
         //dpad down for purple
         //dpad left to clear storage (for testing)
-        if(launchTimer.getElapsedTimeSeconds()>3.5){
+        if(launchTimer.getElapsedTimeSeconds()>2){
             //launches green
             if (gamepad2.dpad_up) {
 
@@ -471,12 +471,18 @@ public class TeleOpControlled extends LinearOpMode {
                 SharedData.emptyStorage();
             }
         }
-        if(launchTimer.getElapsedTimeSeconds()<3.5) {
-            if(!feederFirstTime)
-                feeder.setPower(-1);
+        if(launchTimer.getElapsedTimeSeconds()<2) {
+            if(!feederFirstTime) {
+                if(rightLaunch.getVelocity() >= 2400 && leftLaunch.getVelocity() >= 2400)
+                    feeder.setPower(1);
+                rightLaunch.setVelocity(3000);
+                leftLaunch.setVelocity(3000);
+            }
         }
         else {
             feeder.setPower(0);
+            rightLaunch.setVelocity(0);
+            leftLaunch.setVelocity(0);
             feederFirstTime = false;
         }
         //Senses if a ball is in the intake area
@@ -510,7 +516,7 @@ public class TeleOpControlled extends LinearOpMode {
         }
 
         //swaps to open slot (if available)
-        else if(currentColor == ColorSensed.NO_COLOR && colorTimer.getElapsedTimeSeconds() > .5 && launchTimer.getElapsedTimeSeconds() > 3.5){
+        else if(currentColor == ColorSensed.NO_COLOR && colorTimer.getElapsedTimeSeconds() > .5 && launchTimer.getElapsedTimeSeconds() > 2){
 
             if(SharedData.storage[0] == ColorSensed.NO_COLOR)
 

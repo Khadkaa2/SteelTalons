@@ -32,6 +32,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -58,15 +59,20 @@ public class MovementAuto extends OpMode {
     private static AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
     int index;
+
     private CRServo intakeServo = null;
     private CRServo feeder = null;
     private ColorSensor entranceColor;
-    private DcMotorEx sortMotor = null;
+    private DcMotorEx fan = null;
+    private DcMotorEx rightLaunch = null;
+    private DcMotorEx leftLaunch = null;
+
     boolean launching = false;
     boolean intaking = false;
     int timesLaunched = 0;
     private ColorSensed previousColor = ColorSensed.NO_COLOR;
     private ColorSensed currentColor = ColorSensed.NO_COLOR;
+
 
 
 
@@ -120,23 +126,45 @@ public class MovementAuto extends OpMode {
         pathTimer.resetTimer();
     }
 
-    public void setStoragePos(int slot, boolean intake){
+    public void setStoragePos(int slot, boolean intake) {
         int ticks = 1426;
-        if(intake) {
+        int absolutePos = fan.getCurrentPosition();
+        int relativePos = absolutePos % ticks;
+        int rotationOffset = absolutePos-relativePos;
+
+        int sign = (int)Math.signum(absolutePos == 0 ? 1 : absolutePos);
+        if (intake) {
             if (slot == 0) {
-                sortMotor.setTargetPosition(0);
+                if(relativePos <= ticks/2)
+                    fan.setTargetPosition(rotationOffset);
+                else
+                    fan.setTargetPosition(rotationOffset + ticks);
             } else if (slot == 1) {
-                sortMotor.setTargetPosition(ticks / 3);
+                if(relativePos <= 5*ticks/6)
+                    fan.setTargetPosition(rotationOffset + ticks/3);
+                else
+                    fan.setTargetPosition(rotationOffset + 4*ticks/3);
             } else if (slot == 2) {
-                sortMotor.setTargetPosition(2 * ticks / 3);
+                if(relativePos >= ticks/6)
+                    fan.setTargetPosition(rotationOffset + 2*ticks/3);
+                else
+                    fan.setTargetPosition(rotationOffset - ticks/3);
+
             }
-        }else{
+        }
+        else {
             if (slot == 0) {
-                sortMotor.setTargetPosition(ticks/2);
+                fan.setTargetPosition(rotationOffset + ticks/2);
             } else if (slot == 1) {
-                sortMotor.setTargetPosition(-ticks/6);
+                if(relativePos >= ticks/3)
+                    fan.setTargetPosition(rotationOffset + 5*ticks/6);
+                else
+                    fan.setTargetPosition(rotationOffset - ticks/6);
             } else if (slot == 2) {
-                sortMotor.setTargetPosition(ticks / 6);
+                if(relativePos >= 2*ticks/3)
+                    fan.setTargetPosition(rotationOffset + 7*ticks/6);
+                else
+                    fan.setTargetPosition(rotationOffset + ticks/6);
             }
         }
     }
@@ -154,7 +182,7 @@ public class MovementAuto extends OpMode {
         panels.getTelemetry().addData("heading", f.getPose().getHeading());
         panels.getTelemetry().addData("x", f.getPose().getX());
         panels.getTelemetry().addData("y", f.getPose().getY());
-        telemetry.addData("Sort Encoder", sortMotor.getCurrentPosition());
+        telemetry.addData("Sort Encoder", fan.getCurrentPosition());
         telemetry.addData("Storage", SharedData.storage[0] + ", " + SharedData.storage[1] + ", " + SharedData.storage[2]);
         telemetry.addData("launching", launching);
         telemetry.addData("cc", currentColor);
@@ -219,7 +247,7 @@ public class MovementAuto extends OpMode {
 
         //detects if ready to launch and set storage position
         //need to adapt code so that if multiple greens/ not enough purples are inputted, it will still launch what it has
-        if(launching && launchTimer.getElapsedTimeSeconds()>1) {
+        if(launching && launchTimer.getElapsedTimeSeconds()>2) {
             int ind = -1;
             if(timesLaunched == SharedData.greenIndex) {
                 ind = getGreenIndex();
@@ -230,7 +258,10 @@ public class MovementAuto extends OpMode {
             }
 
             if(ind != -1) {
-                feeder.setPower(-1);
+                leftLaunch.setVelocity(2500);
+                rightLaunch.setVelocity(2500);
+                if(leftLaunch.getVelocity() >= 2400 && rightLaunch.getVelocity() >= 2400)
+                    feeder.setPower(1);
                 setStoragePos(ind, false);
                 timesLaunched ++;
                 if(timesLaunched == 3)
@@ -297,14 +328,22 @@ public class MovementAuto extends OpMode {
 
         intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
         entranceColor = hardwareMap.get(ColorSensor.class, "intakeColorSensor");
-        sortMotor = hardwareMap.get(DcMotorEx.class, "sortMotor");
+        fan = hardwareMap.get(DcMotorEx.class, "sortMotor");
         feeder = hardwareMap.get(CRServo.class,"feederServo");
+        rightLaunch = hardwareMap.get(DcMotorEx.class, "rightLaunch");
+        leftLaunch = hardwareMap.get(DcMotorEx.class, "leftLaunch");
 
-        sortMotor.setTargetPosition(0);
-        sortMotor.setTargetPositionTolerance(10);
+        rightLaunch.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftLaunch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        leftLaunch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightLaunch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        rightLaunch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        sortMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        sortMotor.setPower(1);
+        fan.setTargetPosition(0);
+        fan.setTargetPositionTolerance(10);
+
+        fan.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        fan.setPower(1);
 
         intakeServo.setPower(0);
         index = 0;
@@ -399,7 +438,7 @@ public class MovementAuto extends OpMode {
                 break;
             case 1:
                 //Align 1
-                if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 4) {
+                if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 7) {
                     f.followPath(one, true);
                     setPathState(2);
                     sendPose();
@@ -427,7 +466,7 @@ public class MovementAuto extends OpMode {
                 break;
             case 4:
                 //Align 2
-                if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 4) {
+                if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 7) {
                     f.followPath(four, true);
                     setPathState(5);
                     sendPose();
@@ -455,7 +494,7 @@ public class MovementAuto extends OpMode {
                 break;
             case 7:
                 //move to human area
-                if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 4) {
+                if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 7) {
                     f.followPath(end, true);
                     setPathState(8);
                     sendPose();
