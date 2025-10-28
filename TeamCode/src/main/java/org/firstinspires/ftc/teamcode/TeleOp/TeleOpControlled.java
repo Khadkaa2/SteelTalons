@@ -488,7 +488,7 @@ public class TeleOpControlled extends LinearOpMode {
         //Senses if a ball is in the intake area
         //Sets sorting position to open area on detection
         //only detects every .2 seconds to reduce input lag
-        if(detectColorTimer.getElapsedTimeSeconds()>.2) {
+        if(detectColorTimer.getElapsedTimeSeconds()>.1) {
             currentColor = detectColor();
             detectColorTimer.resetTimer();
         }

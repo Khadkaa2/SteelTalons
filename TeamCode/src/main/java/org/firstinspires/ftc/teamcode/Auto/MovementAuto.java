@@ -68,7 +68,7 @@ public class MovementAuto extends OpMode {
     private DcMotorEx leftLaunch = null;
 
     boolean launching = false;
-    boolean intaking = false;
+
     int timesLaunched = 0;
     private ColorSensed previousColor = ColorSensed.NO_COLOR;
     private ColorSensed currentColor = ColorSensed.NO_COLOR;
@@ -194,8 +194,9 @@ public class MovementAuto extends OpMode {
         telemetry.addData("Path State", pathState);
 
         //sets servo to intake
-        if(pathState == 3||pathState == 6)
+        if((pathState == 3|| pathState == 4||pathState == 6||pathState == 7) && !launching)
             intakeServo.setPower(1);
+
         else
             intakeServo.setPower(0);
 
@@ -204,18 +205,17 @@ public class MovementAuto extends OpMode {
 
 
         //detects color and sets storage position
-        if(detectColorTimer.getElapsedTimeSeconds()>.2) {
+        if(detectColorTimer.getElapsedTimeSeconds()>.1) {
             currentColor = detectColor();
             detectColorTimer.resetTimer();
         }
 
         //sets the slot position and color of the ball in storage
-        if (!launching && previousColor != currentColor && colorTimer.getElapsedTimeSeconds() > .5) {
+        if (!launching && previousColor != currentColor && colorTimer.getElapsedTimeSeconds() > .425) {
             colorTimer.resetTimer();
 
             if(currentColor != ColorSensed.NO_COLOR) {
                 intakeTimer.resetTimer();
-                intaking = true;
                 if (SharedData.storage[0] == ColorSensed.NO_COLOR) {
                     SharedData.storage[0] = currentColor;
                     setStoragePos(0, true);
@@ -225,14 +225,12 @@ public class MovementAuto extends OpMode {
                 } else if (SharedData.storage[2] == ColorSensed.NO_COLOR) {
                     SharedData.storage[2] = currentColor;
                     setStoragePos(2, true);
-                }else {
-                    intaking = false;
                 }
             }
         }
 
         //swaps to open slot (if available)
-        else if(!launching && currentColor == ColorSensed.NO_COLOR && colorTimer.getElapsedTimeSeconds() > .5){
+        else if(!launching && currentColor == ColorSensed.NO_COLOR && colorTimer.getElapsedTimeSeconds() > .425){
 
             if(SharedData.storage[0] == ColorSensed.NO_COLOR)
                 setStoragePos(0, true);
@@ -258,9 +256,9 @@ public class MovementAuto extends OpMode {
             }
 
             if(ind != -1) {
-                leftLaunch.setVelocity(2500);
-                rightLaunch.setVelocity(2500);
-                if(leftLaunch.getVelocity() >= 2400 && rightLaunch.getVelocity() >= 2400)
+                leftLaunch.setVelocity(2600);
+                rightLaunch.setVelocity(2600);
+            //    if(leftLaunch.getVelocity() >= 2400 && rightLaunch.getVelocity() >= 2400)
                     feeder.setPower(1);
                 setStoragePos(ind, false);
                 timesLaunched ++;
@@ -271,8 +269,11 @@ public class MovementAuto extends OpMode {
             }
         }
 
-        if(!launching)
+        if(!launching) {
             feeder.setPower(0);
+            leftLaunch.setVelocity(0);
+            rightLaunch.setVelocity(0);
+        }
 
         
 
@@ -478,7 +479,7 @@ public class MovementAuto extends OpMode {
                 //Pickup 2
                 if (!f.isBusy()) {
                     f.followPath(five, true);
-                    f.setMaxPower(.15);
+                    f.setMaxPower(.2);
                     setPathState(6);
                     sendPose();
                 }
