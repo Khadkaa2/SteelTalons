@@ -1,4 +1,6 @@
 package org.firstinspires.ftc.teamcode;
+import androidx.lifecycle.viewmodel.CreationExtras;
+
 import com.pedropathing.geometry.Pose;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
@@ -6,8 +8,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 public class SharedData {
     public static int greenIndex = 0;
     public static Pose toTeleopPose;
-    public static ColorSensed[] storage = {ColorSensed.GREEN,ColorSensed.PURPLE,ColorSensed.PURPLE};
+    public static ColorSensed[] storage = {ColorSensed.GREEN, ColorSensed.PURPLE, ColorSensed.PURPLE};
     public static boolean red = true;
+
     public static void reset() {
         greenIndex = 0;
         storage[0] = ColorSensed.GREEN;
@@ -15,11 +18,16 @@ public class SharedData {
         storage[2] = ColorSensed.PURPLE;
     }
 
-    public static void emptyStorage() {
-        storage[0] = ColorSensed.NO_COLOR;
-        storage[1] = ColorSensed.NO_COLOR;
-        storage[2] = ColorSensed.NO_COLOR;
+    public static boolean isEmpty() {
+        return (storage[0] == ColorSensed.NO_COLOR && storage[1] == ColorSensed.NO_COLOR && storage[2] == ColorSensed.NO_COLOR);
     }
+
+
+        public static void emptyStorage () {
+            storage[0] = ColorSensed.NO_COLOR;
+            storage[1] = ColorSensed.NO_COLOR;
+            storage[2] = ColorSensed.NO_COLOR;
+        }
 
 
 }

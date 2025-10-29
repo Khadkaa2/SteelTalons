@@ -358,20 +358,7 @@ public class TeleOpControlled extends LinearOpMode {
             setStoragePos(2, !gamepad2.dpad_left);
         }
 
-        //Launch motor theory code
-
-        /* if (gamepad1.rightTrigger >= .2){
-                launchMotor.setPower( far ? farStrength : closeStrength );
-            }
-                    or
-
-           if (trigger >= .2){
-                launchMotor.setPower(1);
-                setLauncherAngle( far ? farStrength : closeStrength  );
-        */
-
-        //flapper
-
+      //feeder
         if (gamepad2.left_trigger >= .2) {
             feeder.setPower(1);
         }

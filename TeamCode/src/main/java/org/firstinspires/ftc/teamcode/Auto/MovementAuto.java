@@ -439,7 +439,7 @@ public class MovementAuto extends OpMode {
                 break;
             case 1:
                 //Align 1
-                if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 7) {
+                if (!f.isBusy() && SharedData.isEmpty() && launchTimer.getElapsedTimeSeconds() > 1) {
                     f.followPath(one, true);
                     setPathState(2);
                     sendPose();
@@ -467,12 +467,12 @@ public class MovementAuto extends OpMode {
                 break;
             case 4:
                 //Align 2
-                if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 7) {
+                if (!f.isBusy() && SharedData.isEmpty() && launchTimer.getElapsedTimeSeconds() > 1) {
                     f.followPath(four, true);
                     setPathState(5);
                     sendPose();
                     launching = false;
-                }else if(!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 1)
+                }else if(!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 1 )
                     launching = true;
                 break;
             case 5:
