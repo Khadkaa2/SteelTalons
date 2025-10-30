@@ -106,6 +106,7 @@ public class TeleOpControlled extends LinearOpMode {
         leftLaunch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightLaunch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightLaunch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        feeder.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
 
@@ -283,9 +284,9 @@ public class TeleOpControlled extends LinearOpMode {
     }
 
     public void tele() {
-//            telemetry.addData("FOLLOWER X",f.getPose().getX());
-//            telemetry.addData("FOLLOWER Y",f.getPose().getY());
-//            telemetry.addData("FOLLOWER Heading",f.getPose().getHeading());
+            telemetry.addData("FOLLOWER X",f.getPose().getX());
+            telemetry.addData("FOLLOWER Y",f.getPose().getY());
+            telemetry.addData("FOLLOWER Heading",f.getPose().getHeading());
 //            telemetry.addData("TAGX", currentDetection.ftcPose.x );
 //            telemetry.addData("TAGY", currentDetection.ftcPose.y );
 //            telemetry.addData("TAGH", currentDetection.ftcPose.yaw);
@@ -309,23 +310,23 @@ public class TeleOpControlled extends LinearOpMode {
 
         //telemetry for Color Sensor and Storage
 //
-            telemetry.addData("Entrance Color", detectColor());
-            telemetry.addData("hue", JavaUtil.rgbToHue(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
-            telemetry.addData("r", entranceColor.red());
-            telemetry.addData("g", entranceColor.green());
-            telemetry.addData("b", entranceColor.blue());
-            telemetry.addData("saturation", JavaUtil.rgbToSaturation(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
+//            telemetry.addData("Entrance Color", detectColor());
+//            telemetry.addData("hue", JavaUtil.rgbToHue(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
+//            telemetry.addData("r", entranceColor.red());
+//            telemetry.addData("g", entranceColor.green());
+//            telemetry.addData("b", entranceColor.blue());
+//            telemetry.addData("saturation", JavaUtil.rgbToSaturation(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
 //            telemetry.addData("sort ticks", fan.getCurrentPosition());
 //            telemetry.addData("Color Timer", colorTimer.getElapsedTimeSeconds());
 //            telemetry.addData("Launch Timer", launchTimer.getElapsedTimeSeconds());
-        telemetry.addData("Pattern", SharedData.greenIndex);
+        //telemetry.addData("Pattern", SharedData.greenIndex);
         telemetry.addLine(String.format("Storage: %s, %s, %s", SharedData.storage[0], SharedData.storage[1], SharedData.storage[2] ));
         //telemetry.addData("Manual Mode", manual);
-        telemetry.addData("fanPos", fan.getCurrentPosition());
-        telemetry.addData("fanTarget", fan.getTargetPosition());
-        telemetry.addData("Slot Goal", slotGoal);
-        telemetry.addData("Side", SharedData.red ? "Red" : "Blue");
-        telemetry.addLine(String.format("LeftVel: %f\nRightVel: %f",leftLaunch.getVelocity(), rightLaunch.getVelocity() ));
+//        telemetry.addData("fanPos", fan.getCurrentPosition());
+//        telemetry.addData("fanTarget", fan.getTargetPosition());
+//        telemetry.addData("Slot Goal", slotGoal);
+        telemetry.addData("Side", !SharedData.red ? "Red" : "Blue");
+//        telemetry.addLine(String.format("LeftVel: %f\nRightVel: %f",leftLaunch.getVelocity(), rightLaunch.getVelocity() ));
 
         telemetry.update();
     }
@@ -460,10 +461,10 @@ public class TeleOpControlled extends LinearOpMode {
         }
         if(launchTimer.getElapsedTimeSeconds()<2) {
             if(!feederFirstTime) {
-                if(rightLaunch.getVelocity() >= 2350 && leftLaunch.getVelocity() >= 2350)
+                if(rightLaunch.getVelocity() >= 2200 && leftLaunch.getVelocity() >= 2200)
                     feeder.setPower(1);
-                rightLaunch.setVelocity(2400);
-                leftLaunch.setVelocity(2400);
+                rightLaunch.setVelocity(2250);
+                leftLaunch.setVelocity(2250);
             }
         }
         else {

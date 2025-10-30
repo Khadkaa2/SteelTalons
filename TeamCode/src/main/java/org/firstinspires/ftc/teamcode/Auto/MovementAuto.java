@@ -206,13 +206,12 @@ public class MovementAuto extends OpMode {
 
 
         //detects color and sets storage position
-//        if(detectColorTimer.getElapsedTimeSeconds()>.05) {
-        currentColor = detectColor();
-//            detectColorTimer.resetTimer();
-//        }
-
+        if(detectColorTimer.getElapsedTimeSeconds()>.1) {
+            currentColor = detectColor();
+            detectColorTimer.resetTimer();
+        }
         //sets the slot position and color of the ball in storage
-        if (!launching && previousColor != currentColor && colorTimer.getElapsedTimeSeconds() > .425) {
+        if (!launching && previousColor != currentColor && colorTimer.getElapsedTimeSeconds() > .5) {
             colorTimer.resetTimer();
 
             if(currentColor != ColorSensed.NO_COLOR) {
@@ -231,7 +230,7 @@ public class MovementAuto extends OpMode {
         }
 
         //swaps to open slot (if available)
-        else if(!launching && currentColor == ColorSensed.NO_COLOR && colorTimer.getElapsedTimeSeconds() > .425){
+        else if(!launching && currentColor == ColorSensed.NO_COLOR && colorTimer.getElapsedTimeSeconds() > .5){
 
             if(SharedData.storage[0] == ColorSensed.NO_COLOR)
                 setStoragePos(0, true);
@@ -254,17 +253,17 @@ public class MovementAuto extends OpMode {
 
 
             if(ind != -1) {
-                leftLaunch.setVelocity(2400);
-                rightLaunch.setVelocity(2400);
+                leftLaunch.setVelocity(2250);
+                rightLaunch.setVelocity(2250);
                 setStoragePos(ind, false);
 
             }
-            if(leftLaunch.getVelocity() >= 2350 && rightLaunch.getVelocity() >= 2350 && launch) {
+            if(leftLaunch.getVelocity() >= 2150 && rightLaunch.getVelocity() >= 2150 && launch) {
                 feeder.setPower(1);
                 launchTimer.resetTimer();
                 launch = false;
             }
-            else if(leftLaunch.getVelocity() <= 2350 && rightLaunch.getVelocity() <= 2350) {
+            else if(leftLaunch.getVelocity() <= 2150 && rightLaunch.getVelocity() <= 2150) {
                 feeder.setPower(0);
             }
             if(launchTimer.getElapsedTimeSeconds() > 1.5 && !launch) {
@@ -346,6 +345,7 @@ public class MovementAuto extends OpMode {
         leftLaunch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightLaunch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightLaunch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        feeder.setDirection(DcMotorSimple.Direction.REVERSE);
 
         fan.setTargetPosition(0);
         fan.setTargetPositionTolerance(10);
