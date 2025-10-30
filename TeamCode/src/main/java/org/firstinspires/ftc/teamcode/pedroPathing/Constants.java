@@ -32,11 +32,11 @@ public class Constants {
             .translationalPIDFCoefficients(new PIDFCoefficients(1, 0, .15, .05))
             .headingPIDFCoefficients(new PIDFCoefficients(1, 0, .1, .05))
             .drivePIDFCoefficients(
-                    new FilteredPIDFCoefficients(0.015, 0, 0, 0.6, .025)
+                    new FilteredPIDFCoefficients(2, 0, 0.005, 0.6, .025)
             )
             .secondaryHeadingPIDFCoefficients(new PIDFCoefficients(1, 0, 0, .025))
-            .secondaryDrivePIDFCoefficients( new FilteredPIDFCoefficients(0,0,0,0,0))
-            .secondaryTranslationalPIDFCoefficients(new PIDFCoefficients(0,0,0,0));
+            .secondaryDrivePIDFCoefficients( new FilteredPIDFCoefficients(0.025,0,0,0,0.025))
+            .secondaryTranslationalPIDFCoefficients(new PIDFCoefficients(0.045,0,0,0.025));
 
     public static MecanumConstants driveConstants = new MecanumConstants()
             .leftFrontMotorName("leftFront")
