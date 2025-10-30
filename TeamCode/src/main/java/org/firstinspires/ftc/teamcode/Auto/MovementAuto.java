@@ -206,10 +206,10 @@ public class MovementAuto extends OpMode {
 
 
         //detects color and sets storage position
-        if(detectColorTimer.getElapsedTimeSeconds()>.1) {
-            currentColor = detectColor();
-            detectColorTimer.resetTimer();
-        }
+//        if(detectColorTimer.getElapsedTimeSeconds()>.05) {
+        currentColor = detectColor();
+//            detectColorTimer.resetTimer();
+//        }
 
         //sets the slot position and color of the ball in storage
         if (!launching && previousColor != currentColor && colorTimer.getElapsedTimeSeconds() > .425) {
@@ -247,21 +247,16 @@ public class MovementAuto extends OpMode {
         //detects if ready to launch and set storage position
         //need to adapt code so that if multiple greens/ not enough purples are inputted, it will still launch what it has
         if(launching) {
-            int ind = -1;
-            if(timesLaunched == SharedData.greenIndex) {
-                ind = getGreenIndex();
+            int ind = getPurpleIndex();
+            if(timesLaunched == SharedData.greenIndex || ind == -1) {
+                ind = getGreenIndex() == -1 ? ind : getGreenIndex();
             }
-            else
-            {
-                ind = getPurpleIndex();
-            }
+
 
             if(ind != -1) {
                 leftLaunch.setVelocity(2400);
                 rightLaunch.setVelocity(2400);
                 setStoragePos(ind, false);
-                if(timesLaunched == 3)
-                    timesLaunched = 0;
 
             }
             if(leftLaunch.getVelocity() >= 2350 && rightLaunch.getVelocity() >= 2350 && launch) {
@@ -272,9 +267,11 @@ public class MovementAuto extends OpMode {
             else if(leftLaunch.getVelocity() <= 2350 && rightLaunch.getVelocity() <= 2350) {
                 feeder.setPower(0);
             }
-            if(feeder.getPower() > .5 && launchTimer.getElapsedTimeSeconds() > .5 && !launch) {
+            if(launchTimer.getElapsedTimeSeconds() > 1.5 && !launch) {
                 SharedData.storage[ind] = ColorSensed.NO_COLOR;
                 timesLaunched ++;
+                if(timesLaunched == 3)
+                    timesLaunched = 0;
                 launch = true;
             }
         }

@@ -9,11 +9,11 @@ import org.firstinspires.ftc.teamcode.SharedData;
 @Configurable
 public class PoseConstants {
     public Pose START_POSE =  SharedData.red ? new Pose(48,0,Math.toRadians(270)) :  new Pose(96,0,Math.toRadians(270));
-    public Pose LAUNCH_POSE = SharedData.red ? new Pose(48,6,Math.toRadians(240)) :  new Pose(96,6,Math.toRadians(300));
-    public Pose ALIGN1_POSE = SharedData.red ? new Pose(33,27,Math.toRadians(180)) :  new Pose(111,27,Math.toRadians(0));
-    public  Pose PICKUP1_POSE = SharedData.red ? new Pose(6,27, Math.toRadians(180)) :  new Pose(138,27, Math.toRadians(0));
-    public Pose ALIGN2_POSE = SharedData.red ? new Pose(33,51,Math.toRadians(180)) :  new Pose(111,51,Math.toRadians(0));
-    public Pose PICKUP2_POSE = SharedData.red ? new Pose(6, 51, Math.toRadians(180)) :  new Pose(138, 51, Math.toRadians(0));
+    public Pose LAUNCH_POSE = SharedData.red ? new Pose(48,6,Math.toRadians(243)) :  new Pose(96,6,Math.toRadians(297));
+    public Pose ALIGN1_POSE = SharedData.red ? new Pose(34,26,Math.toRadians(180)) :  new Pose(109,26,Math.toRadians(0));
+    public  Pose PICKUP1_POSE = SharedData.red ? new Pose(6,26, Math.toRadians(180)) :  new Pose(138,26, Math.toRadians(0));
+    public Pose ALIGN2_POSE = SharedData.red ? new Pose(34,50,Math.toRadians(180)) :  new Pose(109,50,Math.toRadians(0));
+    public Pose PICKUP2_POSE = SharedData.red ? new Pose(6, 50, Math.toRadians(180)) :  new Pose(138, 50, Math.toRadians(0));
     public Pose END_POSE = SharedData.red ? new Pose(12,12,Math.toRadians(240)) :  new Pose(132, 12,0);
 //    public static Pose FIELD_OFFSET;
 //    public static Pose CamOff;
