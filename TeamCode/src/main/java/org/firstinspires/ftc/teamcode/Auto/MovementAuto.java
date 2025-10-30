@@ -68,6 +68,7 @@ public class MovementAuto extends OpMode {
     private DcMotorEx leftLaunch = null;
 
     boolean launching = false;
+    boolean launch = true;
 
     int timesLaunched = 0;
     private ColorSensed previousColor = ColorSensed.NO_COLOR;
@@ -245,7 +246,7 @@ public class MovementAuto extends OpMode {
 
         //detects if ready to launch and set storage position
         //need to adapt code so that if multiple greens/ not enough purples are inputted, it will still launch what it has
-        if(launching && launchTimer.getElapsedTimeSeconds()>2) {
+        if(launching) {
             int ind = -1;
             if(timesLaunched == SharedData.greenIndex) {
                 ind = getGreenIndex();
@@ -256,16 +257,25 @@ public class MovementAuto extends OpMode {
             }
 
             if(ind != -1) {
-                leftLaunch.setVelocity(2600);
-                rightLaunch.setVelocity(2600);
-            //    if(leftLaunch.getVelocity() >= 2400 && rightLaunch.getVelocity() >= 2400)
-                    feeder.setPower(1);
+                leftLaunch.setVelocity(2400);
+                rightLaunch.setVelocity(2400);
                 setStoragePos(ind, false);
-                timesLaunched ++;
                 if(timesLaunched == 3)
                     timesLaunched = 0;
+
+            }
+            if(leftLaunch.getVelocity() >= 2350 && rightLaunch.getVelocity() >= 2350 && launch) {
+                feeder.setPower(1);
                 launchTimer.resetTimer();
+                launch = false;
+            }
+            else if(leftLaunch.getVelocity() <= 2350 && rightLaunch.getVelocity() <= 2350) {
+                feeder.setPower(0);
+            }
+            if(feeder.getPower() > .5 && launchTimer.getElapsedTimeSeconds() > .5 && !launch) {
                 SharedData.storage[ind] = ColorSensed.NO_COLOR;
+                timesLaunched ++;
+                launch = true;
             }
         }
 
