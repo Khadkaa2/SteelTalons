@@ -309,18 +309,18 @@ public class TeleOpControlled extends LinearOpMode {
 
         //telemetry for Color Sensor and Storage
 //
-//            telemetry.addData("Entrance Color", detectColor());
-//            telemetry.addData("hue", JavaUtil.rgbToHue(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
-//            telemetry.addData("r", entranceColor.red());
-//            telemetry.addData("g", entranceColor.green());
-//            telemetry.addData("b", entranceColor.blue());
-//            telemetry.addData("saturation", JavaUtil.rgbToSaturation(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
+            telemetry.addData("Entrance Color", detectColor());
+            telemetry.addData("hue", JavaUtil.rgbToHue(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
+            telemetry.addData("r", entranceColor.red());
+            telemetry.addData("g", entranceColor.green());
+            telemetry.addData("b", entranceColor.blue());
+            telemetry.addData("saturation", JavaUtil.rgbToSaturation(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
 //            telemetry.addData("sort ticks", fan.getCurrentPosition());
 //            telemetry.addData("Color Timer", colorTimer.getElapsedTimeSeconds());
 //            telemetry.addData("Launch Timer", launchTimer.getElapsedTimeSeconds());
         telemetry.addData("Pattern", SharedData.greenIndex);
         telemetry.addLine(String.format("Storage: %s, %s, %s", SharedData.storage[0], SharedData.storage[1], SharedData.storage[2] ));
-        telemetry.addData("Manual Mode", manual);
+        //telemetry.addData("Manual Mode", manual);
         telemetry.addData("fanPos", fan.getCurrentPosition());
         telemetry.addData("fanTarget", fan.getTargetPosition());
         telemetry.addData("Slot Goal", slotGoal);
