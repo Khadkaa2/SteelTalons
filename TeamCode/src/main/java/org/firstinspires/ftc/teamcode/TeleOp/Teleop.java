@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.robot.Robot;
 import com.bylazar.telemetry.PanelsTelemetry;
 
 
-@TeleOp
+//@TeleOp
 public class Teleop extends LinearOpMode {
 
     private enum RobotState {

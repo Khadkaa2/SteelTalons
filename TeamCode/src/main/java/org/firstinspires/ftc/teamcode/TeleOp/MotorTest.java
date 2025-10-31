@@ -15,7 +15,7 @@ import com.bylazar.telemetry.PanelsTelemetry;
 
 
 
-@TeleOp
+//@TeleOp
 public class MotorTest extends LinearOpMode {
 
     private Follower f;

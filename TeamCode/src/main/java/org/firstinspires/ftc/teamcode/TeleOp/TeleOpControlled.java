@@ -412,6 +412,7 @@ public class TeleOpControlled extends LinearOpMode {
         //manual color setting
         //hold right bumper and press a button for green
         //hold left bumper and press a button for purple
+        //both right and left bumper to clear
         //"a" for slot 0
         //"b" for slot 1
         //"y" for slot 2
