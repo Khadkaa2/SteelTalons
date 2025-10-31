@@ -97,7 +97,7 @@ public class MovementAuto extends OpMode {
         return -1;
     }
 
-    public  Pose robotPose(){
+    public Pose robotPose(){
         List<AprilTagDetection> detections = aprilTag.getDetections();
         for (AprilTagDetection detection : detections){
             if(detection.id == 20||detection.id == 24){
@@ -112,72 +112,83 @@ public class MovementAuto extends OpMode {
         return null;
     }
 
-    public ColorSensed detectColor() {
-        int red = entranceColor.red();
-        int blue = entranceColor.blue();
-        int green = entranceColor.green();
-        double hue = JavaUtil.rgbToHue(red, green, blue);
-        double saturation = JavaUtil.rgbToSaturation(red, green, blue);
-        if (hue < 180 && hue > 120 && saturation > .6)
-            return ColorSensed.GREEN;
-        if (hue > 200 && hue < 260 && saturation > .55)
-            return ColorSensed.PURPLE;
-        if(saturation > .55 || green >= 110 || blue >= 100)
+    @Override
+    public void init() {
 
-            if(green > blue)
-                return ColorSensed.GREEN;
-            else
-                return ColorSensed.PURPLE;
-        return ColorSensed.NO_COLOR;
+        SharedData.reset();
+        initAprilTag();
+
+        pathTimer = new Timer();
+        actionTimer = new Timer();
+        opmodeTimer = new Timer();
+        intakeTimer = new Timer();
+        detectColorTimer = new Timer();
+        colorTimer = new Timer();
+        launchTimer = new Timer();
+        opmodeTimer.resetTimer();
+
+        f = Constants.createFollower(hardwareMap);
+        f.setStartingPose(poses.START_POSE);
+        f.activateAllPIDFs();
+
+        buildPaths();
+
+        intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
+        entranceColor = hardwareMap.get(ColorSensor.class, "intakeColorSensor");
+        fan = hardwareMap.get(DcMotorEx.class, "sortMotor");
+        feeder = hardwareMap.get(CRServo.class,"feederServo");
+        rightLaunch = hardwareMap.get(DcMotorEx.class, "rightLaunch");
+        leftLaunch = hardwareMap.get(DcMotorEx.class, "leftLaunch");
+
+        rightLaunch.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftLaunch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        leftLaunch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightLaunch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        rightLaunch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        feeder.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        fan.setTargetPosition(0);
+        fan.setTargetPositionTolerance(10);
+
+        fan.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        fan.setPower(1);
+
+        intakeServo.setPower(0);
+        index = 0;
     }
 
-    public void setPathState(int pState) {
-        this.pathState = pState;
-        pathTimer.resetTimer();
+    @Override
+    public void init_loop() {
+        //detect AprilTag motif and set green index in SharedData
+        int ID = figureID();
+
+        if (ID == 21) {
+            index = 0;
+        } else if (ID == 22) {
+            index = 1;
+        } else if (ID == 23)
+            index = 2;
+
+        SharedData.greenIndex = index;
+        telemetry.addData("Green Index", index );
+        telemetry.addData("Side", SharedData.red ? "Red" : "Blue");
+
+
+        currentPose = robotPose();
+        if (currentPose!= null){
+            telemetry.addData("X",currentPose.getX());
+            telemetry.addData("Y",currentPose.getY());
+            telemetry.addData("H",currentPose.getHeading());
+        }
+
+        telemetry.update();
     }
 
-    public void setStoragePos(int slot, boolean intake) {
-        int ticks = 1426;
-        int absolutePos = fan.getCurrentPosition();
-        int relativePos = absolutePos % ticks;
-        int rotationOffset = absolutePos-relativePos;
-        int sign = (int)Math.signum(absolutePos == 0 ? 1 : absolutePos);
-
-        slotGoal = slot;
-        if (intake) {
-            if (slot == 0) {
-                if(relativePos <= ticks/2)
-                    fan.setTargetPosition(rotationOffset);
-                else
-                    fan.setTargetPosition(rotationOffset + ticks);
-            } else if (slot == 1) {
-                if(relativePos <= 5*ticks/6)
-                    fan.setTargetPosition(rotationOffset + ticks/3);
-                else
-                    fan.setTargetPosition(rotationOffset + 4*ticks/3);
-            } else if (slot == 2) {
-                if(relativePos >= ticks/6)
-                    fan.setTargetPosition(rotationOffset + 2*ticks/3);
-                else
-                    fan.setTargetPosition(rotationOffset - ticks/3);
-
-            }
-        }
-        else {
-            if (slot == 0) {
-                fan.setTargetPosition(rotationOffset + ticks/2);
-            } else if (slot == 1) {
-                if(relativePos >= ticks/3)
-                    fan.setTargetPosition(rotationOffset + 5*ticks/6);
-                else
-                    fan.setTargetPosition(rotationOffset - ticks/6);
-            } else if (slot == 2) {
-                if(relativePos >= 2*ticks/3)
-                    fan.setTargetPosition(rotationOffset + 7*ticks/6);
-                else
-                    fan.setTargetPosition(rotationOffset + ticks/6);
-            }
-        }
+    @Override
+    public void start() {
+        sendPose();
+        opmodeTimer.resetTimer();
+        setPathState(0);
     }
 
     @Override
@@ -292,10 +303,82 @@ public class MovementAuto extends OpMode {
             rightLaunch.setVelocity(0);
         }
 
-        
+
 
     }
 
+    @Override
+    public void stop() {
+        sendPose();
+    }
+
+    public ColorSensed detectColor() {
+        int red = entranceColor.red();
+        int blue = entranceColor.blue();
+        int green = entranceColor.green();
+        double hue = JavaUtil.rgbToHue(red, green, blue);
+        double saturation = JavaUtil.rgbToSaturation(red, green, blue);
+        if (hue < 180 && hue > 120 && saturation > .6)
+            return ColorSensed.GREEN;
+        if (hue > 200 && hue < 260 && saturation > .55)
+            return ColorSensed.PURPLE;
+        if(saturation > .55 || green >= 110 || blue >= 100)
+
+            if(green > blue)
+                return ColorSensed.GREEN;
+            else
+                return ColorSensed.PURPLE;
+        return ColorSensed.NO_COLOR;
+    }
+
+    public void setPathState(int pState) {
+        this.pathState = pState;
+        pathTimer.resetTimer();
+    }
+
+    public void setStoragePos(int slot, boolean intake) {
+        int ticks = 1426;
+        int absolutePos = fan.getCurrentPosition();
+        int relativePos = absolutePos % ticks;
+        int rotationOffset = absolutePos-relativePos;
+        int sign = (int)Math.signum(absolutePos == 0 ? 1 : absolutePos);
+
+        slotGoal = slot;
+        if (intake) {
+            if (slot == 0) {
+                if(relativePos <= ticks/2)
+                    fan.setTargetPosition(rotationOffset);
+                else
+                    fan.setTargetPosition(rotationOffset + ticks);
+            } else if (slot == 1) {
+                if(relativePos <= 5*ticks/6)
+                    fan.setTargetPosition(rotationOffset + ticks/3);
+                else
+                    fan.setTargetPosition(rotationOffset + 4*ticks/3);
+            } else if (slot == 2) {
+                if(relativePos >= ticks/6)
+                    fan.setTargetPosition(rotationOffset + 2*ticks/3);
+                else
+                    fan.setTargetPosition(rotationOffset - ticks/3);
+
+            }
+        }
+        else {
+            if (slot == 0) {
+                fan.setTargetPosition(rotationOffset + ticks/2);
+            } else if (slot == 1) {
+                if(relativePos >= ticks/3)
+                    fan.setTargetPosition(rotationOffset + 5*ticks/6);
+                else
+                    fan.setTargetPosition(rotationOffset - ticks/6);
+            } else if (slot == 2) {
+                if(relativePos >= 2*ticks/3)
+                    fan.setTargetPosition(rotationOffset + 7*ticks/6);
+                else
+                    fan.setTargetPosition(rotationOffset + ticks/6);
+            }
+        }
+    }
 
     //gets the index of a green ball (not the closest)
     //Need to adapt code to set position to nearest green ball
@@ -333,90 +416,6 @@ public class MovementAuto extends OpMode {
         else if (SharedData.storage[2] == ColorSensed.INCONLUSIVE)
             temp = 2;
         return temp;
-    }
-
-    @Override
-    public void init() {
-
-        SharedData.reset();
-        initAprilTag();
-
-        pathTimer = new Timer();
-        actionTimer = new Timer();
-        opmodeTimer = new Timer();
-        intakeTimer = new Timer();
-        detectColorTimer = new Timer();
-        colorTimer = new Timer();
-        launchTimer = new Timer();
-        opmodeTimer.resetTimer();
-
-        f = Constants.createFollower(hardwareMap);
-        f.setStartingPose(poses.START_POSE);
-        f.activateAllPIDFs();
-
-        buildPaths();
-
-        intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
-        entranceColor = hardwareMap.get(ColorSensor.class, "intakeColorSensor");
-        fan = hardwareMap.get(DcMotorEx.class, "sortMotor");
-        feeder = hardwareMap.get(CRServo.class,"feederServo");
-        rightLaunch = hardwareMap.get(DcMotorEx.class, "rightLaunch");
-        leftLaunch = hardwareMap.get(DcMotorEx.class, "leftLaunch");
-
-        rightLaunch.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftLaunch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        leftLaunch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightLaunch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        rightLaunch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        feeder.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        fan.setTargetPosition(0);
-        fan.setTargetPositionTolerance(10);
-
-        fan.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        fan.setPower(1);
-
-        intakeServo.setPower(0);
-        index = 0;
-    }
-
-    @Override
-    public void init_loop() {
-        //detect AprilTag motif and set green index in SharedData
-        int ID = figureID();
-
-        if (ID == 21) {
-            index = 0;
-        } else if (ID == 22) {
-            index = 1;
-        } else if (ID == 23)
-            index = 2;
-
-        SharedData.greenIndex = index;
-        telemetry.addData("Green Index", index );
-        telemetry.addData("Side", SharedData.red ? "Red" : "Blue");
-
-
-        currentPose = robotPose();
-        if (currentPose!= null){
-            telemetry.addData("X",currentPose.getX());
-            telemetry.addData("Y",currentPose.getY());
-            telemetry.addData("H",currentPose.getHeading());
-        }
-
-        telemetry.update();
-    }
-
-    @Override
-    public void start() {
-        sendPose();
-        opmodeTimer.resetTimer();
-        setPathState(0);
-    }
-
-    @Override
-    public void stop() {
-        sendPose();
     }
 
     public void buildPaths() {
