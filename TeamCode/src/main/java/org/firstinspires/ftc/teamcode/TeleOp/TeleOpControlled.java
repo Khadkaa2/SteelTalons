@@ -508,7 +508,7 @@ public class TeleOpControlled extends LinearOpMode {
         }
 
         //sets the slot position and color of the ball in storage
-        if (SharedData.storage[slotGoal] != ColorSensed.NO_COLOR && colorTimer.getElapsedTimeSeconds() > .5) {
+        if (previousColor != currentColor && colorTimer.getElapsedTimeSeconds() > .5) {
             colorTimer.resetTimer();
 
             if(currentColor != ColorSensed.NO_COLOR) {
@@ -530,7 +530,7 @@ public class TeleOpControlled extends LinearOpMode {
         }
 
         //swaps to open slot (if available)
-        else if(currentColor == ColorSensed.NO_COLOR && colorTimer.getElapsedTimeSeconds() > .5 && launchTimer.getElapsedTimeSeconds() > 2){
+        else if(SharedData.storage[slotGoal] != ColorSensed.NO_COLOR && colorTimer.getElapsedTimeSeconds() > .5 && launchTimer.getElapsedTimeSeconds() > 2){
 
             if(SharedData.storage[0] == ColorSensed.NO_COLOR)
 
