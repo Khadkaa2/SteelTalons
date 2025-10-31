@@ -86,7 +86,7 @@ public class TeleOpControlled extends LinearOpMode {
 
     private boolean feederFirstTime = true;
 
-    int slotGoal = -1;
+    int slotGoal = 0;
 
     public void runOpMode() throws InterruptedException {
 
@@ -505,7 +505,7 @@ public class TeleOpControlled extends LinearOpMode {
         }
 
         //sets the slot position and color of the ball in storage
-        if (previousColor != currentColor && colorTimer.getElapsedTimeSeconds() > .5) {
+        if (SharedData.storage[slotGoal] != ColorSensed.NO_COLOR && colorTimer.getElapsedTimeSeconds() > .5) {
             colorTimer.resetTimer();
 
             if(currentColor != ColorSensed.NO_COLOR) {
