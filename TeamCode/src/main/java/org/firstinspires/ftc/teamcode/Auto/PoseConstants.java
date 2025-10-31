@@ -18,4 +18,5 @@ public class PoseConstants {
 //    public static Pose FIELD_OFFSET;
 //    public static Pose CamOff;
     public Pose parkPose = !SharedData.red ? new Pose(29.625, 23.5,0) :  new Pose(114.375,23.5,Math.toRadians(270));
+    public Pose teleOpLaunchPose = !SharedData.red ? new Pose(96,6, Math.toRadians(243)) : new Pose(48,6,Math.toRadians(297));
 }

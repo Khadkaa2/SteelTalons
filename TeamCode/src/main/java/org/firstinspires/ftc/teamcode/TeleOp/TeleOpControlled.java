@@ -64,7 +64,7 @@ public class TeleOpControlled extends LinearOpMode {
     private Follower f;
     private boolean automated = false;
     private boolean intaking = false;
-    private PathChain toLaunch, toPark;
+    private PathChain toLaunchSame, toPark, toLaunchCross;
 
     private PanelsTelemetry panels = PanelsTelemetry.INSTANCE;
 
@@ -123,9 +123,14 @@ public class TeleOpControlled extends LinearOpMode {
         f.update();
 
         //create paths
-        toLaunch = f.pathBuilder()
+        toLaunchSame = f.pathBuilder()
                 .addPath(new BezierLine(f.getPose(), poses.LAUNCH_POSE))
                 .setLinearHeadingInterpolation(f.getPose().getHeading(), poses.LAUNCH_POSE.getHeading())
+                .build();
+
+        toLaunchCross = f.pathBuilder()
+                .addPath(new BezierLine(f.getPose(), poses.teleOpLaunchPose))
+                .setLinearHeadingInterpolation(f.getPose().getHeading(), poses.teleOpLaunchPose.getHeading())
                 .build();
 
         toPark = f.pathBuilder()
@@ -180,12 +185,16 @@ public class TeleOpControlled extends LinearOpMode {
 
             //Auto Pathing to Launch
             if (gamepad1.a && !automated) {
-                f.followPath(toLaunch);
+                f.followPath(toLaunchSame);
                 automated = true;
             }
             //Auto Pathing to Park
             else if (gamepad1.x && !automated) {
                 f.followPath(toPark);
+                automated = true;
+            }
+            else if (gamepad1.b && !automated) {
+                f.followPath(toLaunchCross);
                 automated = true;
             }
             //exits automated pathing
@@ -280,6 +289,13 @@ public class TeleOpControlled extends LinearOpMode {
             return ColorSensed.GREEN;
         if (hue > 200 && hue < 260 && saturation > .55)
             return ColorSensed.PURPLE;
+        if(saturation > .55 && entranceColor.red() >= 100 || entranceColor.green() >= 110 || entranceColor.blue() >= 100)
+            if (entranceColor.red() >= 100)
+                return ColorSensed.PURPLE;
+            else if(entranceColor.green() > entranceColor.blue())
+                return ColorSensed.GREEN;
+            else
+                return ColorSensed.INCONLUSIVE;
         return ColorSensed.NO_COLOR;
     }
 
@@ -309,13 +325,13 @@ public class TeleOpControlled extends LinearOpMode {
 //            telemetry.addData("F H", f.getPose().getHeading());
 
         //telemetry for Color Sensor and Storage
-//
-//            telemetry.addData("Entrance Color", detectColor());
-//            telemetry.addData("hue", JavaUtil.rgbToHue(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
-//            telemetry.addData("r", entranceColor.red());
-//            telemetry.addData("g", entranceColor.green());
-//            telemetry.addData("b", entranceColor.blue());
-//            telemetry.addData("saturation", JavaUtil.rgbToSaturation(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
+
+            telemetry.addData("Entrance Color", detectColor());
+            telemetry.addData("hue", JavaUtil.rgbToHue(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
+            telemetry.addData("r", entranceColor.red());
+            telemetry.addData("g", entranceColor.green());
+            telemetry.addData("b", entranceColor.blue());
+            telemetry.addData("saturation", JavaUtil.rgbToSaturation(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
 //            telemetry.addData("sort ticks", fan.getCurrentPosition());
 //            telemetry.addData("Color Timer", colorTimer.getElapsedTimeSeconds());
 //            telemetry.addData("Launch Timer", launchTimer.getElapsedTimeSeconds());
