@@ -4,5 +4,6 @@ public enum ColorSensed
 {
     GREEN,
     PURPLE,
-    NO_COLOR
+    NO_COLOR,
+    INCONLUSIVE
 }

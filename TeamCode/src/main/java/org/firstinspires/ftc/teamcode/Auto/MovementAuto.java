@@ -119,6 +119,8 @@ public class MovementAuto extends OpMode {
             return ColorSensed.GREEN;
         if (hue > 200 && hue < 260 && saturation > .55)
             return ColorSensed.PURPLE;
+        if(saturation > .55)
+            return ColorSensed.INCONLUSIVE;
         return ColorSensed.NO_COLOR;
     }
 
@@ -248,7 +250,7 @@ public class MovementAuto extends OpMode {
         if(launching) {
             int ind = getPurpleIndex();
             if(timesLaunched == SharedData.greenIndex || ind == -1) {
-                ind = getGreenIndex() == -1 ? ind : getGreenIndex();
+                ind = getGreenIndex() == -1 ? getInconclusiveIndex() == -1 ?  ind : getInconclusiveIndex() : getGreenIndex();
             }
 
 
@@ -308,6 +310,18 @@ public class MovementAuto extends OpMode {
         else if (SharedData.storage[1] == ColorSensed.PURPLE)
             temp = 1;
         else if (SharedData.storage[2] == ColorSensed.PURPLE)
+            temp = 2;
+        return temp;
+    }
+
+
+    public int getInconclusiveIndex() {
+        int temp = -1;
+        if (SharedData.storage[0] == ColorSensed.INCONLUSIVE)
+            temp = 0;
+        else if (SharedData.storage[1] == ColorSensed.INCONLUSIVE)
+            temp = 1;
+        else if (SharedData.storage[2] == ColorSensed.INCONLUSIVE)
             temp = 2;
         return temp;
     }

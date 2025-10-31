@@ -397,7 +397,15 @@ public class TeleOpControlled extends LinearOpMode {
         //"a" for slot 0
         //"b" for slot 1
         //"y" for slot 2
-        if(gamepad2.right_bumper) {
+        if(gamepad2.right_bumper && gamepad2.left_bumper) {
+            if(gamepad2.a)
+                SharedData.storage[0] = ColorSensed.NO_COLOR;
+            else if(gamepad2.b)
+                SharedData.storage[1] = ColorSensed.NO_COLOR;
+            else if(gamepad2.y)
+                SharedData.storage[2] = ColorSensed.NO_COLOR;
+        }
+        else if(gamepad2.right_bumper) {
             if(gamepad2.a)
                 SharedData.storage[0] = ColorSensed.GREEN;
             else if(gamepad2.b)
