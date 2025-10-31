@@ -289,13 +289,12 @@ public class TeleOpControlled extends LinearOpMode {
             return ColorSensed.GREEN;
         if (hue > 200 && hue < 260 && saturation > .55)
             return ColorSensed.PURPLE;
-        if(saturation > .55 && entranceColor.red() >= 100 || entranceColor.green() >= 110 || entranceColor.blue() >= 100)
-            if (entranceColor.red() >= 100)
-                return ColorSensed.PURPLE;
-            else if(entranceColor.green() > entranceColor.blue())
+        if(saturation > .55 || entranceColor.green() >= 110 || entranceColor.blue() >= 100)
+
+            if(entranceColor.green() > entranceColor.blue())
                 return ColorSensed.GREEN;
             else
-                return ColorSensed.INCONLUSIVE;
+                return ColorSensed.PURPLE;
         return ColorSensed.NO_COLOR;
     }
 

@@ -119,8 +119,12 @@ public class MovementAuto extends OpMode {
             return ColorSensed.GREEN;
         if (hue > 200 && hue < 260 && saturation > .55)
             return ColorSensed.PURPLE;
-        if(saturation > .55)
-            return ColorSensed.INCONLUSIVE;
+        if(saturation > .55 || entranceColor.green() >= 110 || entranceColor.blue() >= 100)
+
+            if(entranceColor.green() > entranceColor.blue())
+                return ColorSensed.GREEN;
+            else
+                return ColorSensed.PURPLE;
         return ColorSensed.NO_COLOR;
     }
 
