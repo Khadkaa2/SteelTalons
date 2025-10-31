@@ -302,44 +302,44 @@ public class TeleOpControlled extends LinearOpMode {
     }
 
     public void tele() {
-            telemetry.addData("FOLLOWER X",f.getPose().getX());
-            telemetry.addData("FOLLOWER Y",f.getPose().getY());
-            telemetry.addData("FOLLOWER Heading",f.getPose().getHeading());
-//            telemetry.addData("TAGX", currentDetection.ftcPose.x );
-//            telemetry.addData("TAGY", currentDetection.ftcPose.y );
-//            telemetry.addData("TAGH", currentDetection.ftcPose.yaw);
-//            telemetry.addData("TAGB", currentDetection.ftcPose.bearing);
-//            telemetry.addData("TAGR" , currentDetection.ftcPose.range);
-
-
-//            telemetry for April Tag
+//            telemetry.addData("FOLLOWER X",f.getPose().getX());
+//            telemetry.addData("FOLLOWER Y",f.getPose().getY());
+////            telemetry.addData("FOLLOWER Heading",f.getPose().getHeading());
+////            telemetry.addData("TAGX", currentDetection.ftcPose.x );
+////            telemetry.addData("TAGY", currentDetection.ftcPose.y );
+////            telemetry.addData("TAGH", currentDetection.ftcPose.yaw);
+////            telemetry.addData("TAGB", currentDetection.ftcPose.bearing);
+////            telemetry.addData("TAGR" , currentDetection.ftcPose.range);
 //
-//            telemetry.addData("ROBOT APRIL X", aprilTagPose.getX(DistanceUnit.INCH));
-//            telemetry.addData("ROBOT APRIL Y", aprilTagPose.getY(DistanceUnit.INCH));
-//            telemetry.addData("ROBOT APRIL H", aprilTagPose.getHeading(AngleUnit.DEGREES));
 //
-//            telemetry.addData("PEDRO X", pedroPose.getX());
-//            telemetry.addData("PEDRO Y", pedroPose.getY());
-//            telemetry.addData("PEDRO H", pedroPose.getPose().getHeading());
+////            telemetry for April Tag
+////
+////            telemetry.addData("ROBOT APRIL X", aprilTagPose.getX(DistanceUnit.INCH));
+////            telemetry.addData("ROBOT APRIL Y", aprilTagPose.getY(DistanceUnit.INCH));
+////            telemetry.addData("ROBOT APRIL H", aprilTagPose.getHeading(AngleUnit.DEGREES));
+////
+////            telemetry.addData("PEDRO X", pedroPose.getX());
+////            telemetry.addData("PEDRO Y", pedroPose.getY());
+////            telemetry.addData("PEDRO H", pedroPose.getPose().getHeading());
+////
+////            telemetry.addData("F X", f.getPose().getX());
+////            telemetry.addData("F Y", f.getPose().getY());
+////            telemetry.addData("F H", f.getPose().getHeading());
 //
-//            telemetry.addData("F X", f.getPose().getX());
-//            telemetry.addData("F Y", f.getPose().getY());
-//            telemetry.addData("F H", f.getPose().getHeading());
-
-        //telemetry for Color Sensor and Storage
-
-            telemetry.addData("Entrance Color", detectColor());
-            telemetry.addData("hue", JavaUtil.rgbToHue(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
-            telemetry.addData("r", entranceColor.red());
-            telemetry.addData("g", entranceColor.green());
-            telemetry.addData("b", entranceColor.blue());
-            telemetry.addData("saturation", JavaUtil.rgbToSaturation(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
+//        //telemetry for Color Sensor and Storage
+//
+//            telemetry.addData("Entrance Color", detectColor());
+//            telemetry.addData("hue", JavaUtil.rgbToHue(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
+//            telemetry.addData("r", entranceColor.red());
+//            telemetry.addData("g", entranceColor.green());
+//            telemetry.addData("b", entranceColor.blue());
+//            telemetry.addData("saturation", JavaUtil.rgbToSaturation(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
 //            telemetry.addData("sort ticks", fan.getCurrentPosition());
 //            telemetry.addData("Color Timer", colorTimer.getElapsedTimeSeconds());
 //            telemetry.addData("Launch Timer", launchTimer.getElapsedTimeSeconds());
         //telemetry.addData("Pattern", SharedData.greenIndex);
         telemetry.addLine(String.format("Storage: %s, %s, %s", SharedData.storage[0], SharedData.storage[1], SharedData.storage[2] ));
-        //telemetry.addData("Manual Mode", manual);
+        telemetry.addData("Manual Mode", manual);
 //        telemetry.addData("fanPos", fan.getCurrentPosition());
 //        telemetry.addData("fanTarget", fan.getTargetPosition());
 //        telemetry.addData("Slot Goal", slotGoal);
