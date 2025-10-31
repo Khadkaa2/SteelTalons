@@ -283,15 +283,18 @@ public class TeleOpControlled extends LinearOpMode {
 //    }
 
     public ColorSensed detectColor() {
-        double hue = JavaUtil.rgbToHue(entranceColor.red(), entranceColor.green(), entranceColor.blue());
-        double saturation = JavaUtil.rgbToSaturation(entranceColor.red(), entranceColor.green(), entranceColor.blue());
+        int red = entranceColor.red();
+        int blue = entranceColor.blue();
+        int green = entranceColor.green();
+        double hue = JavaUtil.rgbToHue(red, green, blue);
+        double saturation = JavaUtil.rgbToSaturation(red, green, blue);
         if (hue < 180 && hue > 120 && saturation > .6)
             return ColorSensed.GREEN;
         if (hue > 200 && hue < 260 && saturation > .55)
             return ColorSensed.PURPLE;
-        if(saturation > .55 || entranceColor.green() >= 110 || entranceColor.blue() >= 100)
+        if(saturation > .55 || green >= 110 || blue >= 100)
 
-            if(entranceColor.green() > entranceColor.blue())
+            if(green > blue)
                 return ColorSensed.GREEN;
             else
                 return ColorSensed.PURPLE;
