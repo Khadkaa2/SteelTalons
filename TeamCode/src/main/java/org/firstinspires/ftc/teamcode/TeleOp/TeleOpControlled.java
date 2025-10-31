@@ -30,6 +30,7 @@ import org.firstinspires.ftc.teamcode.Auto.PoseConstants;
 
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 
@@ -56,6 +57,7 @@ public class TeleOpControlled extends LinearOpMode {
     private DcMotorEx rightLaunch = null;
     private DcMotorEx leftLaunch = null;
 
+    private DistanceSensor distanceSensor;
     private ColorSensor entranceColor;
     private Servo launchAngle;
 
@@ -80,6 +82,7 @@ public class TeleOpControlled extends LinearOpMode {
 
     private ColorSensed previousColor = ColorSensed.NO_COLOR;
 
+
     ColorSensed currentColor = ColorSensed.NO_COLOR;
 
     private boolean manual = false;
@@ -95,9 +98,11 @@ public class TeleOpControlled extends LinearOpMode {
         fan = hardwareMap.get(DcMotorEx.class, "sortMotor");
         intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
         entranceColor = hardwareMap.get(ColorSensor.class, "intakeColorSensor");
+        distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
         feeder = hardwareMap.get(CRServo.class, "feederServo");
         rightLaunch = hardwareMap.get(DcMotorEx.class, "rightLaunch");
         leftLaunch = hardwareMap.get(DcMotorEx.class, "leftLaunch");
+
         //servo = hardwareMap.get(Servo.class, "angleMotor");
 
         //make launchmotors track pos and brake
@@ -234,6 +239,7 @@ public class TeleOpControlled extends LinearOpMode {
         int rotationOffset = absolutePos-relativePos;
 
         int sign = (int)Math.signum(absolutePos == 0 ? 1 : absolutePos);
+
         slotGoal = slot;
         if (intake) {
             if (slot == 0) {
@@ -292,12 +298,12 @@ public class TeleOpControlled extends LinearOpMode {
             return ColorSensed.GREEN;
         if (hue > 200 && hue < 260 && saturation > .55)
             return ColorSensed.PURPLE;
-        if(saturation > .55 || green >= 110 || blue >= 100)
-
-            if(green > blue)
+        if(saturation > .55 || green >= 110 || blue >= 100) {
+            if (green > blue)
                 return ColorSensed.GREEN;
             else
                 return ColorSensed.PURPLE;
+        }
         return ColorSensed.NO_COLOR;
     }
 
@@ -310,8 +316,6 @@ public class TeleOpControlled extends LinearOpMode {
 ////            telemetry.addData("TAGH", currentDetection.ftcPose.yaw);
 ////            telemetry.addData("TAGB", currentDetection.ftcPose.bearing);
 ////            telemetry.addData("TAGR" , currentDetection.ftcPose.range);
-//
-//
 ////            telemetry for April Tag
 ////
 ////            telemetry.addData("ROBOT APRIL X", aprilTagPose.getX(DistanceUnit.INCH));
@@ -338,6 +342,7 @@ public class TeleOpControlled extends LinearOpMode {
 //            telemetry.addData("Color Timer", colorTimer.getElapsedTimeSeconds());
 //            telemetry.addData("Launch Timer", launchTimer.getElapsedTimeSeconds());
         //telemetry.addData("Pattern", SharedData.greenIndex);
+        telemetry.addData("distance", distanceSensor.getDistance(DistanceUnit.CM));
         telemetry.addLine(String.format("Storage: %s, %s, %s", SharedData.storage[0], SharedData.storage[1], SharedData.storage[2] ));
         telemetry.addData("Manual Mode", manual);
 //        telemetry.addData("fanPos", fan.getCurrentPosition());
@@ -399,8 +404,8 @@ public class TeleOpControlled extends LinearOpMode {
             else fan.setTargetPosition((int) (fan.getCurrentPosition() + gamepad2.right_stick_x * 10));
         }
 
-        leftLaunch.setVelocity(gamepad2.right_trigger * 2500);
-        rightLaunch.setVelocity(gamepad2.right_trigger * 2500);
+        leftLaunch.setVelocity(gamepad2.right_trigger * 2050);
+        rightLaunch.setVelocity(gamepad2.right_trigger * 2050);
 
 
 
@@ -488,10 +493,10 @@ public class TeleOpControlled extends LinearOpMode {
         }
         if(launchTimer.getElapsedTimeSeconds()<2) {
             if(!feederFirstTime) {
-                if(rightLaunch.getVelocity() >= 2200 && leftLaunch.getVelocity() >= 2200)
+                if(rightLaunch.getVelocity() >= 2000 && leftLaunch.getVelocity() >= 2000)
                     feeder.setPower(1);
-                rightLaunch.setVelocity(2250);
-                leftLaunch.setVelocity(2250);
+                rightLaunch.setVelocity(2050);
+                leftLaunch.setVelocity(2050);
             }
         }
         else {
@@ -503,11 +508,13 @@ public class TeleOpControlled extends LinearOpMode {
         //Senses if a ball is in the intake area
         //Sets sorting position to open area on detection
         //only detects every .2 seconds to reduce input lag
-        if(detectColorTimer.getElapsedTimeSeconds()>.1) {
+        //if(detectColorTimer.getElapsedTimeSeconds()>.1) {
             currentColor = detectColor();
-            detectColorTimer.resetTimer();
+//            detectColorTimer.resetTimer();
+//        }
+        if(distanceSensor.getDistance(DistanceUnit.CM) < 2.7 ) {
+            colorTimer.resetTimer();
         }
-
         //sets the slot position and color of the ball in storage
         if (previousColor != currentColor && colorTimer.getElapsedTimeSeconds() > .5) {
             colorTimer.resetTimer();
@@ -531,7 +538,7 @@ public class TeleOpControlled extends LinearOpMode {
         }
 
         //swaps to open slot (if available)
-        else if(SharedData.storage[slotGoal] != ColorSensed.NO_COLOR && colorTimer.getElapsedTimeSeconds() > .5 && launchTimer.getElapsedTimeSeconds() > 2){
+        else if(colorTimer.getElapsedTimeSeconds() > .5 && launchTimer.getElapsedTimeSeconds() > 2){
 
             if(SharedData.storage[0] == ColorSensed.NO_COLOR)
 

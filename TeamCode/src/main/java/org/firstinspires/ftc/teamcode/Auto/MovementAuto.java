@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -66,6 +67,7 @@ public class MovementAuto extends OpMode {
     private DcMotorEx fan = null;
     private DcMotorEx rightLaunch = null;
     private DcMotorEx leftLaunch = null;
+    private DistanceSensor distanceSensor;
 
     boolean launching = false;
     boolean launch = true;
@@ -139,6 +141,7 @@ public class MovementAuto extends OpMode {
         feeder = hardwareMap.get(CRServo.class,"feederServo");
         rightLaunch = hardwareMap.get(DcMotorEx.class, "rightLaunch");
         leftLaunch = hardwareMap.get(DcMotorEx.class, "leftLaunch");
+        distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
 
         rightLaunch.setDirection(DcMotorSimple.Direction.REVERSE);
         leftLaunch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -228,10 +231,13 @@ public class MovementAuto extends OpMode {
 
         //detects color and sets storage position
         // may want to make faster
-        if(detectColorTimer.getElapsedTimeSeconds()>.1) {
-            currentColor = detectColor();
-            detectColorTimer.resetTimer();
+
+        currentColor = detectColor();
+        //detectColorTimer.resetTimer();
+        if(distanceSensor.getDistance(DistanceUnit.CM) < 2.7) {
+            colorTimer.resetTimer();
         }
+
         //sets the slot position and color of the ball in storage
         if (!launching && previousColor != currentColor && colorTimer.getElapsedTimeSeconds() > .5) {
             colorTimer.resetTimer();
@@ -252,7 +258,7 @@ public class MovementAuto extends OpMode {
         }
 
         //swaps to open slot (if available)
-        else if(!launching && SharedData.storage[slotGoal] == ColorSensed.NO_COLOR && colorTimer.getElapsedTimeSeconds() > .5){
+        else if(!launching && colorTimer.getElapsedTimeSeconds() > .5){
 
             if(SharedData.storage[0] == ColorSensed.NO_COLOR)
                 setStoragePos(0, true);
@@ -275,17 +281,17 @@ public class MovementAuto extends OpMode {
 
 
             if(ind != -1) {
-                leftLaunch.setVelocity(2250);
-                rightLaunch.setVelocity(2250);
+                leftLaunch.setVelocity(2050);
+                rightLaunch.setVelocity(2050);
                 setStoragePos(ind, false);
 
             }
-            if(leftLaunch.getVelocity() >= 2150 && rightLaunch.getVelocity() >= 2150 && launch) {
+            if(leftLaunch.getVelocity() >= 1950 && rightLaunch.getVelocity() >= 1950 && launch) {
                 feeder.setPower(1);
                 launchTimer.resetTimer();
                 launch = false;
             }
-            else if(leftLaunch.getVelocity() <= 2150 && rightLaunch.getVelocity() <= 2150) {
+            else if(leftLaunch.getVelocity() <= 1950 && rightLaunch.getVelocity() <= 1950) {
                 feeder.setPower(0);
             }
             if(launchTimer.getElapsedTimeSeconds() > 1.5 && !launch) {
@@ -322,12 +328,12 @@ public class MovementAuto extends OpMode {
             return ColorSensed.GREEN;
         if (hue > 200 && hue < 260 && saturation > .55)
             return ColorSensed.PURPLE;
-        if(saturation > .55 || green >= 110 || blue >= 100)
-
-            if(green > blue)
+        if(saturation > .55 || green >= 110 || blue >= 100) {
+            if (green > blue)
                 return ColorSensed.GREEN;
             else
                 return ColorSensed.PURPLE;
+        }
         return ColorSensed.NO_COLOR;
     }
 
