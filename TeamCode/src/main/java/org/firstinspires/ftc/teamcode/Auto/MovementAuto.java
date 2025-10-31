@@ -74,7 +74,7 @@ public class MovementAuto extends OpMode {
     private ColorSensed previousColor = ColorSensed.NO_COLOR;
     private ColorSensed currentColor = ColorSensed.NO_COLOR;
 
-
+    int slotGoal = 0;
 
 
     public void initAprilTag(){
@@ -141,8 +141,9 @@ public class MovementAuto extends OpMode {
         int absolutePos = fan.getCurrentPosition();
         int relativePos = absolutePos % ticks;
         int rotationOffset = absolutePos-relativePos;
-
         int sign = (int)Math.signum(absolutePos == 0 ? 1 : absolutePos);
+
+        slotGoal = slot;
         if (intake) {
             if (slot == 0) {
                 if(relativePos <= ticks/2)
@@ -215,6 +216,7 @@ public class MovementAuto extends OpMode {
 
 
         //detects color and sets storage position
+        // may want to make faster
         if(detectColorTimer.getElapsedTimeSeconds()>.1) {
             currentColor = detectColor();
             detectColorTimer.resetTimer();
@@ -239,7 +241,7 @@ public class MovementAuto extends OpMode {
         }
 
         //swaps to open slot (if available)
-        else if(!launching && currentColor == ColorSensed.NO_COLOR && colorTimer.getElapsedTimeSeconds() > .5){
+        else if(!launching && SharedData.storage[slotGoal] == ColorSensed.NO_COLOR && colorTimer.getElapsedTimeSeconds() > .5){
 
             if(SharedData.storage[0] == ColorSensed.NO_COLOR)
                 setStoragePos(0, true);
