@@ -248,9 +248,9 @@ public class MovementAuto extends OpMode {
         //detects if ready to launch and set storage position
         //need to adapt code so that if multiple greens/ not enough purples are inputted, it will still launch what it has
         if(launching) {
-            int ind = getPurpleIndex();
+            int ind = getPurpleIndex() != -1 ?  getPurpleIndex() : getInconclusiveIndex();
             if(timesLaunched == SharedData.greenIndex || ind == -1) {
-                ind = getGreenIndex() == -1 ? getInconclusiveIndex() == -1 ?  ind : getInconclusiveIndex() : getGreenIndex();
+                ind = getGreenIndex() == -1 ? ind : getGreenIndex();
             }
 
 
