@@ -178,7 +178,7 @@ public class TeleOpControlled extends LinearOpMode {
                         -gamepad1.left_stick_x * speedMultiplier,
                         -gamepad1.right_stick_x * speedMultiplier,
                         robotCentric,
-                        SharedData.red || !robotCentric ? 0 : Math.toRadians(180)
+                        (SharedData.red || robotCentric) ? 0 : Math.toRadians(180)
                 );
 
             }
