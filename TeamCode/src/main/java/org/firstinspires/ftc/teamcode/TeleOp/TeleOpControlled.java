@@ -93,6 +93,8 @@ public class TeleOpControlled extends LinearOpMode {
 
     int slotGoal = 0;
 
+    boolean robotCentric = false;
+
     public void runOpMode() throws InterruptedException {
 
 
@@ -137,7 +139,7 @@ public class TeleOpControlled extends LinearOpMode {
 
         toLaunchCross = f.pathBuilder()
                 .addPath(new BezierLine(f.getPose(), poses.teleOpLaunchPose))
-                .setLinearHeadingInterpolation(f.getPose().getHeading(), poses.teleOpLaunchPose.getHeading())
+                .setConstantHeadingInterpolation(poses.teleOpLaunchPose.getHeading())
                 .build();
 
         toPark = f.pathBuilder()
@@ -175,8 +177,8 @@ public class TeleOpControlled extends LinearOpMode {
                         -gamepad1.left_stick_y * speedMultiplier,
                         -gamepad1.left_stick_x * speedMultiplier,
                         -gamepad1.right_stick_x * speedMultiplier,
-                        false,
-                        SharedData.red ? 0 : Math.toRadians(180)
+                        robotCentric,
+                        SharedData.red || !robotCentric ? 0 : Math.toRadians(180)
                 );
 
             }
@@ -185,9 +187,13 @@ public class TeleOpControlled extends LinearOpMode {
             if (gamepad1.y && slowDelay.getElapsedTimeSeconds() > .5) {
                 slowDelay.resetTimer();
                 if (speedMultiplier == 1)
-                    speedMultiplier = .1;
+                    speedMultiplier = .2;
                 else
                     speedMultiplier = 1;
+            }
+            if(gamepad1.dpad_down && slowDelay.getElapsedTimeSeconds() > .5) {
+                robotCentric = !robotCentric;
+                slowDelay.resetTimer();
             }
 
             //Auto Pathing to Launch
@@ -205,7 +211,7 @@ public class TeleOpControlled extends LinearOpMode {
                 automated = true;
             }
             //exits automated pathing
-            else if ((!gamepad1.a && !gamepad1.x) && automated) {
+            else if ((!gamepad1.a && !gamepad1.x && !gamepad1.b) && automated) {
                 f.startTeleopDrive(true);
                 automated = false;
             }
@@ -346,13 +352,14 @@ public class TeleOpControlled extends LinearOpMode {
 //            telemetry.addData("Color Timer", colorTimer.getElapsedTimeSeconds());
 //            telemetry.addData("Launch Timer", launchTimer.getElapsedTimeSeconds());
         //telemetry.addData("Pattern", SharedData.greenIndex);
-        telemetry.addData("distance", distanceSensor.getDistance(DistanceUnit.CM));
+        //telemetry.addData("distance", distanceSensor.getDistance(DistanceUnit.CM));
         telemetry.addLine(String.format("Storage: %s, %s, %s", SharedData.storage[0], SharedData.storage[1], SharedData.storage[2] ));
         telemetry.addData("Manual Mode", manual);
 //        telemetry.addData("fanPos", fan.getCurrentPosition());
 //        telemetry.addData("fanTarget", fan.getTargetPosition());
 //        telemetry.addData("Slot Goal", slotGoal);
-        telemetry.addData("Side", !SharedData.red ? "Red" : "Blue");
+        telemetry.addData("Side", SharedData.red ? "Red" : "Blue");
+        telemetry.addData("Robot Centric" , robotCentric);
 //        telemetry.addLine(String.format("LeftVel: %f\nRightVel: %f",leftLaunch.getVelocity(), rightLaunch.getVelocity() ));
 
         telemetry.update();
