@@ -415,8 +415,8 @@ public class TeleOpControlled extends LinearOpMode {
             else fan.setTargetPosition((int) (fan.getCurrentPosition() + gamepad2.right_stick_x * 10));
         }
 
-        leftLaunch.setVelocity(gamepad2.right_trigger * 2050);
-        rightLaunch.setVelocity(gamepad2.right_trigger * 2050);
+        leftLaunch.setVelocity(gamepad2.right_trigger * 2100);
+        rightLaunch.setVelocity(gamepad2.right_trigger * 2100);
 
 
 
@@ -504,10 +504,10 @@ public class TeleOpControlled extends LinearOpMode {
         }
         if(launchTimer.getElapsedTimeSeconds()<2) {
             if(!feederFirstTime) {
-                if(rightLaunch.getVelocity() >= 2000 && leftLaunch.getVelocity() >= 2000)
+                if(rightLaunch.getVelocity() >= 2050 && leftLaunch.getVelocity() >= 2050)
                     feeder.setPower(1);
-                rightLaunch.setVelocity(2050);
-                leftLaunch.setVelocity(2050);
+                rightLaunch.setVelocity(2100);
+                leftLaunch.setVelocity(2100);
             }
         }
         else {
@@ -520,12 +520,12 @@ public class TeleOpControlled extends LinearOpMode {
         //Sets sorting position to open area on detection
         //only detects every .2 seconds to reduce input lag
         //if(detectColorTimer.getElapsedTimeSeconds()>.1) {
-            currentColor = detectColor();
+//            currentColor = detectColor();
 //            detectColorTimer.resetTimer();
 //        }
-        if(distanceSensor.getDistance(DistanceUnit.CM) < 2.7 ) {
-            colorTimer.resetTimer();
-        }
+//        if(distanceSensor.getDistance(DistanceUnit.CM) < 2.7 ) {
+//            colorTimer.resetTimer();
+//        }
         //sets the slot position and color of the ball in storage
         if (previousColor != currentColor && colorTimer.getElapsedTimeSeconds() > .5) {
             colorTimer.resetTimer();

@@ -282,17 +282,17 @@ public class MovementAuto extends OpMode {
 
 
             if(ind != -1) {
-                leftLaunch.setVelocity(2050);
-                rightLaunch.setVelocity(2050);
+                leftLaunch.setVelocity(2100);
+                rightLaunch.setVelocity(2100);
                 setStoragePos(ind, false);
 
             }
-            if(leftLaunch.getVelocity() >= 1950 && rightLaunch.getVelocity() >= 1950 && launch) {
+            if(leftLaunch.getVelocity() >= 2050 && rightLaunch.getVelocity() >= 2050 && launch) {
                 feeder.setPower(1);
                 launchTimer.resetTimer();
                 launch = false;
             }
-            else if(leftLaunch.getVelocity() <= 1950 && rightLaunch.getVelocity() <= 1950) {
+            else if(leftLaunch.getVelocity() <= 2050 && rightLaunch.getVelocity() <= 2050) {
                 feeder.setPower(0);
             }
             if(launchTimer.getElapsedTimeSeconds() > 1.5 && !launch) {
@@ -329,14 +329,14 @@ public class MovementAuto extends OpMode {
             return ColorSensed.GREEN;
         if (hue > 200 && hue < 260 && saturation > .55)
             return ColorSensed.PURPLE;
-        if(saturation > .55 || (green >= 110 && blue >= 100) || red > 100){
-            if(red > 100)
-                return ColorSensed.PURPLE;
-            else if (green > blue)
-                return ColorSensed.GREEN;
-            else
-                return ColorSensed.INCONLUSIVE;
-        }
+//        if(saturation > .55 || (green >= 110 && blue >= 100) || red > 100){
+//            if(red > 100)
+//                return ColorSensed.PURPLE;
+//            else if (green > blue)
+//                return ColorSensed.GREEN;
+//            else
+//                return ColorSensed.INCONLUSIVE;
+//        }
         return ColorSensed.NO_COLOR;
     }
 
@@ -469,6 +469,13 @@ public class MovementAuto extends OpMode {
     public void autoPathUpdates() {
         sendPose();
         switch (pathState) {
+            case 9:
+                //wait
+                if(pathTimer.getElapsedTimeSeconds() >= 6)
+                {
+                    setPathState(1);
+                }
+                break;
             case 0:
                 //Score 1
                 f.followPath(start);
@@ -527,7 +534,7 @@ public class MovementAuto extends OpMode {
                 if (!f.isBusy()) {
                     f.followPath(six, true);
                     f.setMaxPower(1);
-                    setPathState(7);
+                    setPathState(8);
                     sendPose();
                 }
                 break;
