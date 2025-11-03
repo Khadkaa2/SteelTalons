@@ -59,6 +59,8 @@ public class Robot {
     private static ColorSensor entranceColor = null;
     private static DistanceSensor distanceSensor = null;
 
+    int launchTargetVelocity;
+
     private static Servo test = null;
 
      public Robot(HardwareMap hardwareMap){
@@ -130,21 +132,19 @@ public class Robot {
     public void stopFeeder() {feeder.setPower(0);}
 
     public void startLaunchMotors(boolean far){
-         leftLaunch.setVelocity(far ? 2050 : 1500);
-         rightLaunch.setVelocity(far ? 2050 : 1500);
+         launchTargetVelocity = far ? 2500 : 1500;
+         leftLaunch.setVelocity(launchTargetVelocity);
+         rightLaunch.setVelocity(launchTargetVelocity);
     }
 
     public void stopLaunchMotors() {
+         launchTargetVelocity = 0;
         leftLaunch.setVelocity(0);
         rightLaunch.setVelocity(0);
     }
 
     public boolean atTargetVelocity() {
-        if(leftLaunch.getVelocity() >= 0)
-        {
-
-        }
-        return false;
+        return leftLaunch.getVelocity() >= launchTargetVelocity - 50 && rightLaunch.getVelocity() >= launchTargetVelocity - 50;
     }
 
 }
