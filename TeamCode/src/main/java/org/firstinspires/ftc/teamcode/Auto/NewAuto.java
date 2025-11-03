@@ -16,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.ColorSensed;
+import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.SharedData;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -28,6 +29,7 @@ import java.util.List;
 @Autonomous
 public class NewAuto extends OpMode {
 
+    private Robot hornet = new Robot(hardwareMap);
     private Follower f;
     public PanelsTelemetry panels = PanelsTelemetry.INSTANCE;
     private int pathState;
@@ -89,16 +91,57 @@ public class NewAuto extends OpMode {
         setPathState(0);
     }
     @Override
-    public void loop(){
+    public void loop() {
         f.update();
         sendPose();
         autoPathUpdates();
 
         // panels.getTelemetry().addData("key", value);
         // panels.getTelemetry().update();
-        if ((pathState == 3 || pathState == 4 || pathState == 6|| pathState ==7 ) && !launching){
-            Robot.
+        if ((pathState == 3 || pathState == 4 || pathState == 6 || pathState == 7) && !launching) {
+            hornet.startIntake(true);
+        } else hornet.stopIntake();
+
+        currentColor = detectColor();
+
+        //SET LAUNCHING POSITION
+
+        if(launching) {
+            int ind = getPurpleIndex() != -1 ?  getPurpleIndex() : getInconclusiveIndex();
+            if(timesLaunched == SharedData.greenIndex || ind == -1) {
+                ind = getGreenIndex() == -1 ? ind : getGreenIndex();
+            }
+
+
+            if(ind != -1) {
+                hornet.startLaunchMotors(true);
+                setStoragePos(ind, false);
+
+            }
+            if(hornet.atTargetVelocity() && launch) {
+                hornet.startFeeder(true);
+                launchTimer.resetTimer();
+                launch = false;
+            }
+            else if(!hornet.atTargetVelocity()) {
+                hornet.stopFeeder();
+            }
+            if(launchTimer.getElapsedTimeSeconds() > 1.5 && !launch) {
+                SharedData.storage[ind] = ColorSensed.NO_COLOR;
+                timesLaunched ++;
+                if(timesLaunched == 3)
+                    timesLaunched = 0;
+                launch = true;
+            }
         }
+        if(!launching) {
+            hornet.stopFeeder();
+            hornet.stopLaunchMotors();
+        }
+
+
+
+
 
 
     }
