@@ -61,5 +61,7 @@ public class NewTeleOp extends LinearOpMode{
         hornet = new Robot(hardwareMap);
         waitForStart();
         hornet.setStoragePos(1,true);
+        hornet.startIntake(true);
+        hornet.stopIntake();
     }
 }

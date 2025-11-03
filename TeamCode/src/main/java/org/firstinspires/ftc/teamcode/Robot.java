@@ -59,6 +59,8 @@ public class Robot {
     private static ColorSensor entranceColor = null;
     private static DistanceSensor distanceSensor = null;
 
+    private static Servo test = null;
+
      public Robot(HardwareMap hardwareMap){
         intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
         entranceColor = hardwareMap.get(ColorSensor.class, "intakeColorSensor");
@@ -112,5 +114,11 @@ public class Robot {
             }
         }
     }
+
+    public void startIntake(boolean in) {intakeServo.setPower(in ? 1 : -1);}
+    public void stopIntake(){intakeServo.setPower(0);}
+
+    public void startFeeder(boolean out) {feeder.setPower(out ? 1 : -1);}
+    public void stopFeeder() {feeder.setPower(0);}
 
 }
