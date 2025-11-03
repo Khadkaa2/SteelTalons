@@ -69,6 +69,14 @@ public class Robot {
         rightLaunch = hardwareMap.get(DcMotorEx.class, "rightLaunch");
         leftLaunch = hardwareMap.get(DcMotorEx.class, "leftLaunch");
         distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
+
+         rightLaunch.setDirection(DcMotorSimple.Direction.REVERSE);
+         leftLaunch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+         leftLaunch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+         rightLaunch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+         rightLaunch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+         feeder.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     public void setStoragePos(int slot, boolean intake) {
@@ -120,5 +128,23 @@ public class Robot {
 
     public void startFeeder(boolean out) {feeder.setPower(out ? 1 : -1);}
     public void stopFeeder() {feeder.setPower(0);}
+
+    public void startLaunchMotors(boolean far){
+         leftLaunch.setVelocity(far ? 2050 : 1500);
+         rightLaunch.setVelocity(far ? 2050 : 1500);
+    }
+
+    public void stopLaunchMotors() {
+        leftLaunch.setVelocity(0);
+        rightLaunch.setVelocity(0);
+    }
+
+    public boolean atTargetVelocity() {
+        if(leftLaunch.getVelocity() >= 0)
+        {
+
+        }
+        return false;
+    }
 
 }

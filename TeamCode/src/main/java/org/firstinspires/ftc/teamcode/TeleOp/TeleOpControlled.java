@@ -361,7 +361,8 @@ public class TeleOpControlled extends LinearOpMode {
         telemetry.addData("Side", SharedData.red ? "Red" : "Blue");
         telemetry.addData("Robot Centric" , robotCentric);
 //        telemetry.addLine(String.format("LeftVel: %f\nRightVel: %f",leftLaunch.getVelocity(), rightLaunch.getVelocity() ));
-
+        telemetry.addData("targetVelLeft", leftLaunch.getTargetPosition());
+        telemetry.addData("targetPosRight", rightLaunch.getTargetPosition());
         telemetry.update();
     }
 

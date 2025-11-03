@@ -63,5 +63,8 @@ public class NewTeleOp extends LinearOpMode{
         hornet.setStoragePos(1,true);
         hornet.startIntake(true);
         hornet.stopIntake();
+        hornet.startFeeder(true);
+        hornet.stopFeeder();
+
     }
 }
