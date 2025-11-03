@@ -105,17 +105,47 @@ public class NewAuto extends OpMode {
         currentColor = detectColor();
 
         //SET LAUNCHING POSITION
+        if (!launching && previousColor != currentColor && colorTimer.getElapsedTimeSeconds() > .5) {
+            colorTimer.resetTimer();
 
+            if(currentColor != ColorSensed.NO_COLOR) {
+                intakeTimer.resetTimer();
+                if (SharedData.storage[0] == ColorSensed.NO_COLOR) {
+                    SharedData.storage[0] = currentColor;
+                    hornet.setStoragePos(0, true);
+                } else if (SharedData.storage[1] == ColorSensed.NO_COLOR) {
+                    SharedData.storage[1] = currentColor;
+                    hornet.setStoragePos(1, true);
+                } else if (SharedData.storage[2] == ColorSensed.NO_COLOR) {
+                    SharedData.storage[2] = currentColor;
+                    hornet.setStoragePos(2, true);
+                }
+            }
+        }
+
+        //swaps to open slot (if available)
+        else if(!launching && colorTimer.getElapsedTimeSeconds() > .5){
+
+            if(SharedData.storage[0] == ColorSensed.NO_COLOR)
+                hornet.setStoragePos(0, true);
+            else if(SharedData.storage[1] == ColorSensed.NO_COLOR)
+                hornet.setStoragePos(1, true);
+            else if(SharedData.storage[2] == ColorSensed.NO_COLOR)
+                hornet.setStoragePos(2, true);
+            else
+                hornet.setStoragePos(1,false);
+        }
+        previousColor = currentColor;
         if(launching) {
-            int ind = getPurpleIndex() != -1 ?  getPurpleIndex() : getInconclusiveIndex();
+            int ind = SharedData.getPurpleIndex() != -1 ?  getPurpleIndex() : getInconclusiveIndex();
             if(timesLaunched == SharedData.greenIndex || ind == -1) {
-                ind = getGreenIndex() == -1 ? ind : getGreenIndex();
+                ind = SharedData.getGreenIndex() == -1 ? ind : SharedData.getGreenIndex();
             }
 
 
             if(ind != -1) {
                 hornet.startLaunchMotors(true);
-                setStoragePos(ind, false);
+                hornet.setStoragePos(ind, false);
 
             }
             if(hornet.atTargetVelocity() && launch) {
@@ -138,13 +168,8 @@ public class NewAuto extends OpMode {
             hornet.stopFeeder();
             hornet.stopLaunchMotors();
         }
-
-
-
-
-
-
     }
+
 
 
 

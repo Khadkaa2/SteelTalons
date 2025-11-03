@@ -28,6 +28,39 @@ public class SharedData {
             storage[1] = ColorSensed.NO_COLOR;
             storage[2] = ColorSensed.NO_COLOR;
         }
+    public static int getGreenIndex() {
+        int temp = -1;
+        if (SharedData.storage[0] == ColorSensed.GREEN)
+            temp = 0;
+        else if (SharedData.storage[1] == ColorSensed.GREEN)
+            temp = 1;
+        else if (SharedData.storage[2] == ColorSensed.GREEN)
+            temp = 2;
+        return temp;
+    }
 
+    //gets the index of a purple ball (not the closest)
+    //Need to adapt code to set position to nearest purple ball
+    public int getPurpleIndex() {
+        int temp = -1;
+        if (SharedData.storage[0] == ColorSensed.PURPLE)
+            temp = 0;
+        else if (SharedData.storage[1] == ColorSensed.PURPLE)
+            temp = 1;
+        else if (SharedData.storage[2] == ColorSensed.PURPLE)
+            temp = 2;
+        return temp;
+    }
+
+
+    public int getInconclusiveIndex() {
+        int temp = -1;
+        if (SharedData.storage[0] == ColorSensed.INCONLUSIVE)
+            temp = 0;
+        else if (SharedData.storage[1] == ColorSensed.INCONLUSIVE)
+            temp = 1;
+        else if (SharedData.storage[2] == ColorSensed.INCONLUSIVE)
+            temp = 2;
+        return temp;
 
 }
