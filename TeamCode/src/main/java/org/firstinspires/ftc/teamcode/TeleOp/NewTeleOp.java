@@ -65,6 +65,9 @@ public class NewTeleOp extends LinearOpMode{
         hornet.stopIntake();
         hornet.startFeeder(true);
         hornet.stopFeeder();
-
+        hornet.startLaunchMotors(true);
+        hornet.stopLaunchMotors();
+        hornet.atTargetVelocity();
+        hornet.detectColor()
     }
 }

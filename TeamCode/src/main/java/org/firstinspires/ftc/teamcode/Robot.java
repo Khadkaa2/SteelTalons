@@ -147,4 +147,13 @@ public class Robot {
         return leftLaunch.getVelocity() >= launchTargetVelocity - 50 && rightLaunch.getVelocity() >= launchTargetVelocity - 50;
     }
 
+    public ColorSensed detectColor()
+    {
+        if(distanceSensor.getDistance(DistanceUnit.CM) > 2)
+            return ColorSensed.NO_COLOR;
+        return ColorSensed.INCONLUSIVE;
+    }
+
+
+
 }
