@@ -60,6 +60,7 @@ public class NewTeleOp extends LinearOpMode{
     boolean robotCentric;
     boolean autoMode;
     double speedMultiplier = 1;
+    boolean launching;
 
     public void runOpMode()
     {
@@ -93,16 +94,16 @@ public class NewTeleOp extends LinearOpMode{
     }
     public void autoMode()
     {
-        hornet.setStoragePos(SharedData.storage[0] == ColorSensed.NO_COLOR ? 0 : (SharedData.storage[1] == ColorSensed.NO_COLOR ? 1 : 2) , SharedData.storage[0] != ColorSensed.NO_COLOR || SharedData.storage[1] != ColorSensed.NO_COLOR || SharedData.storage[2] != ColorSensed.NO_COLOR);
+        if(!launching)
+            hornet.setStoragePos(SharedData.storage[0] == ColorSensed.NO_COLOR ? 0 : (SharedData.storage[1] == ColorSensed.NO_COLOR ? 1 : 2) , (SharedData.storage[0] != ColorSensed.NO_COLOR || SharedData.storage[1] != ColorSensed.NO_COLOR || SharedData.storage[2] != ColorSensed.NO_COLOR));
 
         if(gamepad2.right_bumper && gamepad2.left_bumper) {
-            SharedData.storage[gamepad2.a ? 0 : (gamepad2.b ? 1 : (gamepad2.y ? 2 : -1))] = ColorSensed.NO_COLOR;
             if(gamepad2.a)
-                SharedData.storage[0] = ColorSensed.NO_COLOR;
+                SharedData.clearSlot(0);
             else if(gamepad2.b)
-                SharedData.storage[1] = ColorSensed.NO_COLOR;
+                SharedData.clearSlot(1);
             else if(gamepad2.y)
-                SharedData.storage[2] = ColorSensed.NO_COLOR;
+                SharedData.clearSlot(2);
         }
         else if(gamepad2.right_bumper) {
             if(gamepad2.a)
@@ -124,6 +125,43 @@ public class NewTeleOp extends LinearOpMode{
         /*
         if(touchSensor.isPressed() && hornet.atSortTarget) && SharedData.storage[hornet.getSlotGoal()] == ColorSensed.NO_COLOR){
             SharedData.storage[hornet.getSlotGoal] = hornet.detectColor();
+        }
+         */
+
+        if(gamepad2.dpad_up && SharedData.getGreenIndex() != -1 && !launching)
+        {
+            hornet.setStoragePos(SharedData.getGreenIndex(), false);
+            launching = true;
+        }
+        if(gamepad2.dpad_down && SharedData.getPurpleIndex() != -1 && !launching)
+        {
+            hornet.setStoragePos(SharedData.getPurpleIndex(), false);
+            launching = true;
+        }
+
+        /*
+        //If launching -> speed up launchMotors
+        if(launching){hornet.startLaunchMotors(true);}
+
+        //if ready to launch -> then launch
+        if(launching && hornet.atSortTarget() && hornet.atTargetVelocity() && !hornet.flapAtLaunch()){
+            hornet.launch();
+            launchTimer.resetTimer();
+        }
+
+        //if flap has had time to move...
+        and flap is at launch position -> move flap back and clear storage slot
+        and flap is at not launch position and it says its launching -> say its not launching
+        if(launchTimer.getElapsedTimerSeconds() >= .25){
+            if(hornet.flapAtLaunch()){
+                launchTimer.resetTimer();
+                hornet.resetFlap();
+                SharedData.clear(hornet.getSlotGoal());
+            }
+            else if(launching && hornet.launched()){
+                launching = false;
+                hornet.resetLaunch();
+            }
         }
          */
 

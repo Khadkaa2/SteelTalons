@@ -61,6 +61,7 @@ public class Robot {
     int launchTargetVelocity;
     private static Servo test = null;
     int slotGoal;
+    boolean launched;
 
      public Robot(HardwareMap hardwareMap){
         intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
@@ -123,12 +124,12 @@ public class Robot {
     }
 
     public void startIntake(boolean in) {intakeServo.setPower(in ? 1 : -1);}
-    public void stopIntake(){intakeServo.setPower(0);}
+    public void stopIntake() {intakeServo.setPower(0);}
 
     public void startFeeder(boolean out) {feeder.setPower(out ? 1 : -1);}
     public void stopFeeder() {feeder.setPower(0);}
 
-    public void startLaunchMotors(boolean far){
+    public void startLaunchMotors(boolean far) {
          launchTargetVelocity = far ? 2500 : 1500;
          leftLaunch.setVelocity(launchTargetVelocity);
          rightLaunch.setVelocity(launchTargetVelocity);
@@ -153,6 +154,27 @@ public class Robot {
          double hue = JavaUtil.rgbToHue(entranceColor.red(), entranceColor.green(), entranceColor.blue());
          return (hue > 170 && saturation < .5) ? ColorSensed.PURPLE : ((hue < 160 && saturation > .55) ? ColorSensed.GREEN : ColorSensed.INCONLUSIVE);
     }
+
+    public void launch() {
+         /*
+         flap.setPosition(1);
+          */
+        launched = true;
+    }
+    public void resetFlap() {
+        /*
+        flap.setPosition(0);
+         */
+    }
+    public void resetLaunch() {launched = false;}
+    public boolean flapAtLaunch(){
+         /*
+         return flap.getPosition() == 1;
+          */
+        return false;
+    }
+
+    public boolean isLaunched(){return launched;}
 
 
 
