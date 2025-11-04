@@ -6,6 +6,7 @@ import androidx.xr.runtime.math.Pose;
 
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
@@ -33,7 +34,7 @@ public class NewAuto extends OpMode {
     private Follower f;
     public PanelsTelemetry panels = PanelsTelemetry.INSTANCE;
     private int pathState;
-    private Timer pathTimer, actionTimer,opmodeTimer,colorTimer,launchTimer,intakeTimer,detectColorTimer
+    private Timer pathTimer, actionTimer,opmodeTimer,colorTimer,launchTimer,intakeTimer,detectColorTimer;
     private PoseConstants poses = new PoseConstants();
     Pose currentPose = null;
     private Path start, end;
@@ -79,9 +80,9 @@ public class NewAuto extends OpMode {
     else if (ID == 23) index = 2;
     SharedData.greenIndex = index;
 
-        telemetry.addData("Green Index", index );
-        telemetry.addData("Side", SharedData.red ? "Red" : "Blue");
-
+    telemetry.addData("Green Index", index );
+    telemetry.addData("Side", SharedData.red ? "Red" : "Blue");
+    telemetry.update();
     }
 
     @Override
@@ -102,7 +103,7 @@ public class NewAuto extends OpMode {
             hornet.startIntake(true);
         } else hornet.stopIntake();
 
-        currentColor = detectColor();
+        currentColor = hornet.detectColor();
 
         //SET LAUNCHING POSITION
         if (!launching && previousColor != currentColor && colorTimer.getElapsedTimeSeconds() > .5) {
@@ -137,7 +138,7 @@ public class NewAuto extends OpMode {
         }
         previousColor = currentColor;
         if(launching) {
-            int ind = SharedData.getPurpleIndex() != -1 ?  getPurpleIndex() : getInconclusiveIndex();
+            int ind = SharedData.getPurpleIndex() != -1 ?  SharedData.getPurpleIndex() : SharedData.getInconclusiveIndex();
             if(timesLaunched == SharedData.greenIndex || ind == -1) {
                 ind = SharedData.getGreenIndex() == -1 ? ind : SharedData.getGreenIndex();
             }
@@ -170,10 +171,139 @@ public class NewAuto extends OpMode {
         }
     }
 
+    public void stop(){
+        sendPose();
+    }
+
+    public void setPathState(int state){
+        this.pathState = state;
+        pathTimer.resetTimer();
+    }
 
 
+    public void buildPaths(){
+        start = new Path( new BezierLine(poses.START_POSE , poses.LAUNCH_POSE));
+        start.setLinearHeadingInterpolation(poses.START_POSE.getHeading() , poses.LAUNCH_POSE.getHeading());
 
+        one = f.pathBuilder()
+                .addPath(new BezierLine( poses.LAUNCH_POSE , poses.ALIGN1_POSE))
+                .setConstantHeadingInterpolation(poses.ALIGN1_POSE.getHeading())
+                .build();
+        two = f.pathBuilder()
+                .addPath(new BezierLine( poses.ALIGN1_POSE , poses.PICKUP1_POSE))
+                .setLinearHeadingInterpolation( poses.ALIGN1_POSE.getHeading() , poses.PICKUP1_POSE.getHeading())
+                .build();
+        three = f.pathBuilder()
+                .addPath(new BezierLine(poses.PICKUP1_POSE , poses.LAUNCH_POSE ))
+                .setLinearHeadingInterpolation(poses.PICKUP1_POSE.getHeading() , poses.LAUNCH_POSE.getHeading())
+                .build();
+        four = f.pathBuilder()
+                .addPath(new BezierLine(poses.LAUNCH_POSE, poses.ALIGN2_POSE))
+                .setConstantHeadingInterpolation(poses.ALIGN2_POSE.getHeading())
+                .build();
+        five = f.pathBuilder()
+                .addPath(new BezierLine(poses.ALIGN2_POSE, poses.PICKUP2_POSE))
+                .setLinearHeadingInterpolation(poses.ALIGN2_POSE.getHeading(), poses.PICKUP2_POSE.getHeading())
+                .build();
+        six = f.pathBuilder()
+                .addPath(new BezierLine(poses.PICKUP2_POSE, poses.LAUNCH_POSE))
+                .setLinearHeadingInterpolation(poses.PICKUP2_POSE.getHeading(), poses.LAUNCH_POSE.getHeading())
+                .build();
+        end = new Path(new BezierLine(poses.LAUNCH_POSE, poses.END_POSE));
+        end.setLinearHeadingInterpolation(poses.LAUNCH_POSE.getHeading(), poses.END_POSE.getHeading());
+    }
 
+    public void autoPathUpdates(){
+        sendPose();
+        switch (pathState){
+            case 0:
+                //go to scoring pos
+                f.followPath(start);
+                setPathState(1);
+                sendPose();
+                break;
+            case 1:
+                //go to align 1 pos
+                sendPose();
+                if (!f.isBusy() && SharedData.isEmpty() && launchTimer.getElapsedTimeSeconds() > 1 ){
+                    f.followPath(one, true);
+                    setPathState(2);
+                    sendPose();
+                    launching = false;
+                }
+                //score 1
+                else if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 1)
+                    launching = true;
+                break;
+            case 2:
+                //pickup balls
+                if (!f.isBusy()){
+                    f.followPath(two, true);
+                    f.setMaxPower(.2);
+                    setPathState(3);
+                    sendPose();
+                }
+                break;
+            case 3:
+                //go to scoring pos
+                if (!f.isBusy()){
+                    f.followPath(three, true);
+                    f.setMaxPower(1);
+                    setPathState(4);
+                    sendPose();
+                }
+                break;
+            case 4:
+                //go to align 2
+                if (!f.isBusy() && SharedData.isEmpty() && launchTimer.getElapsedTimeSeconds() > 1) {
+                    f.followPath(four, true);
+                    setPathState(5);
+                    sendPose();
+                    launching = false;
+                }
+                //score                         can we remove this part?   //
+                else if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 1) {
+                    launching = true;
+                }
+                break;
+            case 5:
+                // pickup 2
+                if (!f.isBusy()){
+                    f.followPath(five , true);
+                    f.setMaxPower(.2);
+                    setPathState(6);
+                    sendPose();
+            }
+                break;
+            case 6:
+                //move to score pos
+                if (!f.isBusy()){
+                    f.followPath(six , true);
+                    f.setMaxPower(1);
+                    sendPose();
+                    setPathState(7);
+                }
+                break;
+            case 7:
+                // sends to final location
+                if (!f.isBusy() && SharedData.isEmpty() && launchTimer.getElapsedTimeSeconds() > 1){
+                    f.followPath(end);
+                    setPathState(8);
+                    sendPose();
+                }
+                //score
+                else if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() >1){
+                    launching = true;
+                }
+                break;
+            case 8:
+                if (!f.isBusy()){
+                    setPathState(-1);
+                    sendPose();
+                }
+                break;
+        }
+    }
 
 
 
@@ -196,7 +326,9 @@ public class NewAuto extends OpMode {
         return -1;
     }
 
-
+    public void sendPose(){
+        SharedData.toTeleopPose = f.getPose();
+    }
 
 
 }

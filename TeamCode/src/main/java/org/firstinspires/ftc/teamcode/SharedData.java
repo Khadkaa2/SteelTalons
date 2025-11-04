@@ -23,11 +23,12 @@ public class SharedData {
     }
 
 
-        public static void emptyStorage () {
-            storage[0] = ColorSensed.NO_COLOR;
-            storage[1] = ColorSensed.NO_COLOR;
-            storage[2] = ColorSensed.NO_COLOR;
-        }
+    public static void emptyStorage() {
+        storage[0] = ColorSensed.NO_COLOR;
+        storage[1] = ColorSensed.NO_COLOR;
+        storage[2] = ColorSensed.NO_COLOR;
+    }
+
     public static int getGreenIndex() {
         int temp = -1;
         if (SharedData.storage[0] == ColorSensed.GREEN)
@@ -41,7 +42,7 @@ public class SharedData {
 
     //gets the index of a purple ball (not the closest)
     //Need to adapt code to set position to nearest purple ball
-    public int getPurpleIndex() {
+    public static int getPurpleIndex() {
         int temp = -1;
         if (SharedData.storage[0] == ColorSensed.PURPLE)
             temp = 0;
@@ -53,7 +54,7 @@ public class SharedData {
     }
 
 
-    public int getInconclusiveIndex() {
+    public static int getInconclusiveIndex() {
         int temp = -1;
         if (SharedData.storage[0] == ColorSensed.INCONLUSIVE)
             temp = 0;
@@ -63,4 +64,5 @@ public class SharedData {
             temp = 2;
         return temp;
 
+    }
 }
