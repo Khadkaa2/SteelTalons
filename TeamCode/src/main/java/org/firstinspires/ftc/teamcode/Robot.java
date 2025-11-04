@@ -58,10 +58,9 @@ public class Robot {
     private static CRServo feeder = null;
     private static ColorSensor entranceColor = null;
     private static DistanceSensor distanceSensor = null;
-
     int launchTargetVelocity;
-
     private static Servo test = null;
+    int slotGoal;
 
      public Robot(HardwareMap hardwareMap){
         intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
@@ -86,9 +85,7 @@ public class Robot {
         int absolutePos = fan.getCurrentPosition();
         int relativePos = absolutePos % ticks;
         int rotationOffset = absolutePos-relativePos;
-
-        int sign = (int)Math.signum(absolutePos == 0 ? 1 : absolutePos);
-
+        slotGoal = slot;
         if (intake) {
             if (slot == 0) {
                 if(relativePos <= ticks/2)
@@ -139,19 +136,22 @@ public class Robot {
 
     public void stopLaunchMotors() {
          launchTargetVelocity = 0;
-        leftLaunch.setVelocity(0);
-        rightLaunch.setVelocity(0);
+         leftLaunch.setVelocity(0);
+         rightLaunch.setVelocity(0);
     }
 
     public boolean atTargetVelocity() {
         return leftLaunch.getVelocity() >= launchTargetVelocity - 50 && rightLaunch.getVelocity() >= launchTargetVelocity - 50;
     }
 
-    public ColorSensed detectColor()
-    {
-        if(distanceSensor.getDistance(DistanceUnit.CM) > 2)
-            return ColorSensed.NO_COLOR;
-        return ColorSensed.INCONLUSIVE;
+    public boolean atSortTarget() {return !fan.isBusy();}
+
+    public int getSlotGoal() {return slotGoal;}
+
+    public ColorSensed detectColor() {
+         double saturation = JavaUtil.rgbToSaturation(entranceColor.red(), entranceColor.green(), entranceColor.blue());
+         double hue = JavaUtil.rgbToHue(entranceColor.red(), entranceColor.green(), entranceColor.blue());
+         return (hue > 170 && saturation < .5) ? ColorSensed.PURPLE : ((hue < 160 && saturation > .55) ? ColorSensed.GREEN : ColorSensed.INCONLUSIVE);
     }
 
 

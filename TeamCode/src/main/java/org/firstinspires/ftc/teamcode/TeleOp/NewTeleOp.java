@@ -55,11 +55,15 @@ import java.util.List;
 @TeleOp
 public class NewTeleOp extends LinearOpMode{
     Robot hornet;
+    Follower f = Constants.createFollower(hardwareMap);
+    PoseConstants poses = new PoseConstants();
+    boolean robotCentric;
+    boolean autoMode;
+    double speedMultiplier = 1;
 
     public void runOpMode()
     {
         hornet = new Robot(hardwareMap);
-        waitForStart();
         hornet.setStoragePos(1,true);
         hornet.startIntake(true);
         hornet.stopIntake();
@@ -68,6 +72,69 @@ public class NewTeleOp extends LinearOpMode{
         hornet.startLaunchMotors(true);
         hornet.stopLaunchMotors();
         hornet.atTargetVelocity();
-        hornet.detectColor()
+        hornet.detectColor();
+
+        waitForStart();
+        while(opModeIsActive())
+        {
+            f.setTeleOpDrive(
+                    -gamepad1.left_stick_y * speedMultiplier,
+                    -gamepad1.left_stick_x * speedMultiplier,
+                    -gamepad1.right_stick_x * speedMultiplier,
+                    robotCentric,
+                    (SharedData.red || robotCentric) ? 0 : Math.toRadians(180)
+            );
+
+            if (autoMode) {autoMode();} else {manualMode();}
+
+
+        }
+
+    }
+    public void autoMode()
+    {
+        hornet.setStoragePos(SharedData.storage[0] == ColorSensed.NO_COLOR ? 0 : (SharedData.storage[1] == ColorSensed.NO_COLOR ? 1 : 2) , SharedData.storage[0] != ColorSensed.NO_COLOR || SharedData.storage[1] != ColorSensed.NO_COLOR || SharedData.storage[2] != ColorSensed.NO_COLOR);
+
+        if(gamepad2.right_bumper && gamepad2.left_bumper) {
+            SharedData.storage[gamepad2.a ? 0 : (gamepad2.b ? 1 : (gamepad2.y ? 2 : -1))] = ColorSensed.NO_COLOR;
+            if(gamepad2.a)
+                SharedData.storage[0] = ColorSensed.NO_COLOR;
+            else if(gamepad2.b)
+                SharedData.storage[1] = ColorSensed.NO_COLOR;
+            else if(gamepad2.y)
+                SharedData.storage[2] = ColorSensed.NO_COLOR;
+        }
+        else if(gamepad2.right_bumper) {
+            if(gamepad2.a)
+                SharedData.storage[0] = ColorSensed.GREEN;
+            else if(gamepad2.b)
+                SharedData.storage[1] = ColorSensed.GREEN;
+            else if(gamepad2.y)
+                SharedData.storage[2] = ColorSensed.GREEN;
+        }
+        else if(gamepad2.left_bumper) {
+            if(gamepad2.a)
+                SharedData.storage[0] = ColorSensed.PURPLE;
+            else if(gamepad2.b)
+                SharedData.storage[1] = ColorSensed.PURPLE;
+            else if(gamepad2.y)
+                SharedData.storage[2] = ColorSensed.PURPLE;
+        }
+
+        /*
+        if(touchSensor.isPressed() && hornet.atSortTarget) && SharedData.storage[hornet.getSlotGoal()] == ColorSensed.NO_COLOR){
+            SharedData.storage[hornet.getSlotGoal] = hornet.detectColor();
+        }
+         */
+
+    }
+    public void manualMode()
+    {
+        if(gamepad2.a)
+            hornet.setStoragePos(0, gamepad2.dpad_left);
+        else if(gamepad2.b)
+            hornet.setStoragePos(1, gamepad2.dpad_left);
+        else if(gamepad2.y)
+            hornet.setStoragePos(2, gamepad2.dpad_left);
     }
 }
