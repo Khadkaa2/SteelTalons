@@ -123,8 +123,8 @@ public class NewTeleOp extends LinearOpMode{
         }
 
         /*
-        if(touchSensor.isPressed() && hornet.atSortTarget) && SharedData.storage[hornet.getSlotGoal()] == ColorSensed.NO_COLOR){
-            SharedData.storage[hornet.getSlotGoal] = hornet.detectColor();
+        if(touchSensor.isPressed() && hornet.atSortTarget()) && SharedData.storage[hornet.getSlotGoal()] == ColorSensed.NO_COLOR){
+            SharedData.storage[hornet.getSlotGoal()] = hornet.detectColor();
         }
          */
 
