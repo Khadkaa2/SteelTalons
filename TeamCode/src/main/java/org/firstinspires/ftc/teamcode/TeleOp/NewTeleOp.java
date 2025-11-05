@@ -61,30 +61,54 @@ public class NewTeleOp extends LinearOpMode{
     boolean autoMode;
     double speedMultiplier = 1;
     boolean launching;
+    boolean automated;
+    private PathChain toLaunchSame, toPark, toLaunchCross;
+
+    boolean slowMode;
 
     public void runOpMode()
     {
         hornet = new Robot(hardwareMap);
-        hornet.setStoragePos(1,true);
-        hornet.startIntake(true);
-        hornet.stopIntake();
-        hornet.startFeeder(true);
-        hornet.stopFeeder();
-        hornet.startLaunchMotors(true);
-        hornet.stopLaunchMotors();
-        hornet.atTargetVelocity();
-        hornet.detectColor();
+        createPaths();
 
         waitForStart();
         while(opModeIsActive())
         {
-            f.setTeleOpDrive(
-                    -gamepad1.left_stick_y * speedMultiplier,
-                    -gamepad1.left_stick_x * speedMultiplier,
-                    -gamepad1.right_stick_x * speedMultiplier,
-                    robotCentric,
-                    (SharedData.red || robotCentric) ? 0 : Math.toRadians(180)
-            );
+            if(!automated) {
+                f.setTeleOpDrive(
+                        -gamepad1.left_stick_y * speedMultiplier,
+                        -gamepad1.left_stick_x * speedMultiplier,
+                        -gamepad1.right_stick_x * speedMultiplier,
+                        robotCentric,
+                        (SharedData.red || robotCentric) ? 0 : Math.toRadians(180)
+                );
+            }
+
+            //Launch Spot 1
+            if (gamepad1.a && !automated) {
+                f.followPath(toLaunchSame);
+                automated = true;
+            }
+            //Auto Pathing to Park
+            else if (gamepad1.x && !automated) {
+                f.followPath(toPark);
+                automated = true;
+            }
+            //Launch Spot 2
+            else if (gamepad1.b && !automated) {
+                f.followPath(toLaunchCross);
+                automated = true;
+            }
+            //exits automated pathing
+            else if ((!gamepad1.a && !gamepad1.x && !gamepad1.b) && automated) {
+                f.startTeleopDrive(true);
+                automated = false;
+            }
+
+
+            if(slowMode != gamepad1.y && gamepad1.y)
+                speedMultiplier = speedMultiplier == 1 ? .2 : 1;
+            slowMode = gamepad1.y;
 
             if (autoMode) {autoMode();} else {manualMode();}
 
@@ -92,8 +116,7 @@ public class NewTeleOp extends LinearOpMode{
         }
 
     }
-    public void autoMode()
-    {
+    public void autoMode() {
         if(!launching)
             hornet.setStoragePos(SharedData.storage[0] == ColorSensed.NO_COLOR ? 0 : (SharedData.storage[1] == ColorSensed.NO_COLOR ? 1 : 2) , (SharedData.storage[0] != ColorSensed.NO_COLOR || SharedData.storage[1] != ColorSensed.NO_COLOR || SharedData.storage[2] != ColorSensed.NO_COLOR));
 
@@ -166,13 +189,47 @@ public class NewTeleOp extends LinearOpMode{
          */
 
     }
-    public void manualMode()
-    {
+    public void manualMode() {
+        //sorter
         if(gamepad2.a)
-            hornet.setStoragePos(0, gamepad2.dpad_left);
+            hornet.setStoragePos(0, !gamepad2.dpad_left);
         else if(gamepad2.b)
-            hornet.setStoragePos(1, gamepad2.dpad_left);
+            hornet.setStoragePos(1, !gamepad2.dpad_left);
         else if(gamepad2.y)
-            hornet.setStoragePos(2, gamepad2.dpad_left);
+            hornet.setStoragePos(2, !gamepad2.dpad_left);
+
+        //launch
+        if(gamepad2.right_trigger > .2)
+            hornet.startLaunchMotors(true);
+        else if(gamepad2.left_trigger > .2)
+            hornet.startLaunchMotors(false);
+        else
+            hornet.stopLaunchMotors();
+
+        //flap
+        /*
+        if(gamepad2.right_bumper)
+            hornet.launch()
+        if(gamepad2.left_bumper){
+            hornet.resetFlap();
+            hornet.resetLaunch();
+        }
+         */
+    }
+    public void createPaths() {
+        toLaunchSame = f.pathBuilder()
+                .addPath(new BezierLine(f.getPose(), poses.LAUNCH_POSE))
+                .setLinearHeadingInterpolation(f.getPose().getHeading(), poses.LAUNCH_POSE.getHeading())
+                .build();
+
+        toLaunchCross = f.pathBuilder()
+                .addPath(new BezierLine(f.getPose(), poses.teleOpLaunchPose))
+                .setConstantHeadingInterpolation(poses.teleOpLaunchPose.getHeading())
+                .build();
+
+        toPark = f.pathBuilder()
+                .addPath(new BezierLine(f.getPose(), poses.parkPose))
+                .setConstantHeadingInterpolation(poses.parkPose.getHeading())
+                .build();
     }
 }
