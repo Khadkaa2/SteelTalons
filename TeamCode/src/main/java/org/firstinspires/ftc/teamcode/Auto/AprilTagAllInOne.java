@@ -14,7 +14,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
-@TeleOp
+//@TeleOp
 public class AprilTagAllInOne extends LinearOpMode {
 
     private static AprilTagProcessor aprilTag;

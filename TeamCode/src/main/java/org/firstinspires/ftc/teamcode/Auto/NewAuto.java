@@ -42,9 +42,8 @@ public class NewAuto extends OpMode {
     private static AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
     int index;
-    private ColorSensed currentColor = ColorSensed.NO_COLOR;
 
-    boolean launching = false , launch = true;
+    boolean launching = false , launchingTemp = false;
 
     int timesLaunched = 0;
 
@@ -56,7 +55,6 @@ public class NewAuto extends OpMode {
         initAprilTag();
         pathTimer = new Timer();
         opmodeTimer = new Timer();
-        detectColorTimer = new Timer();
         launchTimer = new Timer();
         opmodeTimer.resetTimer();
 
@@ -100,50 +98,42 @@ public class NewAuto extends OpMode {
             hornet.startIntake(true);
         } else hornet.stopIntake();
 
-        currentColor = hornet.detectColor();
-
-        //SET LAUNCHING POSITION
+        //SET STORAGE COLOR
         if(hornet.buttonPressed() && hornet.atSortTarget() && SharedData.storage[hornet.getSlotGoal()] == ColorSensed.NO_COLOR){
             SharedData.storage[hornet.getSlotGoal()] = hornet.detectColor();
         }
 
-        if(!launching)
-            hornet.setStoragePos(SharedData.storage[0] == ColorSensed.NO_COLOR ? 0 : (SharedData.storage[1] == ColorSensed.NO_COLOR ? 1 : 2) , SharedData.isFull());
-
-        if(launching) {
-            int ind = SharedData.getPurpleIndex() != -1 ?  SharedData.getPurpleIndex() : SharedData.getInconclusiveIndex();
+        if(launching && !SharedData.isEmpty() && !launchingTemp) {
+            int ind = SharedData.getPurpleIndex();
             if(timesLaunched == SharedData.greenIndex || ind == -1) {
                 ind = SharedData.getGreenIndex() == -1 ? ind : SharedData.getGreenIndex();
             }
+            hornet.setStoragePos(ind,false);
+            launchingTemp = true;
+        }
+        if(launchingTemp && hornet.atSortTarget() && hornet.atTargetVelocity() && !hornet.flapAtLaunch()){
+            hornet.launch();
+            launchTimer.resetTimer();
+        }
 
-
-            if(ind != -1) {
-                hornet.startLaunchMotors(true);
-                hornet.setStoragePos(ind, false);
-
-            }
-            if(hornet.atTargetVelocity() && launch) {
-                hornet.launch();
+        if(launchTimer.getElapsedTimeSeconds() >= .25){
+            if(hornet.flapAtLaunch()){
                 launchTimer.resetTimer();
-                launch = false;
-            }
-            else if(!hornet.atTargetVelocity()) {
                 hornet.resetFlap();
+                SharedData.clearSlot(hornet.getSlotGoal());
+            }
+            else if(launchingTemp && hornet.isLaunched()){
+                launchingTemp = false;
                 hornet.resetLaunch();
             }
-            if(launchTimer.getElapsedTimeSeconds() > 1.5 && !launch) {
-                SharedData.storage[ind] = ColorSensed.NO_COLOR;
-                timesLaunched ++;
-                if(timesLaunched == 3)
-                    timesLaunched = 0;
-                launch = true;
-            }
         }
+
         if(!launching) {
             hornet.resetFlap();
             hornet.resetLaunch();
             hornet.stopLaunchMotors();
-        }
+            hornet.setStoragePos(SharedData.storage[0] == ColorSensed.NO_COLOR ? 0 : (SharedData.storage[1] == ColorSensed.NO_COLOR ? 1 : 2) , SharedData.isFull());
+        }else{hornet.startLaunchMotors(true);}
     }
 
     public void stop(){
