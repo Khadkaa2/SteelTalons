@@ -63,12 +63,14 @@ public class NewTeleOp extends LinearOpMode{
     boolean launching;
     boolean automated;
     private PathChain toLaunchSame, toPark, toLaunchCross;
+    private Timer launchTimer;
 
     boolean slowMode;
 
     public void runOpMode()
     {
         hornet = new Robot(hardwareMap);
+        launchTimer = new Timer();
         createPaths();
 
         waitForStart();
@@ -118,7 +120,7 @@ public class NewTeleOp extends LinearOpMode{
     }
     public void autoMode() {
         if(!launching)
-            hornet.setStoragePos(SharedData.storage[0] == ColorSensed.NO_COLOR ? 0 : (SharedData.storage[1] == ColorSensed.NO_COLOR ? 1 : 2) , (SharedData.storage[0] != ColorSensed.NO_COLOR || SharedData.storage[1] != ColorSensed.NO_COLOR || SharedData.storage[2] != ColorSensed.NO_COLOR));
+            hornet.setStoragePos(SharedData.storage[0] == ColorSensed.NO_COLOR ? 0 : (SharedData.storage[1] == ColorSensed.NO_COLOR ? 1 : 2) , SharedData.isFull());
 
         if(gamepad2.right_bumper && gamepad2.left_bumper) {
             if(gamepad2.a)
@@ -145,11 +147,11 @@ public class NewTeleOp extends LinearOpMode{
                 SharedData.storage[2] = ColorSensed.PURPLE;
         }
 
-        /*
-        if(touchSensor.isPressed() && hornet.atSortTarget()) && SharedData.storage[hornet.getSlotGoal()] == ColorSensed.NO_COLOR){
+
+        if(hornet.buttonPressed() && hornet.atSortTarget() && SharedData.storage[hornet.getSlotGoal()] == ColorSensed.NO_COLOR){
             SharedData.storage[hornet.getSlotGoal()] = hornet.detectColor();
         }
-         */
+
 
         if(gamepad2.dpad_up && SharedData.getGreenIndex() != -1 && !launching)
         {
@@ -162,7 +164,7 @@ public class NewTeleOp extends LinearOpMode{
             launching = true;
         }
 
-        /*
+
         //If launching -> speed up launchMotors
         if(launching){hornet.startLaunchMotors(true);}
 
@@ -173,20 +175,20 @@ public class NewTeleOp extends LinearOpMode{
         }
 
         //if flap has had time to move...
-        and flap is at launch position -> move flap back and clear storage slot
-        and flap is at not launch position and it says its launching -> say its not launching
-        if(launchTimer.getElapsedTimerSeconds() >= .25){
+        //and flap is at launch position -> move flap back and clear storage slot
+        //and flap is at not launch position and it says its launching -> say its not launching
+        if(launchTimer.getElapsedTimeSeconds() >= .25){
             if(hornet.flapAtLaunch()){
                 launchTimer.resetTimer();
                 hornet.resetFlap();
-                SharedData.clear(hornet.getSlotGoal());
+                SharedData.clearSlot(hornet.getSlotGoal());
             }
             else if(launching && hornet.isLaunched()){
                 launching = false;
                 hornet.resetLaunch();
             }
         }
-         */
+
 
     }
     public void manualMode() {

@@ -20,6 +20,8 @@ public class SharedData {
     public static boolean isEmpty() {
         return (storage[0] == ColorSensed.NO_COLOR && storage[1] == ColorSensed.NO_COLOR && storage[2] == ColorSensed.NO_COLOR);
     }
+    public static boolean isFull(){return (storage[0] != ColorSensed.NO_COLOR && storage[1] != ColorSensed.NO_COLOR && storage[2] != ColorSensed.NO_COLOR);}
+
     public static void emptyStorage() {
         storage[0] = ColorSensed.NO_COLOR;
         storage[1] = ColorSensed.NO_COLOR;
