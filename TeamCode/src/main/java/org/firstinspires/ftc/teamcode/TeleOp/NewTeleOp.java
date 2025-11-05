@@ -52,7 +52,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.ArrayList;
 import java.util.List;
 
-@TeleOp
+@TeleOp (name = "AAA TeleOp")
 public class NewTeleOp extends LinearOpMode{
     Robot hornet;
     Follower f = Constants.createFollower(hardwareMap);

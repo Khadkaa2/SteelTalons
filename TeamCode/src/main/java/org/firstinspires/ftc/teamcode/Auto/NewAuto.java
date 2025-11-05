@@ -27,7 +27,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
-@Autonomous
+@Autonomous (name = "AAA Auto")
 public class NewAuto extends OpMode {
 
     private Robot hornet = new Robot(hardwareMap);
@@ -150,12 +150,13 @@ public class NewAuto extends OpMode {
 
             }
             if(hornet.atTargetVelocity() && launch) {
-                hornet.startFeeder(true);
+                hornet.launch();
                 launchTimer.resetTimer();
                 launch = false;
             }
             else if(!hornet.atTargetVelocity()) {
-                hornet.stopFeeder();
+                hornet.resetFlap();
+                hornet.resetLaunch();
             }
             if(launchTimer.getElapsedTimeSeconds() > 1.5 && !launch) {
                 SharedData.storage[ind] = ColorSensed.NO_COLOR;
@@ -166,7 +167,8 @@ public class NewAuto extends OpMode {
             }
         }
         if(!launching) {
-            hornet.stopFeeder();
+            hornet.resetFlap();
+            hornet.resetLaunch();
             hornet.stopLaunchMotors();
         }
     }
