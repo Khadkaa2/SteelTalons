@@ -181,7 +181,7 @@ public class NewTeleOp extends LinearOpMode{
                 hornet.resetFlap();
                 SharedData.clear(hornet.getSlotGoal());
             }
-            else if(launching && hornet.launched()){
+            else if(launching && hornet.isLaunched()){
                 launching = false;
                 hornet.resetLaunch();
             }
