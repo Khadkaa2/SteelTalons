@@ -34,8 +34,11 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.DigitalChannelController;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.LED;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -61,10 +64,19 @@ public class Robot {
     private static ColorSensor entranceColor = null;
     private static DistanceSensor distanceSensor = null;
     private static TouchSensor touchSensor=null;
+    private static DigitalChannel slotZeroGreen;
+    private static DigitalChannel slotOneGreen;
+    private static DigitalChannel slotTwoGreen;
+    private static DigitalChannel slotZeroRed;
+    private static DigitalChannel slotOneRed;
+    private static DigitalChannel slotTwoRed;
+
+
     int launchTargetVelocity;
     private static Servo test = null;
     int slotGoal;
     boolean launched;
+
 
      public Robot(HardwareMap hardwareMap){
         intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
@@ -75,6 +87,13 @@ public class Robot {
         leftLaunch = hardwareMap.get(DcMotorEx.class, "leftLaunch");
         distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
         touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
+        slotZeroGreen = hardwareMap.get(DigitalChannel.class, "slotZeroGreen");
+        slotOneGreen = hardwareMap.get(DigitalChannel.class, "slotOneGreen");
+        slotTwoGreen = hardwareMap.get(DigitalChannel.class, "slotTwoGreen");
+         slotZeroRed = hardwareMap.get(DigitalChannel.class, "slotZeroRed");
+         slotOneRed = hardwareMap.get(DigitalChannel.class, "slotOneRed");
+         slotTwoRed = hardwareMap.get(DigitalChannel.class, "slotTwoRed");
+
          rightLaunch.setDirection(DcMotorSimple.Direction.REVERSE);
          leftLaunch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
          leftLaunch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -180,6 +199,10 @@ public class Robot {
     public boolean isLaunched(){return launched;}
 
     public boolean buttonPressed() {return touchSensor.isPressed();}
+
+    public void updateLED() {
+
+    }
 
 
 
