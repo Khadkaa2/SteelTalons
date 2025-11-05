@@ -106,6 +106,10 @@ public class NewAuto extends OpMode {
         currentColor = hornet.detectColor();
 
         //SET LAUNCHING POSITION
+        if(hornet.buttonPressed() && hornet.atSortTarget() && SharedData.storage[hornet.getSlotGoal()] == ColorSensed.NO_COLOR){
+            SharedData.storage[hornet.getSlotGoal()] = hornet.detectColor();
+        }
+
         if (!launching && previousColor != currentColor && colorTimer.getElapsedTimeSeconds() > .5) {
             colorTimer.resetTimer();
 

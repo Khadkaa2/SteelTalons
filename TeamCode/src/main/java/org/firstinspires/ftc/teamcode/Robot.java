@@ -50,6 +50,8 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.TouchSensor;
+
 public class Robot {
     private static DcMotorEx fan = null;
     private static DcMotorEx rightLaunch = null;
@@ -58,6 +60,7 @@ public class Robot {
     private static CRServo feeder = null;
     private static ColorSensor entranceColor = null;
     private static DistanceSensor distanceSensor = null;
+    private static TouchSensor touchSensor=null;
     int launchTargetVelocity;
     private static Servo test = null;
     int slotGoal;
@@ -71,7 +74,7 @@ public class Robot {
         rightLaunch = hardwareMap.get(DcMotorEx.class, "rightLaunch");
         leftLaunch = hardwareMap.get(DcMotorEx.class, "leftLaunch");
         distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
-
+        touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
          rightLaunch.setDirection(DcMotorSimple.Direction.REVERSE);
          leftLaunch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
          leftLaunch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -175,6 +178,9 @@ public class Robot {
     }
 
     public boolean isLaunched(){return launched;}
+
+    public boolean buttonPressed() {return touchSensor.isPressed();}
+
 
 
 
