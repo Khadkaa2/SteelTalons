@@ -34,7 +34,7 @@ public class NewAuto extends OpMode {
     private Follower f;
     public PanelsTelemetry panels = PanelsTelemetry.INSTANCE;
     private int pathState;
-    private Timer pathTimer, actionTimer,opmodeTimer,colorTimer,launchTimer,intakeTimer,detectColorTimer;
+    private Timer pathTimer,opmodeTimer,launchTimer,detectColorTimer;
     private PoseConstants poses = new PoseConstants();
     Pose currentPose = null;
     private Path start, end;
@@ -42,11 +42,11 @@ public class NewAuto extends OpMode {
     private static AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
     int index;
+    private ColorSensed currentColor = ColorSensed.NO_COLOR;
 
     boolean launching = false , launch = true;
 
     int timesLaunched = 0;
-    private ColorSensed previousColor = ColorSensed.NO_COLOR, currentColor = ColorSensed.NO_COLOR;
 
     int slotGoal = 0;
 
@@ -55,11 +55,8 @@ public class NewAuto extends OpMode {
         SharedData.reset();
         initAprilTag();
         pathTimer = new Timer();
-        actionTimer = new Timer();
         opmodeTimer = new Timer();
-        intakeTimer = new Timer();
         detectColorTimer = new Timer();
-        colorTimer = new Timer();
         launchTimer = new Timer();
         opmodeTimer.resetTimer();
 
@@ -110,37 +107,9 @@ public class NewAuto extends OpMode {
             SharedData.storage[hornet.getSlotGoal()] = hornet.detectColor();
         }
 
-        if (!launching && previousColor != currentColor && colorTimer.getElapsedTimeSeconds() > .5) {
-            colorTimer.resetTimer();
+        if(!launching)
+            hornet.setStoragePos(SharedData.storage[0] == ColorSensed.NO_COLOR ? 0 : (SharedData.storage[1] == ColorSensed.NO_COLOR ? 1 : 2) , SharedData.isFull());
 
-            if(currentColor != ColorSensed.NO_COLOR) {
-                intakeTimer.resetTimer();
-                if (SharedData.storage[0] == ColorSensed.NO_COLOR) {
-                    SharedData.storage[0] = currentColor;
-                    hornet.setStoragePos(0, true);
-                } else if (SharedData.storage[1] == ColorSensed.NO_COLOR) {
-                    SharedData.storage[1] = currentColor;
-                    hornet.setStoragePos(1, true);
-                } else if (SharedData.storage[2] == ColorSensed.NO_COLOR) {
-                    SharedData.storage[2] = currentColor;
-                    hornet.setStoragePos(2, true);
-                }
-            }
-        }
-
-        //swaps to open slot (if available)
-        else if(!launching && colorTimer.getElapsedTimeSeconds() > .5){
-
-            if(SharedData.storage[0] == ColorSensed.NO_COLOR)
-                hornet.setStoragePos(0, true);
-            else if(SharedData.storage[1] == ColorSensed.NO_COLOR)
-                hornet.setStoragePos(1, true);
-            else if(SharedData.storage[2] == ColorSensed.NO_COLOR)
-                hornet.setStoragePos(2, true);
-            else
-                hornet.setStoragePos(1,false);
-        }
-        previousColor = currentColor;
         if(launching) {
             int ind = SharedData.getPurpleIndex() != -1 ?  SharedData.getPurpleIndex() : SharedData.getInconclusiveIndex();
             if(timesLaunched == SharedData.greenIndex || ind == -1) {
