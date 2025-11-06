@@ -55,8 +55,8 @@ import java.util.List;
 @TeleOp (name = "AAA TeleOp")
 public class NewTeleOp extends LinearOpMode{
     private Robot hornet = new Robot();
-    Follower f = Constants.createFollower(hardwareMap);
-    PoseConstants poses = new PoseConstants();
+    private Follower f;
+    private PoseConstants poses = new PoseConstants();
     boolean robotCentric;
     boolean autoMode;
     double speedMultiplier = 1;
@@ -67,16 +67,26 @@ public class NewTeleOp extends LinearOpMode{
 
     boolean slowMode;
 
-    public void runOpMode()
+    public void runOpMode() throws InterruptedException
     {
         hornet.initialize(hardwareMap);
+        f = Constants.createFollower(hardwareMap);
+        f.setStartingPose(SharedData.toTeleopPose == null ? poses.START_POSE : SharedData.toTeleopPose);
+        f.update();
         launchTimer = new Timer();
         createPaths();
 
         waitForStart();
-        while(opModeIsActive())
-        {
+
+        f.startTeleopDrive(true);
+
+        while(opModeIsActive()) {
+
+            f.update();
+
+            //
             if(!automated) {
+
                 f.setTeleOpDrive(
                         -gamepad1.left_stick_y * speedMultiplier,
                         -gamepad1.left_stick_x * speedMultiplier,

@@ -41,7 +41,7 @@ public class Robot {
      public void initialize(HardwareMap hwMp){
         intakeServo = hwMp.get(CRServo.class, "intakeServo");
         colorRight = hwMp.get(ColorSensor.class, "colorRight");
-        fan = hwMp.get(DcMotorEx.class, "sortMotor");
+        fan = hwMp.get(DcMotorEx.class, "fan");
         hammer = hwMp.get(Servo.class, "hammer");
         rightLaunch = hwMp.get(DcMotorEx.class, "rightLaunch");
         leftLaunch = hwMp.get(DcMotorEx.class, "leftLaunch");
@@ -151,19 +151,25 @@ public class Robot {
     public boolean buttonPressed() {return touchSensor.isPressed();}
 
     public void updateLED() {
-         disableLED();
+
          if(SharedData.storage[0] == ColorSensed.GREEN || SharedData.storage[0] == ColorSensed.INCONCLUSIVE)
             slotZeroGreen.on();
+         else slotZeroGreen.off();
         if(SharedData.storage[0] == ColorSensed.PURPLE || SharedData.storage[0] == ColorSensed.INCONCLUSIVE)
             slotZeroRed.on();
+        else slotZeroRed.off();
         if(SharedData.storage[1] == ColorSensed.GREEN || SharedData.storage[1] == ColorSensed.INCONCLUSIVE)
             slotOneGreen.on();
+        else slotOneGreen.off();
         if(SharedData.storage[1] == ColorSensed.PURPLE || SharedData.storage[1] == ColorSensed.INCONCLUSIVE)
             slotOneRed.on();
+        else slotOneRed.off();
         if(SharedData.storage[2] == ColorSensed.GREEN || SharedData.storage[2] == ColorSensed.INCONCLUSIVE)
             slotTwoGreen.on();
+        else slotTwoGreen.off();
         if(SharedData.storage[2] == ColorSensed.PURPLE || SharedData.storage[2] == ColorSensed.INCONCLUSIVE)
             slotTwoRed.on();
+        else slotTwoGreen.off();
 
     }
 
