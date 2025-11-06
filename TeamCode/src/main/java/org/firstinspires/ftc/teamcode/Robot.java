@@ -16,11 +16,11 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 public class Robot {
-    private static DcMotorEx fan = null;
-    private static DcMotorEx rightLaunch = null;
-    private static DcMotorEx leftLaunch = null;
-    private static CRServo intakeServo = null;
-    private static Servo hammer = null;
+    public static DcMotorEx fan = null;
+    public static DcMotorEx rightLaunch = null;
+    public static DcMotorEx leftLaunch = null;
+    public static CRServo intakeServo = null;
+    public static Servo hammer = null;
     private static ColorSensor colorRight = null;
     private static ColorSensor colorLeft = null;
     private static TouchSensor touchSensor=null;
@@ -61,6 +61,9 @@ public class Robot {
          rightLaunch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
          rightLaunch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+         fan.setTargetPosition(0);
+         fan.setTargetPositionTolerance(10);
+         fan.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     public void setStoragePos(int slot, boolean intake) {
@@ -109,7 +112,7 @@ public class Robot {
     public void stopIntake() {intakeServo.setPower(0);}
 
     public void startLaunchMotors(boolean far) {
-         launchTargetVelocity = far ? 2500 : 1500;
+         launchTargetVelocity = far ? 2150 : 1500;
          leftLaunch.setVelocity(launchTargetVelocity);
          rightLaunch.setVelocity(launchTargetVelocity);
     }
@@ -152,24 +155,24 @@ public class Robot {
 
     public void updateLED() {
 
-         if(SharedData.storage[0] == ColorSensed.GREEN || SharedData.storage[0] == ColorSensed.INCONCLUSIVE)
+         if(SharedData.storage[0] == ColorSensed.PURPLE || SharedData.storage[0] == ColorSensed.INCONCLUSIVE)
             slotZeroGreen.on();
          else slotZeroGreen.off();
-        if(SharedData.storage[0] == ColorSensed.PURPLE || SharedData.storage[0] == ColorSensed.INCONCLUSIVE)
+        if(SharedData.storage[0] == ColorSensed.GREEN || SharedData.storage[0] == ColorSensed.INCONCLUSIVE)
             slotZeroRed.on();
         else slotZeroRed.off();
-        if(SharedData.storage[1] == ColorSensed.GREEN || SharedData.storage[1] == ColorSensed.INCONCLUSIVE)
+        if(SharedData.storage[1] == ColorSensed.PURPLE || SharedData.storage[1] == ColorSensed.INCONCLUSIVE)
             slotOneGreen.on();
         else slotOneGreen.off();
-        if(SharedData.storage[1] == ColorSensed.PURPLE || SharedData.storage[1] == ColorSensed.INCONCLUSIVE)
+        if(SharedData.storage[1] == ColorSensed.GREEN || SharedData.storage[1] == ColorSensed.INCONCLUSIVE)
             slotOneRed.on();
         else slotOneRed.off();
-        if(SharedData.storage[2] == ColorSensed.GREEN || SharedData.storage[2] == ColorSensed.INCONCLUSIVE)
+        if(SharedData.storage[2] == ColorSensed.PURPLE || SharedData.storage[2] == ColorSensed.INCONCLUSIVE)
             slotTwoGreen.on();
         else slotTwoGreen.off();
-        if(SharedData.storage[2] == ColorSensed.PURPLE || SharedData.storage[2] == ColorSensed.INCONCLUSIVE)
+        if(SharedData.storage[2] == ColorSensed.GREEN || SharedData.storage[2] == ColorSensed.INCONCLUSIVE)
             slotTwoRed.on();
-        else slotTwoGreen.off();
+        else slotTwoRed.off();
 
     }
 

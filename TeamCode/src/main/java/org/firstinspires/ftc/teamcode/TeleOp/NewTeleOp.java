@@ -58,7 +58,8 @@ public class NewTeleOp extends LinearOpMode{
     private Follower f;
     private PoseConstants poses = new PoseConstants();
     boolean robotCentric;
-    boolean autoMode;
+    boolean autoMode = true;
+    boolean xButton;
     double speedMultiplier = 1;
     boolean launching;
     boolean automated;
@@ -83,6 +84,7 @@ public class NewTeleOp extends LinearOpMode{
         while(opModeIsActive()) {
 
             f.update();
+            tele();
 
             //
             if(!automated) {
@@ -121,6 +123,10 @@ public class NewTeleOp extends LinearOpMode{
             if(slowMode != gamepad1.y && gamepad1.y)
                 speedMultiplier = speedMultiplier == 1 ? .2 : 1;
             slowMode = gamepad1.y;
+
+            if(xButton != gamepad2.x && gamepad2.x)
+                autoMode = !autoMode;
+            xButton = gamepad2.x;
 
             if (autoMode) {autoMode();} else {manualMode();}
 
@@ -244,4 +250,55 @@ public class NewTeleOp extends LinearOpMode{
                 .setConstantHeadingInterpolation(poses.parkPose.getHeading())
                 .build();
     }
+
+    public void tele() {
+//            telemetry.addData("FOLLOWER X",f.getPose().getX());
+//            telemetry.addData("FOLLOWER Y",f.getPose().getY());
+////            telemetry.addData("FOLLOWER Heading",f.getPose().getHeading());
+////            telemetry.addData("TAGX", currentDetection.ftcPose.x );
+////            telemetry.addData("TAGY", currentDetection.ftcPose.y );
+////            telemetry.addData("TAGH", currentDetection.ftcPose.yaw);
+////            telemetry.addData("TAGB", currentDetection.ftcPose.bearing);
+////            telemetry.addData("TAGR" , currentDetection.ftcPose.range);
+////            telemetry for April Tag
+////
+////            telemetry.addData("ROBOT APRIL X", aprilTagPose.getX(DistanceUnit.INCH));
+////            telemetry.addData("ROBOT APRIL Y", aprilTagPose.getY(DistanceUnit.INCH));
+////            telemetry.addData("ROBOT APRIL H", aprilTagPose.getHeading(AngleUnit.DEGREES));
+////
+////            telemetry.addData("PEDRO X", pedroPose.getX());
+////            telemetry.addData("PEDRO Y", pedroPose.getY());
+////            telemetry.addData("PEDRO H", pedroPose.getPose().getHeading());
+////
+////            telemetry.addData("F X", f.getPose().getX());
+////            telemetry.addData("F Y", f.getPose().getY());
+////            telemetry.addData("F H", f.getPose().getHeading());
+//
+//        //telemetry for Color Sensor and Storage
+//
+//            telemetry.addData("Entrance Color", detectColor());
+//            telemetry.addData("hue", JavaUtil.rgbToHue(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
+//            telemetry.addData("r", entranceColor.red());
+//            telemetry.addData("g", entranceColor.green());
+//            telemetry.addData("b", entranceColor.blue());
+//            telemetry.addData("saturation", JavaUtil.rgbToSaturation(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
+//            telemetry.addData("sort ticks", fan.getCurrentPosition());
+//            telemetry.addData("Color Timer", colorTimer.getElapsedTimeSeconds());
+//            telemetry.addData("Launch Timer", launchTimer.getElapsedTimeSeconds());
+        //telemetry.addData("Pattern", SharedData.greenIndex);
+        //telemetry.addData("distance", distanceSensor.getDistance(DistanceUnit.CM));
+        telemetry.addLine(String.format("Storage: %s, %s, %s", SharedData.storage[0], SharedData.storage[1], SharedData.storage[2] ));
+        telemetry.addData("auto Mode", autoMode);
+//        telemetry.addData("fanPos", fan.getCurrentPosition());
+//        telemetry.addData("fanTarget", fan.getTargetPosition());
+//        telemetry.addData("Slot Goal", slotGoal);
+        telemetry.addData("Side", SharedData.red ? "Red" : "Blue");
+        telemetry.addData("Robot Centric" , robotCentric);
+        telemetry.addLine(String.format("LeftVel: %f\nRightVel: %f",hornet.leftLaunch.getVelocity(), hornet.rightLaunch.getVelocity() ));
+        telemetry.addData("targetVelLeft", hornet.leftLaunch.getTargetPosition());
+        telemetry.addData("targetPosRight", hornet.rightLaunch.getTargetPosition());
+        telemetry.update();
+    }
+
+
 }
