@@ -125,12 +125,12 @@ public class MovementAuto extends OpMode {
         buildPaths();
 
         intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
-        entranceColor = hardwareMap.get(ColorSensor.class, "intakeColorSensor");
+        entranceColor = hardwareMap.get(ColorSensor.class, "colorRight");
         fan = hardwareMap.get(DcMotorEx.class, "sortMotor");
         feeder = hardwareMap.get(CRServo.class,"feederServo");
         rightLaunch = hardwareMap.get(DcMotorEx.class, "rightLaunch");
         leftLaunch = hardwareMap.get(DcMotorEx.class, "leftLaunch");
-        distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
+        distanceSensor = hardwareMap.get(DistanceSensor.class, "colorLeft");
 
         rightLaunch.setDirection(DcMotorSimple.Direction.REVERSE);
         leftLaunch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);

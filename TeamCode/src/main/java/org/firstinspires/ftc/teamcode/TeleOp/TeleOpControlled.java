@@ -55,7 +55,7 @@ import java.util.List;
 public class TeleOpControlled extends LinearOpMode {
     private DcMotorEx fan = null;
     private CRServo intakeServo;
-    private CRServo feeder;
+    private Servo feeder;
     private DcMotorEx rightLaunch = null;
     private DcMotorEx leftLaunch = null;
 
@@ -99,11 +99,11 @@ public class TeleOpControlled extends LinearOpMode {
 
 
         //init hardware
-        fan = hardwareMap.get(DcMotorEx.class, "sortMotor");
+        fan = hardwareMap.get(DcMotorEx.class, "fan");
         intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
-        entranceColor = hardwareMap.get(ColorSensor.class, "intakeColorSensor");
-        distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
-        feeder = hardwareMap.get(CRServo.class, "feederServo");
+        entranceColor = hardwareMap.get(ColorSensor.class, "colorRight");
+        distanceSensor = hardwareMap.get(DistanceSensor.class, "colorLeft");
+        feeder = hardwareMap.get(Servo.class, "hammer");
         rightLaunch = hardwareMap.get(DcMotorEx.class, "rightLaunch");
         leftLaunch = hardwareMap.get(DcMotorEx.class, "leftLaunch");
 
@@ -115,7 +115,7 @@ public class TeleOpControlled extends LinearOpMode {
         leftLaunch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightLaunch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightLaunch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        feeder.setDirection(DcMotorSimple.Direction.REVERSE);
+//        feeder.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
 
@@ -396,10 +396,10 @@ public class TeleOpControlled extends LinearOpMode {
 
       //feeder
         if (gamepad2.left_trigger >= .2) {
-            feeder.setPower(1);
+            feeder.setPosition(1);
         }
         else{
-            feeder.setPower(0);
+            feeder.setPosition(0);
         }
         
         
@@ -506,13 +506,13 @@ public class TeleOpControlled extends LinearOpMode {
         if(launchTimer.getElapsedTimeSeconds()<2) {
             if(!feederFirstTime) {
                 if(rightLaunch.getVelocity() >= 2000 && leftLaunch.getVelocity() >= 2000)
-                    feeder.setPower(1);
+                    feeder.setPosition(1);
                 rightLaunch.setVelocity(2050);
                 leftLaunch.setVelocity(2050);
             }
         }
         else {
-            feeder.setPower(0);
+            feeder.setPosition(0);
             rightLaunch.setVelocity(0);
             leftLaunch.setVelocity(0);
             feederFirstTime = false;

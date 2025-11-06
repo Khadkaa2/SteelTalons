@@ -30,7 +30,7 @@ import java.util.List;
 @Autonomous (name = "AAA Auto")
 public class NewAuto extends OpMode {
 
-    private Robot hornet = new Robot(hardwareMap);
+    private Robot hornet = new Robot();
     private Follower f;
     public PanelsTelemetry panels = PanelsTelemetry.INSTANCE;
     private int pathState;
@@ -47,10 +47,9 @@ public class NewAuto extends OpMode {
 
     int timesLaunched = 0;
 
-    int slotGoal = 0;
-
     @Override
     public void init() {
+        hornet.initialize(hardwareMap);
         SharedData.reset();
         initAprilTag();
         pathTimer = new Timer();

@@ -54,7 +54,7 @@ import java.util.List;
 
 @TeleOp (name = "AAA TeleOp")
 public class NewTeleOp extends LinearOpMode{
-    Robot hornet;
+    private Robot hornet = new Robot();
     Follower f = Constants.createFollower(hardwareMap);
     PoseConstants poses = new PoseConstants();
     boolean robotCentric;
@@ -69,7 +69,7 @@ public class NewTeleOp extends LinearOpMode{
 
     public void runOpMode()
     {
-        hornet = new Robot(hardwareMap);
+        hornet.initialize(hardwareMap);
         launchTimer = new Timer();
         createPaths();
 
