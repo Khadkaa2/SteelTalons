@@ -61,7 +61,7 @@ public class NewAuto extends OpMode {
         f = Constants.createFollower(hardwareMap);
         f.setStartingPose(poses.START_POSE);
         buildPaths();
-
+        hornet.disableLED();
 
         index = 0;
 

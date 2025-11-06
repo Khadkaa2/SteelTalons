@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode;
-import androidx.lifecycle.viewmodel.CreationExtras;
 
 import com.pedropathing.geometry.Pose;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
 
 public class SharedData {
@@ -49,11 +47,11 @@ public class SharedData {
     }
     public static int getInconclusiveIndex() {
         int temp = -1;
-        if (SharedData.storage[0] == ColorSensed.INCONLUSIVE)
+        if (SharedData.storage[0] == ColorSensed.INCONCLUSIVE)
             temp = 0;
-        else if (SharedData.storage[1] == ColorSensed.INCONLUSIVE)
+        else if (SharedData.storage[1] == ColorSensed.INCONCLUSIVE)
             temp = 1;
-        else if (SharedData.storage[2] == ColorSensed.INCONLUSIVE)
+        else if (SharedData.storage[2] == ColorSensed.INCONCLUSIVE)
             temp = 2;
         return temp;
 

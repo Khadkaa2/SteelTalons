@@ -1,28 +1,20 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
 
-import com.pedropathing.geometry.BezierPoint;
-import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-import org.firstinspires.ftc.teamcode.Auto.PoseConstants;
 import org.firstinspires.ftc.teamcode.ColorSensed;
 import org.firstinspires.ftc.teamcode.SharedData;
-import org.firstinspires.ftc.teamcode.pedroPathing.Tuning;
+
 import com.bylazar.telemetry.PanelsTelemetry;
 
-import com.bylazar.panels.Panels;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.paths.PathConstraints;
 
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
@@ -34,14 +26,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
-import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
@@ -335,7 +324,7 @@ public class MovementAuto extends OpMode {
             else if (green > blue)
                 return ColorSensed.GREEN;
             else
-                return ColorSensed.INCONLUSIVE;
+                return ColorSensed.INCONCLUSIVE;
         }
         return ColorSensed.NO_COLOR;
     }
@@ -418,11 +407,11 @@ public class MovementAuto extends OpMode {
 
     public int getInconclusiveIndex() {
         int temp = -1;
-        if (SharedData.storage[0] == ColorSensed.INCONLUSIVE)
+        if (SharedData.storage[0] == ColorSensed.INCONCLUSIVE)
             temp = 0;
-        else if (SharedData.storage[1] == ColorSensed.INCONLUSIVE)
+        else if (SharedData.storage[1] == ColorSensed.INCONCLUSIVE)
             temp = 1;
-        else if (SharedData.storage[2] == ColorSensed.INCONLUSIVE)
+        else if (SharedData.storage[2] == ColorSensed.INCONCLUSIVE)
             temp = 2;
         return temp;
     }

@@ -5,5 +5,5 @@ public enum ColorSensed
     GREEN,
     PURPLE,
     NO_COLOR,
-    INCONLUSIVE
+    INCONCLUSIVE
 }

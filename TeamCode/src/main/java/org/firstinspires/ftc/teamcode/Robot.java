@@ -1,58 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.bylazar.configurables.annotations.Configurable;
-import com.pedropathing.geometry.BezierPoint;
-import com.pedropathing.paths.PathConstraints;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-import org.firstinspires.ftc.teamcode.Auto.PoseConstants;
-import org.firstinspires.ftc.teamcode.ColorSensed;
-import org.firstinspires.ftc.teamcode.SharedData;
-import org.firstinspires.ftc.teamcode.pedroPathing.Tuning;
-import com.bylazar.telemetry.PanelsTelemetry;
 
-import com.bylazar.panels.Panels;
-import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.BezierLine;
-import com.pedropathing.geometry.Pose;
-import com.pedropathing.paths.PathConstraints;
-
-import com.pedropathing.paths.Path;
-import com.pedropathing.paths.PathChain;
-import com.pedropathing.util.Timer;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.DigitalChannelController;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.LED;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
-import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 public class Robot {
@@ -93,6 +52,12 @@ public class Robot {
          slotZeroRed = hardwareMap.get(DigitalChannel.class, "slotZeroRed");
          slotOneRed = hardwareMap.get(DigitalChannel.class, "slotOneRed");
          slotTwoRed = hardwareMap.get(DigitalChannel.class, "slotTwoRed");
+         slotZeroGreen.setMode(DigitalChannel.Mode.OUTPUT);
+         slotZeroRed.setMode(DigitalChannel.Mode.OUTPUT);
+         slotOneGreen.setMode(DigitalChannel.Mode.OUTPUT);
+         slotOneRed.setMode(DigitalChannel.Mode.OUTPUT);
+         slotTwoGreen.setMode(DigitalChannel.Mode.OUTPUT);
+         slotOneRed.setMode(DigitalChannel.Mode.OUTPUT);
 
          rightLaunch.setDirection(DcMotorSimple.Direction.REVERSE);
          leftLaunch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -174,7 +139,7 @@ public class Robot {
     public ColorSensed detectColor() {
          double saturation = JavaUtil.rgbToSaturation(entranceColor.red(), entranceColor.green(), entranceColor.blue());
          double hue = JavaUtil.rgbToHue(entranceColor.red(), entranceColor.green(), entranceColor.blue());
-         return (hue > 170 && saturation < .5) ? ColorSensed.PURPLE : ((hue < 160 && saturation > .55) ? ColorSensed.GREEN : ColorSensed.INCONLUSIVE);
+         return (hue > 170 && saturation < .5) ? ColorSensed.PURPLE : ((hue < 160 && saturation > .55) ? ColorSensed.GREEN : ColorSensed.INCONCLUSIVE);
     }
 
     public void launch() {
@@ -201,6 +166,23 @@ public class Robot {
     public boolean buttonPressed() {return touchSensor.isPressed();}
 
     public void updateLED() {
+        slotZeroGreen.setState(SharedData.storage[0] == ColorSensed.GREEN || SharedData.storage[0] == ColorSensed.INCONCLUSIVE);
+        slotZeroRed.setState(SharedData.storage[0] == ColorSensed.PURPLE || SharedData.storage[0] == ColorSensed.INCONCLUSIVE);
+        slotOneGreen.setState(SharedData.storage[1] == ColorSensed.GREEN || SharedData.storage[1] == ColorSensed.INCONCLUSIVE);
+        slotOneRed.setState(SharedData.storage[1] == ColorSensed.PURPLE || SharedData.storage[1] == ColorSensed.INCONCLUSIVE);
+        slotTwoGreen.setState(SharedData.storage[2] == ColorSensed.GREEN || SharedData.storage[2] == ColorSensed.INCONCLUSIVE);
+        slotTwoRed.setState(SharedData.storage[2] == ColorSensed.PURPLE || SharedData.storage[2] == ColorSensed.INCONCLUSIVE);
+
+    }
+
+    public void disableLED()
+    {
+        slotZeroGreen.setState(false);
+        slotZeroRed.setState(false);
+        slotOneGreen.setState(false);
+        slotOneRed.setState(false);
+        slotTwoGreen.setState(false);
+        slotTwoRed.setState(false);
 
     }
 

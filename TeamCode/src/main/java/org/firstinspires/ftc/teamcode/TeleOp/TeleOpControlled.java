@@ -312,7 +312,7 @@ public class TeleOpControlled extends LinearOpMode {
 //            else if (green > blue)
 //                return ColorSensed.GREEN;
 //            else
-//                return ColorSensed.INCONLUSIVE;
+//                return ColorSensed.INCONCLUSIVE;
 //        }
         return ColorSensed.NO_COLOR;
     }

@@ -114,7 +114,7 @@ public class NewTeleOp extends LinearOpMode{
 
             if (autoMode) {autoMode();} else {manualMode();}
 
-
+            hornet.updateLED();
         }
 
     }
