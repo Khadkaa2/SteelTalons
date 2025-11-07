@@ -64,6 +64,7 @@ public class Robot {
          fan.setTargetPosition(0);
          fan.setTargetPositionTolerance(10);
          fan.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+         fan.setPower(1);
     }
 
     public void setStoragePos(int slot, boolean intake) {
