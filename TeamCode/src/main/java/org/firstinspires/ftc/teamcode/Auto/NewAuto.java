@@ -111,7 +111,7 @@ public class NewAuto extends OpMode {
             hornet.setStoragePos(ind,false);
             launchingTemp = true;
         }
-        if(launchingTemp && hornet.atSortTarget() && hornet.atTargetVelocity() && !hornet.flapAtLaunch()){
+        if(launchingTemp && hornet.atSortTarget() && hornet.atTargetVelocity() && !hornet.flapAtLaunch() && !hornet.isLaunched()){
             hornet.launch();
             launchTimer.resetTimer();
         }
