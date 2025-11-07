@@ -128,6 +128,13 @@ public class NewTeleOp extends LinearOpMode{
                 autoMode = !autoMode;
             xButton = gamepad2.x;
 
+            if(gamepad1.right_bumper)
+                hornet.startIntake(true);
+            else if(gamepad1.left_bumper)
+                hornet.startIntake(false);
+            else
+                hornet.stopIntake();
+
             if (autoMode) {autoMode();} else {manualMode();}
 
             hornet.updateLED();
@@ -182,10 +189,10 @@ public class NewTeleOp extends LinearOpMode{
 
 
         //If launching -> speed up launchMotors
-        if(launching){hornet.startLaunchMotors(true);}
+        if(launching){hornet.startLaunchMotors(true);} else{hornet.stopLaunchMotors();}
 
         //if ready to launch -> then launch
-        if(launching && hornet.atSortTarget() && hornet.atTargetVelocity() && !hornet.flapAtLaunch()){
+        if(launching && hornet.atSortTarget() && hornet.atTargetVelocity() && !hornet.flapAtLaunch() && !hornet.isLaunched()){
             hornet.launch();
             launchTimer.resetTimer();
         }
@@ -194,7 +201,7 @@ public class NewTeleOp extends LinearOpMode{
         //and flap is at launch position -> move flap back and clear storage slot
         //and flap is at not launch position and it says its launching -> say its not launching
         if(launchTimer.getElapsedTimeSeconds() >= .25){
-            if(hornet.flapAtLaunch()){
+            if(hornet.flapAtLaunch() && launching){
                 launchTimer.resetTimer();
                 hornet.resetFlap();
                 SharedData.clearSlot(hornet.getSlotGoal());
@@ -295,8 +302,9 @@ public class NewTeleOp extends LinearOpMode{
         telemetry.addData("Side", SharedData.red ? "Red" : "Blue");
         telemetry.addData("Robot Centric" , robotCentric);
         telemetry.addLine(String.format("LeftVel: %f\nRightVel: %f",hornet.leftLaunch.getVelocity(), hornet.rightLaunch.getVelocity() ));
-        telemetry.addData("targetVelLeft", hornet.leftLaunch.getTargetPosition());
-        telemetry.addData("targetPosRight", hornet.rightLaunch.getTargetPosition());
+        telemetry.addData("targetVelocity" ,hornet.getLaunchTargetVelocity());
+        telemetry.addData("atTarget" , hornet.atTargetVelocity());
+        telemetry.addData("launchTimer", launchTimer.getElapsedTimeSeconds());
         telemetry.update();
     }
 

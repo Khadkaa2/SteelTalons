@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -24,6 +26,8 @@ public class Robot {
     private static ColorSensor colorRight = null;
     private static ColorSensor colorLeft = null;
     private static TouchSensor touchSensor=null;
+    private Limelight3A limelight = null;
+    private LLResult result = null;
     private static LED slotZeroGreen;
     private static LED slotOneGreen;
     private static LED slotTwoGreen;
@@ -65,6 +69,9 @@ public class Robot {
          fan.setTargetPositionTolerance(10);
          fan.setMode(DcMotor.RunMode.RUN_TO_POSITION);
          fan.setPower(1);
+
+         limelight = hwMp.get(Limelight3A.class, "limelight");
+         LLResult result = limelight.getLatestResult();
     }
 
     public void setStoragePos(int slot, boolean intake) {
@@ -116,6 +123,10 @@ public class Robot {
          launchTargetVelocity = far ? 2150 : 1500;
          leftLaunch.setVelocity(launchTargetVelocity);
          rightLaunch.setVelocity(launchTargetVelocity);
+    }
+
+    public int getLaunchTargetVelocity(){
+         return launchTargetVelocity;
     }
 
     public void stopLaunchMotors() {
@@ -187,6 +198,22 @@ public class Robot {
         slotTwoRed.off();
 
     }
+
+    public void getTargetArea(){
+         if (result.isValid()){
+
+         }
+    }
+
+    public void getResult(){
+
+        if (this.result.isValid() && result != null){
+
+        }
+    }
+
+
+
 
 
 
