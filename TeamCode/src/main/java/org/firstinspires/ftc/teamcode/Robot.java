@@ -144,9 +144,13 @@ public class Robot {
     public int getSlotGoal() {return slotGoal;}
 
     public ColorSensed detectColor() {
-         double saturation = JavaUtil.rgbToSaturation(colorRight.red(), colorRight.green(), colorRight.blue());
-         double hue = JavaUtil.rgbToHue(colorRight.red(), colorRight.green(), colorRight.blue());
-         return (hue > 170 && saturation < .5) ? ColorSensed.PURPLE : ((hue < 160 && saturation > .55) ? ColorSensed.GREEN : ColorSensed.INCONCLUSIVE);
+         double saturationR = JavaUtil.rgbToSaturation(colorRight.red(), colorRight.green(), colorRight.blue());
+         double hueR = JavaUtil.rgbToHue(colorRight.red(), colorRight.green(), colorRight.blue());
+         ColorSensed right =  (hueR > 170 && saturationR < .5) ? ColorSensed.PURPLE : ((hueR < 160 && saturationR > .55) ? ColorSensed.GREEN : ColorSensed.INCONCLUSIVE);
+        double saturationL = JavaUtil.rgbToSaturation(colorLeft.red(), colorLeft.green(), colorLeft.blue());
+        double hueL = JavaUtil.rgbToHue(colorLeft.red(), colorLeft.green(), colorLeft.blue());
+        ColorSensed left =  (hueL > 170 && saturationL < .5) ? ColorSensed.PURPLE : ((hueL < 160 && saturationL > .55) ? ColorSensed.GREEN : ColorSensed.INCONCLUSIVE);
+         return right == left ? right : left == ColorSensed.INCONCLUSIVE ? right : left;
     }
 
     public void launch() {
