@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.LED;
 
 import org.firstinspires.ftc.teamcode.Robot;
 
-@TeleOp
+//@TeleOp
 public class LEDTest extends LinearOpMode {
     private Robot hornet = new Robot();
 //    private static LED slotZeroGreen;

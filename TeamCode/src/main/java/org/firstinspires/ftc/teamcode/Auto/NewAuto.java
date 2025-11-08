@@ -27,7 +27,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
-@Autonomous (name = "AAA Auto")
+@Autonomous (name = "Auto")
 public class NewAuto extends OpMode {
 
     private Robot hornet = new Robot();
