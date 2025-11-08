@@ -117,7 +117,7 @@ public class NewAuto extends OpMode {
         }
 
         if(launchTimer.getElapsedTimeSeconds() >= .25){
-            if(hornet.flapAtLaunch()){
+            if(hornet.flapAtLaunch() && launchingTemp){
                 launchTimer.resetTimer();
                 hornet.resetFlap();
                 SharedData.clearSlot(hornet.getSlotGoal());
@@ -188,21 +188,21 @@ public class NewAuto extends OpMode {
                 sendPose();
                 break;
             case 1:
-                //go to align 1 pos
                 sendPose();
-                if (!f.isBusy() && SharedData.isEmpty() && launchTimer.getElapsedTimeSeconds() > 1 ){
+                if (!f.isBusy() && SharedData.isEmpty()){
+                    //go to align 1 pos
                     f.followPath(one, true);
                     setPathState(2);
                     sendPose();
                     launching = false;
                 }
                 //score 1
-                else if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 1)
+                else if (!f.isBusy())
                     launching = true;
                 break;
             case 2:
-                //pickup balls
                 if (!f.isBusy()){
+                    //pickup balls
                     f.followPath(two, true);
                     f.setMaxPower(.2);
                     setPathState(3);
@@ -210,8 +210,8 @@ public class NewAuto extends OpMode {
                 }
                 break;
             case 3:
-                //go to scoring pos
                 if (!f.isBusy()){
+                    //go to scoring pose
                     f.followPath(three, true);
                     f.setMaxPower(1);
                     setPathState(4);
@@ -219,21 +219,21 @@ public class NewAuto extends OpMode {
                 }
                 break;
             case 4:
-                //go to align 2
-                if (!f.isBusy() && SharedData.isEmpty() && launchTimer.getElapsedTimeSeconds() > 1) {
+                if (!f.isBusy() && SharedData.isEmpty()) {
+                    //go to align 2
                     f.followPath(four, true);
                     setPathState(5);
                     sendPose();
                     launching = false;
                 }
-                //score                         can we remove this part?   //
-                else if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 1) {
+                //score 2
+                else if (!f.isBusy()) {
                     launching = true;
                 }
                 break;
             case 5:
-                // pickup 2
                 if (!f.isBusy()){
+                    //pickup 2
                     f.followPath(five , true);
                     f.setMaxPower(.2);
                     setPathState(6);
@@ -241,8 +241,8 @@ public class NewAuto extends OpMode {
             }
                 break;
             case 6:
-                //move to score pos
                 if (!f.isBusy()){
+                    //move to score pose
                     f.followPath(six , true);
                     f.setMaxPower(1);
                     sendPose();
@@ -250,14 +250,14 @@ public class NewAuto extends OpMode {
                 }
                 break;
             case 7:
-                // sends to final location
-                if (!f.isBusy() && SharedData.isEmpty() && launchTimer.getElapsedTimeSeconds() > 1){
+                if (!f.isBusy() && SharedData.isEmpty()){
+                    // sends to final location
                     f.followPath(end);
                     setPathState(8);
                     sendPose();
                 }
-                //score
-                else if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() >1){
+                //score 3
+                else if (!f.isBusy()){
                     launching = true;
                 }
                 break;
