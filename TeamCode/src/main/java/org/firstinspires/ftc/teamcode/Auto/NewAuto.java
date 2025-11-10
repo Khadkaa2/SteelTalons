@@ -10,9 +10,11 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -27,7 +29,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
-@Autonomous (name = "AAA Auto")
+@Autonomous (name = "Auto")
 public class NewAuto extends OpMode {
 
     private Robot hornet = new Robot();
@@ -51,7 +53,7 @@ public class NewAuto extends OpMode {
     public void init() {
         hornet.initialize(hardwareMap);
         SharedData.reset();
-        //initAprilTag();
+        initAprilTag();
         pathTimer = new Timer();
         opmodeTimer = new Timer();
         launchTimer = new Timer();
@@ -68,11 +70,10 @@ public class NewAuto extends OpMode {
 
     @Override
     public void init_loop() {
-    //int ID = figureID();
-//    if (ID == 21) index = 0;
-//    else if (ID == 22) index = 1;
-//    else if (ID == 23) index = 2;
-    index = 0;
+    int ID = figureID();
+    if (ID == 21) index = 0;
+    else if (ID == 22) index = 1;
+    else if (ID == 23) index = 2;
     SharedData.greenIndex = index;
 
     telemetry.addData("Green Index", index );
@@ -117,7 +118,7 @@ public class NewAuto extends OpMode {
         }
 
         if(launchTimer.getElapsedTimeSeconds() >= .25){
-            if(hornet.flapAtLaunch()){
+            if(hornet.flapAtLaunch() && launchingTemp){
                 launchTimer.resetTimer();
                 hornet.resetFlap();
                 SharedData.clearSlot(hornet.getSlotGoal());
@@ -188,21 +189,21 @@ public class NewAuto extends OpMode {
                 sendPose();
                 break;
             case 1:
-                //go to align 1 pos
                 sendPose();
-                if (!f.isBusy() && SharedData.isEmpty() && launchTimer.getElapsedTimeSeconds() > 1 ){
+                if (!f.isBusy() && SharedData.isEmpty()){
+                    //go to align 1 pos
                     f.followPath(one, true);
                     setPathState(2);
                     sendPose();
                     launching = false;
                 }
                 //score 1
-                else if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 1)
+                else if (!f.isBusy())
                     launching = true;
                 break;
             case 2:
-                //pickup balls
                 if (!f.isBusy()){
+                    //pickup balls
                     f.followPath(two, true);
                     f.setMaxPower(.2);
                     setPathState(3);
@@ -210,8 +211,8 @@ public class NewAuto extends OpMode {
                 }
                 break;
             case 3:
-                //go to scoring pos
                 if (!f.isBusy()){
+                    //go to scoring pose
                     f.followPath(three, true);
                     f.setMaxPower(1);
                     setPathState(4);
@@ -219,21 +220,21 @@ public class NewAuto extends OpMode {
                 }
                 break;
             case 4:
-                //go to align 2
-                if (!f.isBusy() && SharedData.isEmpty() && launchTimer.getElapsedTimeSeconds() > 1) {
+                if (!f.isBusy() && SharedData.isEmpty()) {
+                    //go to align 2
                     f.followPath(four, true);
                     setPathState(5);
                     sendPose();
                     launching = false;
                 }
-                //score                         can we remove this part?   //
-                else if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 1) {
+                //score 2
+                else if (!f.isBusy()) {
                     launching = true;
                 }
                 break;
             case 5:
-                // pickup 2
                 if (!f.isBusy()){
+                    //pickup 2
                     f.followPath(five , true);
                     f.setMaxPower(.2);
                     setPathState(6);
@@ -241,8 +242,8 @@ public class NewAuto extends OpMode {
             }
                 break;
             case 6:
-                //move to score pos
                 if (!f.isBusy()){
+                    //move to score pose
                     f.followPath(six , true);
                     f.setMaxPower(1);
                     sendPose();
@@ -250,14 +251,14 @@ public class NewAuto extends OpMode {
                 }
                 break;
             case 7:
-                // sends to final location
-                if (!f.isBusy() && SharedData.isEmpty() && launchTimer.getElapsedTimeSeconds() > 1){
+                if (!f.isBusy() && SharedData.isEmpty()){
+                    // sends to final location
                     f.followPath(end);
                     setPathState(8);
                     sendPose();
                 }
-                //score
-                else if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() >1){
+                //score 3
+                else if (!f.isBusy()){
                     launching = true;
                 }
                 break;
@@ -272,24 +273,24 @@ public class NewAuto extends OpMode {
 
 
 
-//    public void initAprilTag(){
-//        aprilTag = new AprilTagProcessor.Builder()
-//                .setDrawAxes(true)
-//                .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES).setTagLibrary(AprilTagGameDatabase.getCurrentGameTagLibrary())
-//                .build();
-//        VisionPortal.Builder builder = new VisionPortal.Builder();
-//        builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
-//        builder.addProcessor(aprilTag);
-//        visionPortal = builder.build();
-//    }
-//    public static int figureID(){
-//        List<AprilTagDetection> detections = aprilTag.getDetections();
-//        for (AprilTagDetection detection : detections){
-//            if(detection.id == 21||detection.id == 22||detection.id == 23)
-//                return detection.id;
-//        }
-//        return -1;
-//    }
+    public void initAprilTag(){
+        aprilTag = new AprilTagProcessor.Builder()
+                .setDrawAxes(true)
+                .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES).setTagLibrary(AprilTagGameDatabase.getCurrentGameTagLibrary())
+                .build();
+        VisionPortal.Builder builder = new VisionPortal.Builder();
+        builder.setCamera((CameraName) hardwareMap.get(Limelight3A.class,"limelight"));
+        builder.addProcessor(aprilTag);
+        visionPortal = builder.build();
+    }
+    public static int figureID(){
+        List<AprilTagDetection> detections = aprilTag.getDetections();
+        for (AprilTagDetection detection : detections){
+            if(detection.id == 21||detection.id == 22||detection.id == 23)
+                return detection.id;
+        }
+        return -1;
+    }
 
     public void sendPose(){
         SharedData.toTeleopPose = f.getPose();

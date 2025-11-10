@@ -20,6 +20,21 @@ public class Calibration extends LinearOpMode {
         fan.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         SharedData.reset();
         SharedData.emptyStorage();
+        while(opModeIsActive())
+        {
+            if(gamepad1.a)
+                SharedData.red = false;
+            else if(gamepad1.b)
+                SharedData.red = true;
+            if(gamepad1.dpad_left)
+                SharedData.emptyStorage();
+            if(gamepad1.dpad_right)
+                SharedData.reset();
+            if(gamepad1.y)
+                fan.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            telemetry.addData("side", SharedData.red);
+            telemetry.update();
+        }
 
     }
 }

@@ -35,7 +35,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
-@Autonomous(name = "Autonomous")
+//@Autonomous(name = "Autonomous")
 public class MovementAuto extends OpMode {
 
     private Follower f;

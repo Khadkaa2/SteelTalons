@@ -51,7 +51,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.ArrayList;
 import java.util.List;
 
-@TeleOp
+//@TeleOp
 public class TeleOpControlled extends LinearOpMode {
     private DcMotorEx fan = null;
     private CRServo intakeServo;
@@ -163,6 +163,7 @@ public class TeleOpControlled extends LinearOpMode {
         intakeTimer.resetTimer();
 
         waitForStart();
+
 
         entranceColor.enableLed(true);
 

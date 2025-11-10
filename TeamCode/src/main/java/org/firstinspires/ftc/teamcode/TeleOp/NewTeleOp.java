@@ -15,6 +15,8 @@ import com.pedropathing.ftc.FTCCoordinates;
 
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.util.Timer;
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -23,6 +25,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.CRServo;
 
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
@@ -34,6 +37,7 @@ import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -65,6 +69,12 @@ public class NewTeleOp extends LinearOpMode{
     boolean automated;
     private PathChain toLaunchSame, toPark, toLaunchCross;
     private Timer launchTimer;
+    private Limelight3A limelight;
+    private LLResult result;
+    private TouchSensor touchSensor = null;
+//    private static AprilTagProcessor aprilTag;
+//    private VisionPortal visionPortal;
+//    private AprilTagDetection currentDetection;
 
     boolean slowMode;
 
@@ -76,13 +86,21 @@ public class NewTeleOp extends LinearOpMode{
         f.update();
         launchTimer = new Timer();
         createPaths();
+        touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        limelight.pipelineSwitch(0);
+        limelight.start();
 
+//        initAprilTag();
         waitForStart();
-
+        hornet.setStoragePos(hornet.getSlotGoal(), true);
         f.startTeleopDrive(true);
 
         while(opModeIsActive()) {
+            int ID = 0;
+            if (result != null && result.isValid()){
 
+            }
             f.update();
             tele();
 
@@ -143,7 +161,7 @@ public class NewTeleOp extends LinearOpMode{
     }
     public void autoMode() {
         if(!launching)
-            hornet.setStoragePos(SharedData.storage[0] == ColorSensed.NO_COLOR ? 0 : (SharedData.storage[1] == ColorSensed.NO_COLOR ? 1 : 2) , SharedData.isFull());
+            hornet.setStoragePos(SharedData.storage[0] == ColorSensed.NO_COLOR ? 0 : (SharedData.storage[1] == ColorSensed.NO_COLOR ? 1 : 2) , !SharedData.isFull());
 
         if(gamepad2.right_bumper && gamepad2.left_bumper) {
             if(gamepad2.a)
@@ -258,53 +276,44 @@ public class NewTeleOp extends LinearOpMode{
                 .build();
     }
 
+//    public void initAprilTag() {
+//        aprilTag = new AprilTagProcessor.Builder()
+//                .setDrawAxes(true)
+//                .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
+//                .build();
+//        VisionPortal.Builder builder = new VisionPortal.Builder();
+//
+//        builder.setCamera((CameraName) hardwareMap.get(Limelight3A.class, "limelight"));
+//        builder.addProcessor(aprilTag);
+//        visionPortal = builder.build();
+//    }
+//    public static int figureID(){
+//        List<AprilTagDetection> detections = aprilTag.getDetections();
+//        for (AprilTagDetection detection : detections){
+//            if(detection.id == 21||detection.id == 22||detection.id == 23)
+//                return detection.id;
+//        }
+//        return -1;
+//    }
+
+
     public void tele() {
 //            telemetry.addData("FOLLOWER X",f.getPose().getX());
 //            telemetry.addData("FOLLOWER Y",f.getPose().getY());
-////            telemetry.addData("FOLLOWER Heading",f.getPose().getHeading());
-////            telemetry.addData("TAGX", currentDetection.ftcPose.x );
-////            telemetry.addData("TAGY", currentDetection.ftcPose.y );
-////            telemetry.addData("TAGH", currentDetection.ftcPose.yaw);
-////            telemetry.addData("TAGB", currentDetection.ftcPose.bearing);
-////            telemetry.addData("TAGR" , currentDetection.ftcPose.range);
-////            telemetry for April Tag
-////
-////            telemetry.addData("ROBOT APRIL X", aprilTagPose.getX(DistanceUnit.INCH));
-////            telemetry.addData("ROBOT APRIL Y", aprilTagPose.getY(DistanceUnit.INCH));
-////            telemetry.addData("ROBOT APRIL H", aprilTagPose.getHeading(AngleUnit.DEGREES));
-////
-////            telemetry.addData("PEDRO X", pedroPose.getX());
-////            telemetry.addData("PEDRO Y", pedroPose.getY());
-////            telemetry.addData("PEDRO H", pedroPose.getPose().getHeading());
-////
-////            telemetry.addData("F X", f.getPose().getX());
-////            telemetry.addData("F Y", f.getPose().getY());
-////            telemetry.addData("F H", f.getPose().getHeading());
-//
-//        //telemetry for Color Sensor and Storage
-//
-//            telemetry.addData("Entrance Color", detectColor());
-//            telemetry.addData("hue", JavaUtil.rgbToHue(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
-//            telemetry.addData("r", entranceColor.red());
-//            telemetry.addData("g", entranceColor.green());
-//            telemetry.addData("b", entranceColor.blue());
-//            telemetry.addData("saturation", JavaUtil.rgbToSaturation(entranceColor.red(), entranceColor.green(), entranceColor.blue()));
-//            telemetry.addData("sort ticks", fan.getCurrentPosition());
-//            telemetry.addData("Color Timer", colorTimer.getElapsedTimeSeconds());
-//            telemetry.addData("Launch Timer", launchTimer.getElapsedTimeSeconds());
-        //telemetry.addData("Pattern", SharedData.greenIndex);
-        //telemetry.addData("distance", distanceSensor.getDistance(DistanceUnit.CM));
+//            telemetry.addData("FOLLOWER Heading",f.getPose().getHeading());
+        telemetry.addData("Pattern", SharedData.greenIndex);
         telemetry.addLine(String.format("Storage: %s, %s, %s", SharedData.storage[0], SharedData.storage[1], SharedData.storage[2] ));
         telemetry.addData("auto Mode", autoMode);
-//        telemetry.addData("fanPos", fan.getCurrentPosition());
-//        telemetry.addData("fanTarget", fan.getTargetPosition());
-//        telemetry.addData("Slot Goal", slotGoal);
         telemetry.addData("Side", SharedData.red ? "Red" : "Blue");
         telemetry.addData("Robot Centric" , robotCentric);
         telemetry.addLine(String.format("LeftVel: %f\nRightVel: %f",hornet.leftLaunch.getVelocity(), hornet.rightLaunch.getVelocity() ));
         telemetry.addData("targetVelocity" ,hornet.getLaunchTargetVelocity());
         telemetry.addData("atTarget" , hornet.atTargetVelocity());
         telemetry.addData("launchTimer", launchTimer.getElapsedTimeSeconds());
+        telemetry.addData("button", hornet.buttonPressed());
+        telemetry.addData("at sort", hornet.atSortTarget());
+        telemetry.addData("goal clear", SharedData.storage[hornet.getSlotGoal()] == ColorSensed.NO_COLOR);
+//        telemetry.addData("current ID" , figureID());
         telemetry.update();
     }
 

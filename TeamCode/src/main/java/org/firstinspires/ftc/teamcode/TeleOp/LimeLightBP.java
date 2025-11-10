@@ -42,6 +42,13 @@ public class LimeLightBP extends OpMode {
             telemetry.addData("target x" , result.getTx());
             telemetry.addData("target y" , result.getTy());
             telemetry.addData("target area" , result.getTa());
+            try {
+                telemetry.addData("detector result", result.getFiducialResults().get(0).getFiducialId());
+
+            }
+            catch (Exception e) {
+                telemetry.addData("not", "working");
+            }
             telemetry.addData("botPose" , pose.toString());
             telemetry.addData("yaw", pose.getOrientation().getYaw());
 
