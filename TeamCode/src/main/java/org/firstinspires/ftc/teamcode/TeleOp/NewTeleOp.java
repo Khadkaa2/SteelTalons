@@ -161,7 +161,7 @@ public class NewTeleOp extends LinearOpMode{
     }
     public void autoMode() {
         if(!launching)
-            hornet.setStoragePos(SharedData.storage[0] == ColorSensed.NO_COLOR ? 0 : (SharedData.storage[1] == ColorSensed.NO_COLOR ? 1 : 2) , SharedData.isFull());
+            hornet.setStoragePos(SharedData.storage[0] == ColorSensed.NO_COLOR ? 0 : (SharedData.storage[1] == ColorSensed.NO_COLOR ? 1 : 2) , !SharedData.isFull());
 
         if(gamepad2.right_bumper && gamepad2.left_bumper) {
             if(gamepad2.a)
