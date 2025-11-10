@@ -139,7 +139,7 @@ public class Robot {
         return leftLaunch.getVelocity() >= launchTargetVelocity - 50 && rightLaunch.getVelocity() >= launchTargetVelocity - 50;
     }
 
-    public boolean atSortTarget() {return !fan.isBusy();}
+    public boolean atSortTarget() {return Math.abs(fan.getCurrentPosition() - fan.getTargetPosition()) < 20;}
 
     public int getSlotGoal() {return slotGoal;}
 
@@ -203,18 +203,18 @@ public class Robot {
 
     }
 
-    public void getTargetArea(){
-         if (result.isValid()){
-
-         }
-    }
-
-    public void getResult(){
-
-        if (this.result.isValid() && result != null){
-
-        }
-    }
+//    public void getTargetArea(){
+//         if (result.isValid()){
+//
+//         }
+//    }
+//
+//    public void getResult(){
+//
+//        if (this.result.isValid() && result != null){
+//
+//        }
+//    }
 
 
 

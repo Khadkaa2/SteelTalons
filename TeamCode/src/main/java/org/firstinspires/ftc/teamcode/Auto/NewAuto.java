@@ -10,9 +10,11 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -51,7 +53,7 @@ public class NewAuto extends OpMode {
     public void init() {
         hornet.initialize(hardwareMap);
         SharedData.reset();
-        //initAprilTag();
+        initAprilTag();
         pathTimer = new Timer();
         opmodeTimer = new Timer();
         launchTimer = new Timer();
@@ -68,11 +70,10 @@ public class NewAuto extends OpMode {
 
     @Override
     public void init_loop() {
-    //int ID = figureID();
-//    if (ID == 21) index = 0;
-//    else if (ID == 22) index = 1;
-//    else if (ID == 23) index = 2;
-    index = 0;
+    int ID = figureID();
+    if (ID == 21) index = 0;
+    else if (ID == 22) index = 1;
+    else if (ID == 23) index = 2;
     SharedData.greenIndex = index;
 
     telemetry.addData("Green Index", index );
@@ -272,24 +273,24 @@ public class NewAuto extends OpMode {
 
 
 
-//    public void initAprilTag(){
-//        aprilTag = new AprilTagProcessor.Builder()
-//                .setDrawAxes(true)
-//                .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES).setTagLibrary(AprilTagGameDatabase.getCurrentGameTagLibrary())
-//                .build();
-//        VisionPortal.Builder builder = new VisionPortal.Builder();
-//        builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
-//        builder.addProcessor(aprilTag);
-//        visionPortal = builder.build();
-//    }
-//    public static int figureID(){
-//        List<AprilTagDetection> detections = aprilTag.getDetections();
-//        for (AprilTagDetection detection : detections){
-//            if(detection.id == 21||detection.id == 22||detection.id == 23)
-//                return detection.id;
-//        }
-//        return -1;
-//    }
+    public void initAprilTag(){
+        aprilTag = new AprilTagProcessor.Builder()
+                .setDrawAxes(true)
+                .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES).setTagLibrary(AprilTagGameDatabase.getCurrentGameTagLibrary())
+                .build();
+        VisionPortal.Builder builder = new VisionPortal.Builder();
+        builder.setCamera((CameraName) hardwareMap.get(Limelight3A.class,"limelight"));
+        builder.addProcessor(aprilTag);
+        visionPortal = builder.build();
+    }
+    public static int figureID(){
+        List<AprilTagDetection> detections = aprilTag.getDetections();
+        for (AprilTagDetection detection : detections){
+            if(detection.id == 21||detection.id == 22||detection.id == 23)
+                return detection.id;
+        }
+        return -1;
+    }
 
     public void sendPose(){
         SharedData.toTeleopPose = f.getPose();

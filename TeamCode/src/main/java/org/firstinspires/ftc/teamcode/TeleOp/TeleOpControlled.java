@@ -164,6 +164,7 @@ public class TeleOpControlled extends LinearOpMode {
 
         waitForStart();
 
+
         entranceColor.enableLed(true);
 
         f.startTeleopDrive(true);

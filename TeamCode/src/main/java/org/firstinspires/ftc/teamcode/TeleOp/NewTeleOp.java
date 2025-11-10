@@ -15,6 +15,8 @@ import com.pedropathing.ftc.FTCCoordinates;
 
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.util.Timer;
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -23,6 +25,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.CRServo;
 
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
@@ -34,6 +37,7 @@ import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -65,6 +69,12 @@ public class NewTeleOp extends LinearOpMode{
     boolean automated;
     private PathChain toLaunchSame, toPark, toLaunchCross;
     private Timer launchTimer;
+    private Limelight3A limelight;
+    private LLResult result;
+    private TouchSensor touchSensor = null;
+//    private static AprilTagProcessor aprilTag;
+//    private VisionPortal visionPortal;
+//    private AprilTagDetection currentDetection;
 
     boolean slowMode;
 
@@ -76,13 +86,21 @@ public class NewTeleOp extends LinearOpMode{
         f.update();
         launchTimer = new Timer();
         createPaths();
+        touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        limelight.pipelineSwitch(0);
+        limelight.start();
 
+//        initAprilTag();
         waitForStart();
-
+        hornet.setStoragePos(hornet.getSlotGoal(), true);
         f.startTeleopDrive(true);
 
         while(opModeIsActive()) {
+            int ID = 0;
+            if (result != null && result.isValid()){
 
+            }
             f.update();
             tele();
 
@@ -258,6 +276,27 @@ public class NewTeleOp extends LinearOpMode{
                 .build();
     }
 
+//    public void initAprilTag() {
+//        aprilTag = new AprilTagProcessor.Builder()
+//                .setDrawAxes(true)
+//                .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
+//                .build();
+//        VisionPortal.Builder builder = new VisionPortal.Builder();
+//
+//        builder.setCamera((CameraName) hardwareMap.get(Limelight3A.class, "limelight"));
+//        builder.addProcessor(aprilTag);
+//        visionPortal = builder.build();
+//    }
+//    public static int figureID(){
+//        List<AprilTagDetection> detections = aprilTag.getDetections();
+//        for (AprilTagDetection detection : detections){
+//            if(detection.id == 21||detection.id == 22||detection.id == 23)
+//                return detection.id;
+//        }
+//        return -1;
+//    }
+
+
     public void tele() {
 //            telemetry.addData("FOLLOWER X",f.getPose().getX());
 //            telemetry.addData("FOLLOWER Y",f.getPose().getY());
@@ -271,6 +310,10 @@ public class NewTeleOp extends LinearOpMode{
         telemetry.addData("targetVelocity" ,hornet.getLaunchTargetVelocity());
         telemetry.addData("atTarget" , hornet.atTargetVelocity());
         telemetry.addData("launchTimer", launchTimer.getElapsedTimeSeconds());
+        telemetry.addData("button", hornet.buttonPressed());
+        telemetry.addData("at sort", hornet.atSortTarget());
+        telemetry.addData("goal clear", SharedData.storage[hornet.getSlotGoal()] == ColorSensed.NO_COLOR);
+//        telemetry.addData("current ID" , figureID());
         telemetry.update();
     }
 
