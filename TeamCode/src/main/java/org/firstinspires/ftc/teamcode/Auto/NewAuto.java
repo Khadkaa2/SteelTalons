@@ -132,7 +132,7 @@ public class NewAuto extends OpMode {
             hornet.resetFlap();
             hornet.resetLaunch();
             hornet.stopLaunchMotors();
-            hornet.setStoragePos(SharedData.storage[0] == ColorSensed.NO_COLOR ? 0 : (SharedData.storage[1] == ColorSensed.NO_COLOR ? 1 : 2) , SharedData.isFull());
+            hornet.setStoragePos(SharedData.storage[0] == ColorSensed.NO_COLOR ? 0 : (SharedData.storage[1] == ColorSensed.NO_COLOR ? 1 : 2) , !SharedData.isFull());
         }else{hornet.startLaunchMotors(true);}
     }
 
