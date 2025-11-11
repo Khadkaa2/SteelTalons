@@ -9,8 +9,6 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.LED;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -157,11 +155,11 @@ public class Robot {
          hammer.setPosition(1);
         launched = true;
     }
-    public void resetFlap() {
+    public void resetHammer() {
         hammer.setPosition(0);
     }
     public void resetLaunch() {launched = false;}
-    public boolean flapAtLaunch(){
+    public boolean hammerAtLaunch(){
          return hammer.getPosition() == 1;
     }
 

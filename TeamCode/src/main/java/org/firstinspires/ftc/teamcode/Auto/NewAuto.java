@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
-import android.graphics.Color;
-
 import androidx.xr.runtime.math.Pose;
 
 import com.bylazar.telemetry.PanelsTelemetry;
@@ -10,12 +8,12 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
+import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.ColorSensed;
@@ -41,29 +39,28 @@ public class NewAuto extends OpMode {
     Pose currentPose = null;
     private Path start, end;
     private PathChain one, two, three, four, five, six;
-    private static AprilTagProcessor aprilTag;
-    private VisionPortal visionPortal;
     int index;
-
+    private Limelight3A limelight;
     boolean launching = false , launchingTemp = false;
-
+    private LLResult result;
     int timesLaunched = 0;
 
     @Override
     public void init() {
         hornet.initialize(hardwareMap);
         SharedData.reset();
-        initAprilTag();
         pathTimer = new Timer();
         opmodeTimer = new Timer();
         launchTimer = new Timer();
         opmodeTimer.resetTimer();
+        limelight = hardwareMap.get(Limelight3A.class , "limelight");
 
         f = Constants.createFollower(hardwareMap);
         f.setStartingPose(poses.START_POSE);
         buildPaths();
         hornet.disableLED();
-
+        hornet.resetHammer();
+        limelight.start();
         index = 0;
 
     }
@@ -74,10 +71,12 @@ public class NewAuto extends OpMode {
     if (ID == 21) index = 0;
     else if (ID == 22) index = 1;
     else if (ID == 23) index = 2;
-    SharedData.greenIndex = index;
 
+    SharedData.greenIndex = index;
+    telemetry.addData("ID" , ID);
     telemetry.addData("Green Index", index );
     telemetry.addData("Side", SharedData.red ? "Red" : "Blue");
+
     telemetry.update();
     }
 
@@ -85,6 +84,7 @@ public class NewAuto extends OpMode {
     public void start(){
         sendPose();
         opmodeTimer.resetTimer();
+        limelight.stop();
         setPathState(0);
     }
     @Override
@@ -112,15 +112,15 @@ public class NewAuto extends OpMode {
             hornet.setStoragePos(ind,false);
             launchingTemp = true;
         }
-        if(launchingTemp && hornet.atSortTarget() && hornet.atTargetVelocity() && !hornet.flapAtLaunch() && !hornet.isLaunched()){
+        if(launchingTemp && hornet.atSortTarget() && hornet.atTargetVelocity() && !hornet.hammerAtLaunch() && !hornet.isLaunched()){
             hornet.launch();
             launchTimer.resetTimer();
         }
 
         if(launchTimer.getElapsedTimeSeconds() >= .25){
-            if(hornet.flapAtLaunch() && launchingTemp){
+            if(hornet.hammerAtLaunch() && launchingTemp){
                 launchTimer.resetTimer();
-                hornet.resetFlap();
+                hornet.resetHammer();
                 SharedData.clearSlot(hornet.getSlotGoal());
             }
             else if(launchingTemp && hornet.isLaunched()){
@@ -130,7 +130,7 @@ public class NewAuto extends OpMode {
         }
 
         if(!launching) {
-            hornet.resetFlap();
+            hornet.resetHammer();
             hornet.resetLaunch();
             hornet.stopLaunchMotors();
             hornet.setStoragePos(SharedData.storage[0] == ColorSensed.NO_COLOR ? 0 : (SharedData.storage[1] == ColorSensed.NO_COLOR ? 1 : 2) , !SharedData.isFull());
@@ -272,25 +272,21 @@ public class NewAuto extends OpMode {
     }
 
 
+    public int figureID (){
+        result = limelight.getLatestResult();
+        try{
 
-    public void initAprilTag(){
-        aprilTag = new AprilTagProcessor.Builder()
-                .setDrawAxes(true)
-                .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES).setTagLibrary(AprilTagGameDatabase.getCurrentGameTagLibrary())
-                .build();
-        VisionPortal.Builder builder = new VisionPortal.Builder();
-        builder.setCamera((CameraName) hardwareMap.get(Limelight3A.class,"limelight"));
-        builder.addProcessor(aprilTag);
-        visionPortal = builder.build();
-    }
-    public static int figureID(){
-        List<AprilTagDetection> detections = aprilTag.getDetections();
-        for (AprilTagDetection detection : detections){
-            if(detection.id == 21||detection.id == 22||detection.id == 23)
-                return detection.id;
+            telemetry.addData("ID" , result.getFiducialResults().get(0).getFiducialId());
+            return result.getFiducialResults().get(0).getFiducialId();
         }
-        return -1;
+        catch (Exception e){
+            telemetry.addData("ID" , "not found");
+            return -1;
+        }
     }
+
+
+
 
     public void sendPose(){
         SharedData.toTeleopPose = f.getPose();

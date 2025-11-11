@@ -1,60 +1,26 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
-import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
-
-import android.graphics.Color;
-
-import com.bylazar.telemetry.PanelsTelemetry;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
-import com.pedropathing.geometry.PedroCoordinates;
-import com.pedropathing.ftc.InvertedFTCCoordinates;
-import com.pedropathing.ftc.PoseConverter;
-import com.pedropathing.ftc.FTCCoordinates;
 
 
-import com.pedropathing.geometry.Pose;
 import com.pedropathing.util.Timer;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.CRServo;
 
-import org.firstinspires.ftc.robotcore.external.JavaUtil;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.Auto.PoseConstants;
 
 
 import com.pedropathing.paths.PathChain;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
-
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import org.firstinspires.ftc.teamcode.ColorSensed;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.SharedData;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-
-
-import java.util.ArrayList;
-import java.util.List;
 
 @TeleOp (name = "AAA TeleOp")
 public class NewTeleOp extends LinearOpMode{
@@ -90,6 +56,8 @@ public class NewTeleOp extends LinearOpMode{
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.pipelineSwitch(0);
         limelight.start();
+        hornet.resetHammer();
+
 
 //        initAprilTag();
         waitForStart();
@@ -210,7 +178,7 @@ public class NewTeleOp extends LinearOpMode{
         if(launching){hornet.startLaunchMotors(true);} else{hornet.stopLaunchMotors();}
 
         //if ready to launch -> then launch
-        if(launching && hornet.atSortTarget() && hornet.atTargetVelocity() && !hornet.flapAtLaunch() && !hornet.isLaunched()){
+        if(launching && hornet.atSortTarget() && hornet.atTargetVelocity() && !hornet.hammerAtLaunch() && !hornet.isLaunched()){
             hornet.launch();
             launchTimer.resetTimer();
         }
@@ -219,9 +187,9 @@ public class NewTeleOp extends LinearOpMode{
         //and flap is at launch position -> move flap back and clear storage slot
         //and flap is at not launch position and it says its launching -> say its not launching
         if(launchTimer.getElapsedTimeSeconds() >= .25){
-            if(hornet.flapAtLaunch() && launching){
+            if(hornet.hammerAtLaunch() && launching){
                 launchTimer.resetTimer();
-                hornet.resetFlap();
+                hornet.resetHammer();
                 SharedData.clearSlot(hornet.getSlotGoal());
             }
             else if(launching && hornet.isLaunched()){
@@ -248,6 +216,12 @@ public class NewTeleOp extends LinearOpMode{
             hornet.startLaunchMotors(false);
         else
             hornet.stopLaunchMotors();
+
+        //hammer
+        if (gamepad2.right_bumper){
+            hornet.launch();
+        }
+        else hornet.resetHammer();
 
         //flap
         /*
