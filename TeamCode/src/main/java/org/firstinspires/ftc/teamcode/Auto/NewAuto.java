@@ -272,6 +272,8 @@ public class NewAuto extends OpMode {
     }
 
 
+
+
     public int figureID (){
         result = limelight.getLatestResult();
         try{

@@ -127,6 +127,10 @@ public class NewTeleOp extends LinearOpMode{
         }
 
     }
+
+
+
+
     public void autoMode() {
         if(!launching)
             hornet.setStoragePos(SharedData.storage[0] == ColorSensed.NO_COLOR ? 0 : (SharedData.storage[1] == ColorSensed.NO_COLOR ? 1 : 2) , !SharedData.isFull());
