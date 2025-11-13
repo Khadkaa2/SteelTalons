@@ -31,7 +31,7 @@ import java.util.List;
 public class NewAuto extends OpMode {
 
     private Robot hornet = new Robot();
-    private Follower f;
+    private Follower f = null;
     public PanelsTelemetry panels = PanelsTelemetry.INSTANCE;
     private int pathState;
     private Timer pathTimer,opmodeTimer,launchTimer,detectColorTimer;
@@ -47,7 +47,7 @@ public class NewAuto extends OpMode {
 
     @Override
     public void init() {
-        hornet.initialize(hardwareMap);
+        hornet.initialize(this.hardwareMap);
         SharedData.reset();
         pathTimer = new Timer();
         opmodeTimer = new Timer();

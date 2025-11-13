@@ -31,6 +31,7 @@ public class NewTeleOp extends LinearOpMode{
     boolean autoMode = true;
     boolean xButton;
     double speedMultiplier = 1;
+    boolean dpadLeft;
     boolean launching;
     boolean automated;
     private PathChain toLaunchSame, toPark, toLaunchCross;
@@ -125,6 +126,12 @@ public class NewTeleOp extends LinearOpMode{
             if (autoMode) {autoMode();} else {manualMode();}
 
             hornet.updateLED();
+
+            if(dpadLeft != gamepad1.dpad_left && gamepad1.dpad_left)
+                robotCentric = !robotCentric;
+            dpadLeft = gamepad1.dpad_left;
+
+
         }
 
     }
@@ -228,15 +235,6 @@ public class NewTeleOp extends LinearOpMode{
         }
         else hornet.resetHammer();
 
-        //flap
-        /*
-        if(gamepad2.right_bumper)
-            hornet.launch()
-        if(gamepad2.left_bumper){
-            hornet.resetFlap();
-            hornet.resetLaunch();
-        }
-         */
     }
     public void createPaths() {
         toLaunchSame = f.pathBuilder()
@@ -285,6 +283,7 @@ public class NewTeleOp extends LinearOpMode{
         telemetry.addData("auto Mode", autoMode);
         telemetry.addData("Side", SharedData.red ? "Red" : "Blue");
         telemetry.addData("Robot Centric" , robotCentric);
+        telemetry.addData("Slow Mode", slowMode);
         telemetry.addLine(String.format("LeftVel: %f\nRightVel: %f",hornet.leftLaunch.getVelocity(), hornet.rightLaunch.getVelocity() ));
         telemetry.addData("targetVelocity" ,hornet.getLaunchTargetVelocity());
         telemetry.addData("atTarget" , hornet.atTargetVelocity());

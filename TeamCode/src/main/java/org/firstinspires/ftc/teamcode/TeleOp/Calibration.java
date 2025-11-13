@@ -10,29 +10,29 @@ import org.firstinspires.ftc.teamcode.SharedData;
 @TeleOp
 public class Calibration extends LinearOpMode {
 
-    DcMotorEx fan;
+    DcMotorEx fan = null;
     @Override
     public void runOpMode() throws InterruptedException {
         SharedData.red = !SharedData.red;
         waitForStart();
-        fan = null;
         fan = hardwareMap.get(DcMotorEx.class, "fan");
         fan.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         SharedData.reset();
         SharedData.emptyStorage();
         while(opModeIsActive())
         {
-            if(gamepad1.a)
+            if(gamepad1.a || gamepad2.a)
                 SharedData.red = false;
-            else if(gamepad1.b)
+            else if(gamepad1.b || gamepad2.b)
                 SharedData.red = true;
-            if(gamepad1.dpad_left)
+            if(gamepad1.dpad_left || gamepad2.dpad_left)
                 SharedData.emptyStorage();
-            if(gamepad1.dpad_right)
+            if(gamepad1.dpad_right || gamepad2.dpad_right)
                 SharedData.reset();
-            if(gamepad1.y)
+            if(gamepad1.y || gamepad2.y)
                 fan.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            telemetry.addData("side", SharedData.red);
+            telemetry.addLine("B to set to red\nA to set to blue\ndpad left to empty storage\ndpad right to reset SharedData\nY to reset fan encoder\n");
+            telemetry.addData("side", SharedData.red ? "red" : "blue");
             telemetry.update();
         }
 

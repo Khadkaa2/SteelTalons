@@ -16,16 +16,16 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 public class Robot {
-    public static DcMotorEx fan = null;
-    public static DcMotorEx rightLaunch = null;
-    public static DcMotorEx leftLaunch = null;
-    public static CRServo intakeServo = null;
-    public static Servo hammer = null;
-    private static ColorSensor colorRight = null;
-    private static ColorSensor colorLeft = null;
-    private static TouchSensor touchSensor=null;
-    private Limelight3A limelight = null;
-    private LLResult result = null;
+    public static DcMotorEx fan;
+    public static DcMotorEx rightLaunch;
+    public static DcMotorEx leftLaunch;
+    public static CRServo intakeServo;
+    public static Servo hammer;
+    private static ColorSensor colorRight;
+    private static ColorSensor colorLeft;
+    private static TouchSensor touchSensor;
+    private Limelight3A limelight;
+    private LLResult result;
     private static LED slotZeroGreen;
     private static LED slotOneGreen;
     private static LED slotTwoGreen;
@@ -41,14 +41,16 @@ public class Robot {
 
 
      public void initialize(HardwareMap hwMp){
-        intakeServo = hwMp.get(CRServo.class, "intakeServo");
+         touchSensor = hwMp.get(TouchSensor.class, "touchSensor");
         colorRight = hwMp.get(ColorSensor.class, "colorRight");
-        fan = hwMp.get(DcMotorEx.class, "fan");
         hammer = hwMp.get(Servo.class, "hammer");
         rightLaunch = hwMp.get(DcMotorEx.class, "rightLaunch");
         leftLaunch = hwMp.get(DcMotorEx.class, "leftLaunch");
         colorLeft = hwMp.get(ColorSensor.class, "colorLeft");
-        touchSensor = hwMp.get(TouchSensor.class, "touchSensor");
+
+         intakeServo = hwMp.get(CRServo.class, "intakeServo");
+         fan = hwMp.get(DcMotorEx.class, "fan");
+
 
         slotZeroGreen = hwMp.get(LED.class, "slotZeroGreen");
         slotOneGreen = hwMp.get(LED.class, "slotOneGreen");
@@ -64,7 +66,6 @@ public class Robot {
          rightLaunch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
          fan.setTargetPosition(0);
-         fan.setTargetPositionTolerance(10);
          fan.setMode(DcMotor.RunMode.RUN_TO_POSITION);
          fan.setPower(1);
 
@@ -118,7 +119,7 @@ public class Robot {
     public void stopIntake() {intakeServo.setPower(0);}
 
     public void startLaunchMotors(boolean far) {
-         launchTargetVelocity = far ? 1850 : 1500;
+         launchTargetVelocity = far ? 1950 : 1500;
          leftLaunch.setVelocity(launchTargetVelocity);
          rightLaunch.setVelocity(launchTargetVelocity);
     }
@@ -137,7 +138,7 @@ public class Robot {
         return leftLaunch.getVelocity() >= launchTargetVelocity - 10 && rightLaunch.getVelocity() >= launchTargetVelocity - 10;
     }
 
-    public boolean atSortTarget() {return Math.abs(fan.getCurrentPosition() - fan.getTargetPosition()) < 20;}
+    public boolean atSortTarget() {return Math.abs(fan.getCurrentPosition() - fan.getTargetPosition()) < 10;}
 
     public int getSlotGoal() {return slotGoal;}
 
