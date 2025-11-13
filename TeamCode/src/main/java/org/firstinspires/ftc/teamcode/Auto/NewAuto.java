@@ -94,6 +94,14 @@ public class NewAuto extends OpMode {
         sendPose();
         autoPathUpdates();
 
+        if(!launching) {
+            hornet.resetHammer();
+            hornet.resetLaunch();
+            hornet.stopLaunchMotors();
+            hornet.setStoragePos(SharedData.storage[0] == ColorSensed.NO_COLOR ? 0 : (SharedData.storage[1] == ColorSensed.NO_COLOR ? 1 : 2) , !SharedData.isFull());
+            launchingTemp = false;
+        }else{hornet.startLaunchMotors(true);}
+
         // panels.getTelemetry().addData("key", value);
         // panels.getTelemetry().update();
         if ((pathState == 3 || pathState == 4 || pathState == 6 || pathState == 7) && !launching) {
@@ -118,7 +126,7 @@ public class NewAuto extends OpMode {
             launchTimer.resetTimer();
         }
 
-        if(launchTimer.getElapsedTimeSeconds() >= .25){
+        if(launchTimer.getElapsedTimeSeconds() >= .4){
             if(hornet.hammerAtLaunch() && launchingTemp){
                 launchTimer.resetTimer();
                 hornet.resetHammer();
@@ -129,13 +137,6 @@ public class NewAuto extends OpMode {
                 hornet.resetLaunch();
             }
         }
-
-        if(!launching) {
-            hornet.resetHammer();
-            hornet.resetLaunch();
-            hornet.stopLaunchMotors();
-            hornet.setStoragePos(SharedData.storage[0] == ColorSensed.NO_COLOR ? 0 : (SharedData.storage[1] == ColorSensed.NO_COLOR ? 1 : 2) , !SharedData.isFull());
-        }else{hornet.startLaunchMotors(true);}
 
         telemetry.addData("Temp launch", launchingTemp);
         telemetry.addData("launching", launching);
@@ -272,6 +273,7 @@ public class NewAuto extends OpMode {
                 if (!f.isBusy()){
                     setPathState(-1);
                     sendPose();
+                    launching = false;
                 }
                 break;
         }

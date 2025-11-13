@@ -118,7 +118,7 @@ public class Robot {
     public void stopIntake() {intakeServo.setPower(0);}
 
     public void startLaunchMotors(boolean far) {
-         launchTargetVelocity = far ? 2050 : 1500;
+         launchTargetVelocity = far ? 1850 : 1500;
          leftLaunch.setVelocity(launchTargetVelocity);
          rightLaunch.setVelocity(launchTargetVelocity);
     }
@@ -134,7 +134,7 @@ public class Robot {
     }
 
     public boolean atTargetVelocity() {
-        return leftLaunch.getVelocity() >= launchTargetVelocity - 50 && rightLaunch.getVelocity() >= launchTargetVelocity - 50;
+        return leftLaunch.getVelocity() >= launchTargetVelocity - 10 && rightLaunch.getVelocity() >= launchTargetVelocity - 10;
     }
 
     public boolean atSortTarget() {return Math.abs(fan.getCurrentPosition() - fan.getTargetPosition()) < 20;}
