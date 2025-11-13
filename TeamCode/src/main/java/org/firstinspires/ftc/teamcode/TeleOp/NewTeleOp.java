@@ -36,8 +36,8 @@ public class NewTeleOp extends LinearOpMode{
     boolean automated;
     private PathChain toLaunchSame, toPark, toLaunchCross;
     private Timer launchTimer;
-    private Limelight3A limelight;
-    private LLResult result;
+//    private Limelight3A limelight;
+//    private LLResult result;
     private TouchSensor touchSensor = null;
 //    private static AprilTagProcessor aprilTag;
 //    private VisionPortal visionPortal;
@@ -54,9 +54,9 @@ public class NewTeleOp extends LinearOpMode{
         launchTimer = new Timer();
         createPaths();
         touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
-        limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        limelight.pipelineSwitch(0);
-        limelight.start();
+       // limelight = hardwareMap.get(Limelight3A.class, "limelight");
+//        limelight.pipelineSwitch(0);
+//        limelight.start();
         hornet.resetHammer();
 
 
@@ -68,9 +68,9 @@ public class NewTeleOp extends LinearOpMode{
 
         while(opModeIsActive()) {
             int ID = 0;
-            if (result != null && result.isValid()){
-
-            }
+//            if (result != null && result.isValid()){
+//
+//            }
             f.update();
             tele();
 
@@ -278,19 +278,19 @@ public class NewTeleOp extends LinearOpMode{
 //            telemetry.addData("FOLLOWER X",f.getPose().getX());
 //            telemetry.addData("FOLLOWER Y",f.getPose().getY());
 //            telemetry.addData("FOLLOWER Heading",f.getPose().getHeading());
-        telemetry.addData("Pattern", SharedData.greenIndex);
-        telemetry.addLine(String.format("Storage: %s, %s, %s", SharedData.storage[0], SharedData.storage[1], SharedData.storage[2] ));
+//        telemetry.addData("Pattern", SharedData.greenIndex);
+//        telemetry.addLine(String.format("Storage: %s, %s, %s", SharedData.storage[0], SharedData.storage[1], SharedData.storage[2] ));
         telemetry.addData("auto Mode", autoMode);
         telemetry.addData("Side", SharedData.red ? "Red" : "Blue");
-        telemetry.addData("Robot Centric" , robotCentric);
-        telemetry.addData("Slow Mode", slowMode);
-        telemetry.addLine(String.format("LeftVel: %f\nRightVel: %f",hornet.leftLaunch.getVelocity(), hornet.rightLaunch.getVelocity() ));
-        telemetry.addData("targetVelocity" ,hornet.getLaunchTargetVelocity());
+//        telemetry.addData("Robot Centric" , robotCentric);
+//        telemetry.addData("Slow Mode", slowMode);
+//        telemetry.addLine(String.format("LeftVel: %f\nRightVel: %f",hornet.leftLaunch.getVelocity(), hornet.rightLaunch.getVelocity() ));
+//        telemetry.addData("targetVelocity" ,hornet.getLaunchTargetVelocity());
         telemetry.addData("atTarget" , hornet.atTargetVelocity());
-        telemetry.addData("launchTimer", launchTimer.getElapsedTimeSeconds());
-        telemetry.addData("button", hornet.buttonPressed());
+//        telemetry.addData("launchTimer", launchTimer.getElapsedTimeSeconds());
+//        telemetry.addData("button", hornet.buttonPressed());
         telemetry.addData("at sort", hornet.atSortTarget());
-        telemetry.addData("goal clear", SharedData.storage[hornet.getSlotGoal()] == ColorSensed.NO_COLOR);
+//        telemetry.addData("goal clear", SharedData.storage[hornet.getSlotGoal()] == ColorSensed.NO_COLOR);
 //        telemetry.addData("current ID" , figureID());
         telemetry.update();
     }
