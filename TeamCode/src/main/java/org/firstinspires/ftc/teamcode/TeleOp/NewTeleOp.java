@@ -198,7 +198,7 @@ public class NewTeleOp extends LinearOpMode{
         //if flap has had time to move...
         //and flap is at launch position -> move flap back and clear storage slot
         //and flap is at not launch position and it says its launching -> say its not launching
-        if(launchTimer.getElapsedTimeSeconds() >= .4){
+        if(launchTimer.getElapsedTimeSeconds() >= .25){
             if(hornet.hammerAtLaunch() && launching){
                 launchTimer.resetTimer();
                 hornet.resetHammer();

@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.SharedData;
 @Configurable
 public class PoseConstants {
     public Pose START_POSE =  !SharedData.red ? new Pose(56.75,8.75,Math.toRadians(270)) :  new Pose(87.25,8.75,Math.toRadians(270));
-    public Pose LAUNCH_POSE = !SharedData.red ? new Pose(56.75,14.75,Math.toRadians(290)) :  new Pose(87.25,14.75,Math.toRadians(250));
+    public Pose LAUNCH_POSE = !SharedData.red ? new Pose(56.75,14.75,Math.toRadians(294)) :  new Pose(87.25,14.75,Math.toRadians(246));
     public Pose ALIGN1_POSE = !SharedData.red ? new Pose(45.75,34.75,Math.toRadians(180)) :  new Pose(98.25,34.75,Math.toRadians(0));
     public  Pose PICKUP1_POSE = !SharedData.red ? new Pose(17.75,34.75, Math.toRadians(180)) :  new Pose(126.25,34.75, Math.toRadians(0));
     public Pose ALIGN2_POSE = !SharedData.red ? new Pose(45.75,58.75,Math.toRadians(180)) :  new Pose(98.25,58.75,Math.toRadians(0));

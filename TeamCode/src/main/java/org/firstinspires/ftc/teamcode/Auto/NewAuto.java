@@ -126,7 +126,7 @@ public class NewAuto extends OpMode {
             launchTimer.resetTimer();
         }
 
-        if(launchTimer.getElapsedTimeSeconds() >= .4){
+        if(launchTimer.getElapsedTimeSeconds() >= .25){
             if(hornet.hammerAtLaunch() && launchingTemp){
                 launchTimer.resetTimer();
                 hornet.resetHammer();
@@ -212,7 +212,7 @@ public class NewAuto extends OpMode {
                 if (!f.isBusy()){
                     //pickup balls
                     f.followPath(two, true);
-                    f.setMaxPower(.2);
+                    f.setMaxPower(.25);
                     setPathState(3);
                     sendPose();
                 }
@@ -243,7 +243,7 @@ public class NewAuto extends OpMode {
                 if (!f.isBusy()){
                     //pickup 2
                     f.followPath(five , true);
-                    f.setMaxPower(.2);
+                    f.setMaxPower(.25);
                     setPathState(6);
                     sendPose();
             }
