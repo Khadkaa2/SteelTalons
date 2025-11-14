@@ -25,6 +25,10 @@ public class Calibration extends LinearOpMode {
                 SharedData.red = false;
             else if(gamepad1.b || gamepad2.b)
                 SharedData.red = true;
+            else if(gamepad1.x || gamepad2.x)
+                SharedData.shootFar = !SharedData.shootFar;
+            else if(gamepad1.y || gamepad2.y)
+                SharedData.startFar = !SharedData.startFar;
             if(gamepad1.dpad_left || gamepad2.dpad_left)
                 SharedData.emptyStorage();
             if(gamepad1.dpad_right || gamepad2.dpad_right)
@@ -32,7 +36,9 @@ public class Calibration extends LinearOpMode {
             if(gamepad1.y || gamepad2.y)
                 fan.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             telemetry.addLine("B to set to red\nA to set to blue\ndpad left to empty storage\ndpad right to reset SharedData\nY to reset fan encoder\n");
-            telemetry.addData("side", SharedData.red ? "red" : "blue");
+            telemetry.addData("Side", SharedData.red ? "red" : "blue");
+            telemetry.addData("Shooting", SharedData.shootFar ? "far" : "close");
+            telemetry.addData("Starting", SharedData.startFar ? "far" : "close");
             telemetry.update();
         }
 

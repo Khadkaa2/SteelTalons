@@ -8,6 +8,8 @@ public class SharedData {
     public static Pose toTeleopPose;
     public static ColorSensed[] storage = {ColorSensed.GREEN, ColorSensed.PURPLE, ColorSensed.PURPLE};
     public static boolean red = true;
+    public static boolean startFar;
+    public static boolean shootFar;
 
     public static void reset() {
         greenIndex = 0;
@@ -57,5 +59,7 @@ public class SharedData {
 
     }
     public static void clearSlot(int i) {storage[i] = ColorSensed.NO_COLOR;}
+
+
 
 }
