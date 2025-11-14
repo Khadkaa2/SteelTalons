@@ -13,6 +13,7 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+
 import org.firstinspires.ftc.teamcode.ColorSensed;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.SharedData;
@@ -25,7 +26,7 @@ public class CloseAuto extends OpMode {
     private Follower f = null;
     public PanelsTelemetry panels = PanelsTelemetry.INSTANCE;
     private int pathState;
-    private Timer pathTimer,opmodeTimer,launchTimer,detectColorTimer;
+    private Timer pathTimer,opmodeTimer,launchTimer,detectColorTimer, launchPauseTimer;
     private PoseConstantsClose posesClose = new PoseConstantsClose();
     Pose currentPose = null;
     private Path start, end;
@@ -35,6 +36,7 @@ public class CloseAuto extends OpMode {
     boolean launching = false , launchingTemp = false;
     private LLResult result;
     int timesLaunched = 0;
+    boolean firstPaused = false;
 
     @Override
     public void init() {
@@ -43,7 +45,9 @@ public class CloseAuto extends OpMode {
         pathTimer = new Timer();
         opmodeTimer = new Timer();
         launchTimer = new Timer();
+        launchPauseTimer = new Timer();
         opmodeTimer.resetTimer();
+        launchPauseTimer.resetTimer();
         limelight = hardwareMap.get(Limelight3A.class , "limelight");
 
         f = Constants.createFollower(hardwareMap);
@@ -109,10 +113,12 @@ public class CloseAuto extends OpMode {
             if(timesLaunched == SharedData.greenIndex || ind == -1) {
                 ind = SharedData.getGreenIndex() == -1 ? ind : SharedData.getGreenIndex();
             }
+
             hornet.setStoragePos(ind,false);
             launchingTemp = true;
         }
-        if(launchingTemp && hornet.atSortTarget() && hornet.atTargetVelocity() && !hornet.hammerAtLaunch() && !hornet.isLaunched()){
+
+        if(launchingTemp && hornet.atSortTarget() && hornet.atTargetVelocity() && !hornet.hammerAtLaunch() && !hornet.isLaunched() && launchPauseTimer.getElapsedTimeSeconds() > 1){
             hornet.launch();
             launchTimer.resetTimer();
         }
@@ -126,6 +132,7 @@ public class CloseAuto extends OpMode {
             else if(launchingTemp && hornet.isLaunched()){
                 launchingTemp = false;
                 hornet.resetLaunch();
+                launchPauseTimer.resetTimer();
             }
         }
 
@@ -194,10 +201,17 @@ public class CloseAuto extends OpMode {
                     setPathState(2);
                     sendPose();
                     launching = false;
+                    firstPaused = false;
                 }
                 //score 1
-                else if (!f.isBusy())
+                else if (!f.isBusy()) {
                     launching = true;
+                    if (!firstPaused)
+                    {
+                        launchPauseTimer.resetTimer();
+                        firstPaused = true;
+                    }
+                }
                 break;
             case 2:
                 if (!f.isBusy()){
@@ -224,10 +238,18 @@ public class CloseAuto extends OpMode {
                     setPathState(5);
                     sendPose();
                     launching = false;
+                    firstPaused = false;
                 }
                 //score 2
                 else if (!f.isBusy()) {
                     launching = true;
+                    if (!firstPaused)
+                    {
+                        launchPauseTimer.resetTimer();
+                        firstPaused = true;
+                    }
+
+
                 }
                 break;
             case 5:
@@ -258,6 +280,11 @@ public class CloseAuto extends OpMode {
                 //score 3
                 else if (!f.isBusy()){
                     launching = true;
+                    if (!firstPaused)
+                    {
+                        launchPauseTimer.resetTimer();
+                        firstPaused = true;
+                    }
                 }
                 break;
             case 8:
@@ -265,6 +292,7 @@ public class CloseAuto extends OpMode {
                     setPathState(-1);
                     sendPose();
                     launching = false;
+                    firstPaused = false;
                 }
                 break;
         }

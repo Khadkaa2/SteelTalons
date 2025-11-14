@@ -17,6 +17,7 @@ import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 
+import org.firstinspires.ftc.teamcode.Auto.PoseConstantsClose;
 import org.firstinspires.ftc.teamcode.ColorSensed;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.SharedData;
@@ -27,6 +28,7 @@ public class NewTeleOp extends LinearOpMode{
     private Robot hornet = new Robot();
     private Follower f;
     private PoseConstants poses = new PoseConstants();
+    private PoseConstantsClose posesClose = new PoseConstantsClose();
     boolean robotCentric;
     boolean autoMode = true;
     boolean xButton;
@@ -34,7 +36,7 @@ public class NewTeleOp extends LinearOpMode{
     boolean dpadLeft;
     boolean launching;
     boolean automated;
-    private PathChain toLaunchSame, toPark, toLaunchCross;
+    private PathChain toLaunchClose, toPark, toLaunchCross;
     private Timer launchTimer;
 //    private Limelight3A limelight;
 //    private LLResult result;
@@ -88,7 +90,7 @@ public class NewTeleOp extends LinearOpMode{
 
             //Launch Spot 1
             if (gamepad1.a && !automated) {
-                f.followPath(toLaunchSame);
+                f.followPath(toLaunchClose);
                 automated = true;
             }
             //Auto Pathing to Park
@@ -101,6 +103,7 @@ public class NewTeleOp extends LinearOpMode{
                 f.followPath(toLaunchCross);
                 automated = true;
             }
+            
             //exits automated pathing
             else if ((!gamepad1.a && !gamepad1.x && !gamepad1.b) && automated) {
                 f.startTeleopDrive(true);
@@ -187,7 +190,7 @@ public class NewTeleOp extends LinearOpMode{
 
 
         //If launching -> speed up launchMotors
-        if(launching){hornet.startLaunchMotors(true);} else{hornet.stopLaunchMotors();}
+        if(launching){hornet.startLaunchMotors(!(gamepad2.left_trigger > 0.2));} else{hornet.stopLaunchMotors();}
 
         //if ready to launch -> then launch
         if(launching && hornet.atSortTarget() && hornet.atTargetVelocity() && !hornet.hammerAtLaunch() && !hornet.isLaunched()){
@@ -237,9 +240,10 @@ public class NewTeleOp extends LinearOpMode{
 
     }
     public void createPaths() {
-        toLaunchSame = f.pathBuilder()
-                .addPath(new BezierLine(f.getPose(), poses.LAUNCH_POSE))
-                .setLinearHeadingInterpolation(f.getPose().getHeading(), poses.LAUNCH_POSE.getHeading())
+        
+        toLaunchClose = f.pathBuilder()
+                .addPath(new BezierLine(f.getPose(), posesClose.LAUNCH_POSE))
+                .setLinearHeadingInterpolation(f.getPose().getHeading(), posesClose.LAUNCH_POSE.getHeading())
                 .build();
 
         toLaunchCross = f.pathBuilder()
