@@ -68,6 +68,7 @@ public class Robot {
          fan.setTargetPosition(0);
          fan.setMode(DcMotor.RunMode.RUN_TO_POSITION);
          fan.setPower(1);
+         fan.setTargetPositionTolerance(3);
 
          limelight = hwMp.get(Limelight3A.class, "limelight");
          LLResult result = limelight.getLatestResult();
@@ -138,7 +139,7 @@ public class Robot {
         return leftLaunch.getVelocity() >= launchTargetVelocity - 10 && rightLaunch.getVelocity() >= launchTargetVelocity - 10;
     }
 
-    public boolean atSortTarget() {return Math.abs(fan.getCurrentPosition() - fan.getTargetPosition()) < 10;}
+    public boolean atSortTarget() {return Math.abs(fan.getCurrentPosition() - fan.getTargetPosition()) <= 3;}
 
     public int getSlotGoal() {return slotGoal;}
 

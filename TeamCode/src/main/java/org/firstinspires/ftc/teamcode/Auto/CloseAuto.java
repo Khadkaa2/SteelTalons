@@ -118,7 +118,7 @@ public class CloseAuto extends OpMode {
             launchingTemp = true;
         }
 
-        if(launchingTemp && hornet.atSortTarget() && hornet.atTargetVelocity() && !hornet.hammerAtLaunch() && !hornet.isLaunched() && launchPauseTimer.getElapsedTimeSeconds() > 1){
+        if(launchingTemp && hornet.atSortTarget() && hornet.atTargetVelocity() && !hornet.hammerAtLaunch() && !hornet.isLaunched() && launchPauseTimer.getElapsedTimeSeconds() > .5){
             hornet.launch();
             launchTimer.resetTimer();
         }
