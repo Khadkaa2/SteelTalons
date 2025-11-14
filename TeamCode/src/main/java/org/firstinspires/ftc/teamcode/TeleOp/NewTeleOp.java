@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import com.bylazar.telemetry.PanelsTelemetry;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 
@@ -44,6 +45,7 @@ public class NewTeleOp extends LinearOpMode{
 //    private static AprilTagProcessor aprilTag;
 //    private VisionPortal visionPortal;
 //    private AprilTagDetection currentDetection;
+    private PanelsTelemetry panelsTelemetry = PanelsTelemetry.INSTANCE;
 
     boolean slowMode;
 
@@ -135,7 +137,10 @@ public class NewTeleOp extends LinearOpMode{
             dpadLeft = gamepad1.dpad_left;
 
 
+
+
         }
+
 
     }
 
@@ -296,6 +301,9 @@ public class NewTeleOp extends LinearOpMode{
         telemetry.addData("at sort", hornet.atSortTarget());
 //        telemetry.addData("goal clear", SharedData.storage[hornet.getSlotGoal()] == ColorSensed.NO_COLOR);
 //        telemetry.addData("current ID" , figureID());
+        telemetry.addData("fx" , f.getPose().getX());
+        telemetry.addData("fy" , f.getPose().getY());
+        telemetry.addData("fh" , f.getHeading());
         telemetry.update();
     }
 
