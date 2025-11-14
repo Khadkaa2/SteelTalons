@@ -13,29 +13,20 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.ColorSensed;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.SharedData;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
-import java.util.List;
-
-@Autonomous (name = "Auto")
-public class NewAuto extends OpMode {
+@Autonomous (name = "Auto CLOSE")
+public class CloseAuto extends OpMode {
 
     private Robot hornet = new Robot();
     private Follower f = null;
     public PanelsTelemetry panels = PanelsTelemetry.INSTANCE;
     private int pathState;
     private Timer pathTimer,opmodeTimer,launchTimer,detectColorTimer;
-    private PoseConstants poses = new PoseConstants();
+    private PoseConstantsClose posesClose = new PoseConstantsClose();
     Pose currentPose = null;
     private Path start, end;
     private PathChain one, two, three, four, five, six;
@@ -56,7 +47,7 @@ public class NewAuto extends OpMode {
         limelight = hardwareMap.get(Limelight3A.class , "limelight");
 
         f = Constants.createFollower(hardwareMap);
-        f.setStartingPose(poses.START_POSE);
+        f.setStartingPose(posesClose.START_POSE);
         buildPaths();
         hornet.disableLED();
         hornet.resetHammer();
@@ -68,17 +59,17 @@ public class NewAuto extends OpMode {
 
     @Override
     public void init_loop() {
-    int ID = figureID();
-    if (ID == 21) index = 0;
-    else if (ID == 22) index = 1;
-    else if (ID == 23) index = 2;
+        int ID = figureID();
+        if (ID == 21) index = 0;
+        else if (ID == 22) index = 1;
+        else if (ID == 23) index = 2;
 
-    SharedData.greenIndex = index;
-    telemetry.addData("ID" , ID);
-    telemetry.addData("Green Index", index );
-    telemetry.addData("Side", SharedData.red ? "Red" : "Blue");
+        SharedData.greenIndex = index;
+        telemetry.addData("ID" , ID);
+        telemetry.addData("Green Index", index );
+        telemetry.addData("Side", SharedData.red ? "Red" : "Blue");
 
-    telemetry.update();
+        telemetry.update();
     }
 
     @Override
@@ -100,11 +91,11 @@ public class NewAuto extends OpMode {
             hornet.stopLaunchMotors();
             hornet.setStoragePos(SharedData.storage[0] == ColorSensed.NO_COLOR ? 0 : (SharedData.storage[1] == ColorSensed.NO_COLOR ? 1 : 2) , !SharedData.isFull());
             launchingTemp = false;
-        }else{hornet.startLaunchMotors(true);}
+        }else{hornet.startLaunchMotors(false);}
 
         // panels.getTelemetry().addData("key", value);
         // panels.getTelemetry().update();
-        if ((pathState == 3 || pathState == 4 || pathState == 6 || pathState == 7) && !launching) {
+        if ((pathState == 3 || pathState == 4 || pathState == 6 || pathState == 7) || launching) {
             hornet.startIntake(true);
         } else hornet.stopIntake();
 
@@ -155,35 +146,35 @@ public class NewAuto extends OpMode {
 
 
     public void buildPaths(){
-        start = new Path( new BezierLine(poses.START_POSE , poses.LAUNCH_POSE));
-        start.setLinearHeadingInterpolation(poses.START_POSE.getHeading() , poses.LAUNCH_POSE.getHeading());
+        start = new Path( new BezierLine(posesClose.START_POSE , posesClose.LAUNCH_POSE));
+        start.setLinearHeadingInterpolation(posesClose.START_POSE.getHeading() , posesClose.LAUNCH_POSE.getHeading());
 
         one = f.pathBuilder()
-                .addPath(new BezierLine( poses.LAUNCH_POSE , poses.ALIGN1_POSE))
-                .setConstantHeadingInterpolation(poses.ALIGN1_POSE.getHeading())
+                .addPath(new BezierLine( posesClose.LAUNCH_POSE , posesClose.ALIGN1_POSE))
+                .setConstantHeadingInterpolation(posesClose.ALIGN1_POSE.getHeading())
                 .build();
         two = f.pathBuilder()
-                .addPath(new BezierLine( poses.ALIGN1_POSE , poses.PICKUP1_POSE))
-                .setLinearHeadingInterpolation( poses.ALIGN1_POSE.getHeading() , poses.PICKUP1_POSE.getHeading())
+                .addPath(new BezierLine( posesClose.ALIGN1_POSE , posesClose.PICKUP1_POSE))
+                .setLinearHeadingInterpolation( posesClose.ALIGN1_POSE.getHeading() , posesClose.PICKUP1_POSE.getHeading())
                 .build();
         three = f.pathBuilder()
-                .addPath(new BezierLine(poses.PICKUP1_POSE , poses.LAUNCH_POSE ))
-                .setLinearHeadingInterpolation(poses.PICKUP1_POSE.getHeading() , poses.LAUNCH_POSE.getHeading())
+                .addPath(new BezierLine(posesClose.PICKUP1_POSE , posesClose.LAUNCH_POSE ))
+                .setLinearHeadingInterpolation(posesClose.PICKUP1_POSE.getHeading() , posesClose.LAUNCH_POSE.getHeading())
                 .build();
         four = f.pathBuilder()
-                .addPath(new BezierLine(poses.LAUNCH_POSE, poses.ALIGN2_POSE))
-                .setConstantHeadingInterpolation(poses.ALIGN2_POSE.getHeading())
+                .addPath(new BezierLine(posesClose.LAUNCH_POSE, posesClose.ALIGN2_POSE))
+                .setConstantHeadingInterpolation(posesClose.ALIGN2_POSE.getHeading())
                 .build();
         five = f.pathBuilder()
-                .addPath(new BezierLine(poses.ALIGN2_POSE, poses.PICKUP2_POSE))
-                .setLinearHeadingInterpolation(poses.ALIGN2_POSE.getHeading(), poses.PICKUP2_POSE.getHeading())
+                .addPath(new BezierLine(posesClose.ALIGN2_POSE, posesClose.PICKUP2_POSE))
+                .setLinearHeadingInterpolation(posesClose.ALIGN2_POSE.getHeading(), posesClose.PICKUP2_POSE.getHeading())
                 .build();
         six = f.pathBuilder()
-                .addPath(new BezierLine(poses.PICKUP2_POSE, poses.LAUNCH_POSE))
-                .setLinearHeadingInterpolation(poses.PICKUP2_POSE.getHeading(), poses.LAUNCH_POSE.getHeading())
+                .addPath(new BezierLine(posesClose.PICKUP2_POSE, posesClose.LAUNCH_POSE))
+                .setLinearHeadingInterpolation(posesClose.PICKUP2_POSE.getHeading(), posesClose.LAUNCH_POSE.getHeading())
                 .build();
-        end = new Path(new BezierLine(poses.LAUNCH_POSE, poses.END_POSE));
-        end.setLinearHeadingInterpolation(poses.LAUNCH_POSE.getHeading(), poses.END_POSE.getHeading());
+        end = new Path(new BezierLine(posesClose.LAUNCH_POSE, posesClose.END_POSE));
+        end.setLinearHeadingInterpolation(posesClose.LAUNCH_POSE.getHeading(), posesClose.END_POSE.getHeading());
     }
 
     public void autoPathUpdates(){
@@ -212,7 +203,7 @@ public class NewAuto extends OpMode {
                 if (!f.isBusy()){
                     //pickup balls
                     f.followPath(two, true);
-                    f.setMaxPower(.25);
+                    f.setMaxPower(.2);
                     setPathState(3);
                     sendPose();
                 }
@@ -243,10 +234,10 @@ public class NewAuto extends OpMode {
                 if (!f.isBusy()){
                     //pickup 2
                     f.followPath(five , true);
-                    f.setMaxPower(.25);
+                    f.setMaxPower(.2);
                     setPathState(6);
                     sendPose();
-            }
+                }
                 break;
             case 6:
                 if (!f.isBusy()){
