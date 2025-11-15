@@ -27,7 +27,7 @@ public class Calibration extends LinearOpMode {
                 SharedData.red = false;
             else if(gamepad1.b || gamepad2.b)
                 SharedData.red = true;
-            else if((gamepad1.x || gamepad2.x) && (gamepad1.x || gamepad2.x) != startF)
+            else if((gamepad1.x || gamepad2.x) && (gamepad1.x || gamepad2.x) != shootF)
                 SharedData.shootFar = !SharedData.shootFar;
             else if((gamepad1.y || gamepad2.y) && (gamepad1.y || gamepad2.y) != startF)
                 SharedData.startFar = !SharedData.startFar;
