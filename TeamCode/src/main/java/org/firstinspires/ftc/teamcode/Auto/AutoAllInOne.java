@@ -94,7 +94,7 @@ public class AutoAllInOne extends OpMode {
             hornet.stopLaunchMotors();
             hornet.setStoragePos(SharedData.storage[0] == ColorSensed.NO_COLOR ? 0 : (SharedData.storage[1] == ColorSensed.NO_COLOR ? 1 : 2) , !SharedData.isFull());
             launchingTemp = false;
-        }else{hornet.startLaunchMotors(true);}
+        }else{hornet.startLaunchMotors(SharedData.shootFar);}
 
         // panels.getTelemetry().addData("key", value);
         // panels.getTelemetry().update();
