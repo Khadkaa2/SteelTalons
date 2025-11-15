@@ -217,7 +217,7 @@ public class CloseAuto extends OpMode {
                 if (!f.isBusy()){
                     //pickup balls
                     f.followPath(two, true);
-                    f.setMaxPower(.2);
+                    f.setMaxPower(.15);
                     setPathState(3);
                     sendPose();
                 }
@@ -256,7 +256,7 @@ public class CloseAuto extends OpMode {
                 if (!f.isBusy()){
                     //pickup 2
                     f.followPath(five , true);
-                    f.setMaxPower(.2);
+                    f.setMaxPower(.15);
                     setPathState(6);
                     sendPose();
                 }
