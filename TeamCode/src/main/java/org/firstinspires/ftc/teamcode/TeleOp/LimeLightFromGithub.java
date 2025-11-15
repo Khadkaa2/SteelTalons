@@ -66,7 +66,7 @@ import java.util.List;
  *   and the ip address the Limelight device assigned the Control Hub and which is displayed in small text
  *   below the name of the Limelight on the top level configuration screen.
  */
-@TeleOp(name = "Sensor: Limelight3A", group = "Sensor")
+//@TeleOp(name = "Sensor: Limelight3A", group = "Sensor")
 public class LimeLightFromGithub extends LinearOpMode {
 
     private Limelight3A limelight;
