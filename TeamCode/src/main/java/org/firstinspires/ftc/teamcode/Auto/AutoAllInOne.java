@@ -18,8 +18,8 @@ import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.SharedData;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@Autonomous (name = "Auto FAR")
-public class FarAuto extends OpMode {
+@Autonomous (name = "Auto")
+public class AutoAllInOne extends OpMode {
 
     private Robot hornet = new Robot();
     private Follower f = null;
@@ -69,6 +69,8 @@ public class FarAuto extends OpMode {
     telemetry.addData("ID" , ID);
     telemetry.addData("Green Index", index );
     telemetry.addData("Side", SharedData.red ? "Red" : "Blue");
+    telemetry.addData("Start", SharedData.startFar ? "far" : "close");
+    telemetry.addData("Shoot", SharedData.shootFar ? "far" : "close");
 
     telemetry.update();
     }

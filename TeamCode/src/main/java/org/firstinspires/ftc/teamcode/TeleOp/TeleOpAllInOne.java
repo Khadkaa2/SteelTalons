@@ -6,8 +6,6 @@ import com.pedropathing.geometry.BezierLine;
 
 
 import com.pedropathing.util.Timer;
-import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -24,8 +22,8 @@ import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.SharedData;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@TeleOp (name = "AAA TeleOp")
-public class NewTeleOp extends LinearOpMode{
+@TeleOp (name = "TeleOp")
+public class TeleOpAllInOne extends LinearOpMode{
     private Robot hornet = new Robot();
     private Follower f;
     private PoseConstants poses = new PoseConstants();
@@ -37,7 +35,7 @@ public class NewTeleOp extends LinearOpMode{
     boolean dpadLeft;
     boolean launching;
     boolean automated;
-    private PathChain toLaunchClose, toPark, toLaunchCross;
+    private PathChain toLaunchClose, toPark, toLaunchFar;
     private Timer launchTimer;
 //    private Limelight3A limelight;
 //    private LLResult result;
@@ -102,7 +100,7 @@ public class NewTeleOp extends LinearOpMode{
             }
             //Launch Spot 2
             else if (gamepad1.b && !automated) {
-                f.followPath(toLaunchCross);
+                f.followPath(toLaunchFar);
                 automated = true;
             }
             
@@ -247,13 +245,13 @@ public class NewTeleOp extends LinearOpMode{
     public void createPaths() {
         
         toLaunchClose = f.pathBuilder()
-                .addPath(new BezierLine(f.getPose(), posesClose.LAUNCH_POSE))
-                .setLinearHeadingInterpolation(f.getPose().getHeading(), posesClose.LAUNCH_POSE.getHeading())
+                .addPath(new BezierLine(f.getPose(), poses.closeLaunch))
+                .setLinearHeadingInterpolation(f.getPose().getHeading(), poses.closeLaunch.getHeading())
                 .build();
 
-        toLaunchCross = f.pathBuilder()
-                .addPath(new BezierLine(f.getPose(), poses.teleOpLaunchPose))
-                .setConstantHeadingInterpolation(poses.teleOpLaunchPose.getHeading())
+        toLaunchFar = f.pathBuilder()
+                .addPath(new BezierLine(f.getPose(), poses.farLaunch))
+                .setConstantHeadingInterpolation(poses.farLaunch.getHeading())
                 .build();
 
         toPark = f.pathBuilder()

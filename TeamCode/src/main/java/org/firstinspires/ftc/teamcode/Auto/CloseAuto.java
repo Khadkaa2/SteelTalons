@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.SharedData;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@Autonomous (name = "Auto CLOSE")
+//@Autonomous (name = "Auto CLOSE")
 public class CloseAuto extends OpMode {
 
     private Robot hornet = new Robot();

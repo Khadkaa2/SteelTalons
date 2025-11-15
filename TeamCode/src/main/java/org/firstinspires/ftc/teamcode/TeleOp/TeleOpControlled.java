@@ -138,8 +138,8 @@ public class TeleOpControlled extends LinearOpMode {
                 .build();
 
         toLaunchCross = f.pathBuilder()
-                .addPath(new BezierLine(f.getPose(), poses.teleOpLaunchPose))
-                .setConstantHeadingInterpolation(poses.teleOpLaunchPose.getHeading())
+                .addPath(new BezierLine(f.getPose(), poses.farLaunch))
+                .setConstantHeadingInterpolation(poses.farLaunch.getHeading())
                 .build();
 
         toPark = f.pathBuilder()
