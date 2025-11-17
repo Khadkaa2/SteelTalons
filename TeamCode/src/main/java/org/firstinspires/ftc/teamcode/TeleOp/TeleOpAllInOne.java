@@ -26,7 +26,6 @@ public class TeleOpAllInOne extends LinearOpMode{
     private Robot hornet = new Robot();
     private Follower f;
     private PoseConstants poses = new PoseConstants();
-    private PoseConstantsClose posesClose = new PoseConstantsClose();
     boolean robotCentric;
     boolean autoMode = true;
     boolean xButton;
@@ -36,12 +35,7 @@ public class TeleOpAllInOne extends LinearOpMode{
     boolean automated;
     private PathChain toLaunchClose, toPark, toLaunchFar;
     private Timer launchTimer;
-//    private Limelight3A limelight;
-//    private LLResult result;
     private TouchSensor touchSensor = null;
-//    private static AprilTagProcessor aprilTag;
-//    private VisionPortal visionPortal;
-//    private AprilTagDetection currentDetection;
     private PanelsTelemetry panelsTelemetry = PanelsTelemetry.INSTANCE;
 
     boolean slowMode;
