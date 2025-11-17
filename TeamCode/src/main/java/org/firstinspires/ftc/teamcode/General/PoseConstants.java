@@ -1,10 +1,8 @@
-package org.firstinspires.ftc.teamcode.Auto;
+package org.firstinspires.ftc.teamcode.General;
 
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.Pose;
-
-import org.firstinspires.ftc.teamcode.SharedData;
 
 @Configurable
 public class PoseConstants {

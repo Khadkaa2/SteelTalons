@@ -9,17 +9,16 @@ import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.Auto.PoseConstants;
+import org.firstinspires.ftc.teamcode.General.PoseConstants;
 
 
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 
-import org.firstinspires.ftc.teamcode.Auto.PoseConstantsClose;
-import org.firstinspires.ftc.teamcode.ColorSensed;
-import org.firstinspires.ftc.teamcode.Robot;
-import org.firstinspires.ftc.teamcode.SharedData;
+import org.firstinspires.ftc.teamcode.General.ColorSensed;
+import org.firstinspires.ftc.teamcode.General.Robot;
+import org.firstinspires.ftc.teamcode.General.SharedData;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @TeleOp (name = "TeleOp")
@@ -78,7 +77,6 @@ public class TeleOpAllInOne extends LinearOpMode{
 
             //
             if(!automated) {
-
                 f.setTeleOpDrive(
                         -gamepad1.left_stick_y * speedMultiplier,
                         -gamepad1.left_stick_x * speedMultiplier,
