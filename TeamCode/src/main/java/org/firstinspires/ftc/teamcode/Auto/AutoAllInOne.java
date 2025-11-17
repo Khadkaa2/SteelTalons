@@ -28,8 +28,6 @@ public class AutoAllInOne extends OpMode {
     private int pathState;
     private Timer pathTimer,opmodeTimer,launchTimer,detectColorTimer;
     private PoseConstants poses = new PoseConstants();
-    private PoseConstantsClose closePoses = new PoseConstantsClose();
-    Pose currentPose = null;
     private Path start, end;
     private PathChain one, two, three, four, five, six;
     int index;
