@@ -119,7 +119,7 @@ public class TeleOpAllInOne extends LinearOpMode{
                 autoMode = !autoMode;
             xButton = gamepad2.x;
 
-            if(gamepad1.right_bumper)
+            if(gamepad1.right_bumper )
                 hornet.startIntake(true);
             else if(gamepad1.left_bumper)
                 hornet.startIntake(false);
@@ -193,11 +193,15 @@ public class TeleOpAllInOne extends LinearOpMode{
 
 
         //If launching -> speed up launchMotors
-        if(launching){hornet.startLaunchMotors(!(gamepad2.left_trigger > 0.2));} else{hornet.stopLaunchMotors();}
+        if(launching){
+            hornet.startLaunchMotors(!(gamepad2.left_trigger > 0.2));
+            hornet.startIntake(true);
+        } else{hornet.stopLaunchMotors();}
 
         //if ready to launch -> then launch
         if(launching && hornet.atSortTarget() && hornet.atTargetVelocity() && !hornet.hammerAtLaunch() && !hornet.isLaunched()){
             hornet.launch();
+
             launchTimer.resetTimer();
         }
 
