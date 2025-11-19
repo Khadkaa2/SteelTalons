@@ -90,17 +90,17 @@ public class TeleOpAllInOne extends LinearOpMode{
 
             //Launch Spot 1
             if (gamepad1.a && !automated) {
-                f.followPath(toLaunchClose);
+                f.followPath(goToClose());
                 automated = true;
             }
             //Auto Pathing to Park
             else if (gamepad1.x && !automated) {
-                f.followPath(toPark);
+                f.followPath(goToPark());
                 automated = true;
             }
             //Launch Spot 2
             else if (gamepad1.b && !automated) {
-                f.followPath(toLaunchFar);
+                f.followPath(goToFar());
                 automated = true;
             }
             
@@ -111,9 +111,15 @@ public class TeleOpAllInOne extends LinearOpMode{
             }
 
 
-            if(slowMode != gamepad1.y && gamepad1.y)
-                speedMultiplier = speedMultiplier == 1 ? .2 : 1;
-            slowMode = gamepad1.y;
+//            if(slowMode != gamepad1.y && gamepad1.y)
+//                speedMultiplier = speedMultiplier == 1 ? .2 : 1;
+//            slowMode = gamepad1.y;
+
+            if(gamepad1.left_trigger >= .2)
+                speedMultiplier = .2;
+            else
+                speedMultiplier = 1;
+
 
             if(xButton != gamepad2.x && gamepad2.x)
                 autoMode = !autoMode;
@@ -262,6 +268,31 @@ public class TeleOpAllInOne extends LinearOpMode{
                 .addPath(new BezierLine(f.getPose(), poses.parkPose))
                 .setConstantHeadingInterpolation(poses.parkPose.getHeading())
                 .build();
+    }
+
+    public PathChain goToPark()
+    {
+        toPark = f.pathBuilder()
+                .addPath(new BezierLine(f.getPose(), poses.parkPose))
+                .setConstantHeadingInterpolation(poses.parkPose.getHeading())
+                .build();
+        return toPark;
+    }
+    public PathChain goToClose()
+    {
+        toLaunchClose = f.pathBuilder()
+                .addPath(new BezierLine(f.getPose(), poses.closeLaunch))
+                .setLinearHeadingInterpolation(f.getPose().getHeading(), poses.closeLaunch.getHeading())
+                .build();
+        return toLaunchClose;
+    }
+    public PathChain goToFar()
+    {
+        toLaunchFar = f.pathBuilder()
+                .addPath(new BezierLine(f.getPose(), poses.farLaunch))
+                .setConstantHeadingInterpolation(poses.farLaunch.getHeading())
+                .build();
+        return toLaunchFar;
     }
 
 //    public void initAprilTag() {
