@@ -104,7 +104,7 @@ public class TeleOpAllInOne extends LinearOpMode{
                 automated = true;
             }
             //clear gate
-            else if((gamepad1.y || gamepad2.y) && !automated)
+            else if((gamepad1.y || (gamepad2.y && !gamepad2.right_bumper && !gamepad2.left_bumper)) && !automated)
             {
                 f.followPath(goToGate());
                 automated = true;
