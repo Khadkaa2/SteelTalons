@@ -103,13 +103,13 @@ public class TeleOpAllInOne extends LinearOpMode{
                 automated = true;
             }
 
-            else if (gamepad1.y ||( (gamepad2.y && !gamepad1.right_bumper && !gamepad1.left_bumper) && !automated)){
+            else if ((gamepad1.y ||(gamepad2.y && !gamepad2.right_bumper && !gamepad2.left_bumper)) && !automated){
                 f.followPath(goToGate());
                 automated = true;
             }
 
             //exits automated pathing
-            else if ((!gamepad1.a && !gamepad1.x && !gamepad1.b && !gamepad1.y && !gamepad2.y && !(gamepad2.y && !gamepad1.right_bumper && !gamepad1.left_bumper)) && automated) {
+            else if (!gamepad1.a && !gamepad1.x && !gamepad1.b && !(gamepad1.y || (gamepad2.y && !gamepad2.right_bumper && !gamepad2.left_bumper)) && automated) {
                 f.startTeleopDrive(true);
                 automated = false;
             }
