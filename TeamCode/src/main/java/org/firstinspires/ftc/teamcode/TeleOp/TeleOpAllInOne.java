@@ -5,6 +5,7 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 
 
+import com.pedropathing.geometry.Pose;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -35,7 +36,6 @@ public class TeleOpAllInOne extends LinearOpMode{
     boolean dpadLeft;
     boolean launching;
     boolean automated;
-    private PathChain toLaunchClose, toPark, toLaunchFar;
     private Timer launchTimer;
 //    private Limelight3A limelight;
 //    private LLResult result;
@@ -54,7 +54,6 @@ public class TeleOpAllInOne extends LinearOpMode{
         f.setStartingPose(SharedData.toTeleopPose == null ? poses.START_POSE : SharedData.toTeleopPose);
         f.update();
         launchTimer = new Timer();
-        createPaths();
         touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
        // limelight = hardwareMap.get(Limelight3A.class, "limelight");
 //        limelight.pipelineSwitch(0);
@@ -89,7 +88,7 @@ public class TeleOpAllInOne extends LinearOpMode{
             }
 
             //Launch Spot 1
-            if (gamepad1.a  && !automated) {
+            if (gamepad1.a && !automated) {
                 f.followPath(goToClose());
                 automated = true;
             }
@@ -103,17 +102,23 @@ public class TeleOpAllInOne extends LinearOpMode{
                 f.followPath(goToFar());
                 automated = true;
             }
-            //clear gate
-            else if((gamepad1.y || (gamepad2.y && !gamepad2.right_bumper && !gamepad2.left_bumper)) && !automated)
-            {
+
+            else if (gamepad1.y ||( (gamepad2.y && !gamepad1.right_bumper && !gamepad1.left_bumper) && !automated)){
                 f.followPath(goToGate());
                 automated = true;
             }
+
             //exits automated pathing
-            else if ((!gamepad1.a && !gamepad1.x && !gamepad1.b && !gamepad1.y) && automated) {
+            else if ((!gamepad1.a && !gamepad1.x && !gamepad1.b && !gamepad1.y && !gamepad2.y && !(gamepad2.y && !gamepad1.right_bumper && !gamepad1.left_bumper)) && automated) {
                 f.startTeleopDrive(true);
                 automated = false;
             }
+
+
+            if (gamepad1.dpad_right && gamepad1.right_trigger > .5){
+                f.setPose(new Pose(f.getPose().getX() , 8.75 , f.getHeading()));
+            }
+
 
 
 //            if(slowMode != gamepad1.y && gamepad1.y)
@@ -160,14 +165,6 @@ public class TeleOpAllInOne extends LinearOpMode{
         if(!launching)
             hornet.setStoragePos(SharedData.storage[0] == ColorSensed.NO_COLOR ? 0 : (SharedData.storage[1] == ColorSensed.NO_COLOR ? 1 : 2) , !SharedData.isFull());
 
-        if(gamepad2.left_trigger > .7 && gamepad2.right_trigger > .7) {
-            launching = false;
-            hornet.resetHammer();
-            hornet.resetLaunch();
-            hornet.stopIntake();
-            hornet.stopLaunchMotors();
-        }
-
         if(gamepad2.right_bumper && gamepad2.left_bumper) {
             if(gamepad2.a)
                 SharedData.clearSlot(0);
@@ -213,7 +210,7 @@ public class TeleOpAllInOne extends LinearOpMode{
 
         //If launching -> speed up launchMotors
         if(launching){
-            hornet.startLaunchMotors(f.getPose().getY() < 48);
+            hornet.startLaunchMotors(!(gamepad2.left_trigger > 0.2));
             hornet.startIntake(true);
         } else{hornet.stopLaunchMotors();}
 
@@ -265,27 +262,27 @@ public class TeleOpAllInOne extends LinearOpMode{
         else hornet.resetHammer();
 
     }
-    public void createPaths() {
-        
-        toLaunchClose = f.pathBuilder()
-                .addPath(new BezierLine(f.getPose(), poses.closeLaunch))
-                .setLinearHeadingInterpolation(f.getPose().getHeading(), poses.closeLaunch.getHeading())
-                .build();
-
-        toLaunchFar = f.pathBuilder()
-                .addPath(new BezierLine(f.getPose(), poses.farLaunch))
-                .setLinearHeadingInterpolation(f.getPose().getHeading(), poses.farLaunch.getHeading())
-                .build();
-
-        toPark = f.pathBuilder()
-                .addPath(new BezierLine(f.getPose(), poses.parkPose))
-                .setConstantHeadingInterpolation(poses.parkPose.getHeading())
-                .build();
-    }
+//    public void createPaths() {
+//
+//        toLaunchClose = f.pathBuilder()
+//                .addPath(new BezierLine(f.getPose(), poses.closeLaunch))
+//                .setLinearHeadingInterpolation(f.getPose().getHeading(), poses.closeLaunch.getHeading())
+//                .build();
+//
+//        toLaunchFar = f.pathBuilder()
+//                .addPath(new BezierLine(f.getPose(), poses.farLaunch))
+//                .setConstantHeadingInterpolation(poses.farLaunch.getHeading())
+//                .build();
+//
+//        toPark = f.pathBuilder()
+//                .addPath(new BezierLine(f.getPose(), poses.parkPose))
+//                .setConstantHeadingInterpolation(poses.parkPose.getHeading())
+//                .build();
+//    }
 
     public PathChain goToPark()
     {
-        toPark = f.pathBuilder()
+        PathChain toPark = f.pathBuilder()
                 .addPath(new BezierLine(f.getPose(), poses.parkPose))
                 .setConstantHeadingInterpolation(poses.parkPose.getHeading())
                 .build();
@@ -293,7 +290,7 @@ public class TeleOpAllInOne extends LinearOpMode{
     }
     public PathChain goToClose()
     {
-        toLaunchClose = f.pathBuilder()
+        PathChain toLaunchClose = f.pathBuilder()
                 .addPath(new BezierLine(f.getPose(), poses.closeLaunch))
                 .setLinearHeadingInterpolation(f.getPose().getHeading(), poses.closeLaunch.getHeading())
                 .build();
@@ -301,11 +298,18 @@ public class TeleOpAllInOne extends LinearOpMode{
     }
     public PathChain goToFar()
     {
-        toLaunchFar = f.pathBuilder()
+        PathChain toLaunchFar = f.pathBuilder()
                 .addPath(new BezierLine(f.getPose(), poses.farLaunch))
-                .setLinearHeadingInterpolation(f.getPose().getHeading(), poses.farLaunch.getHeading())
+                .setLinearHeadingInterpolation(f.getHeading() , poses.farLaunch.getHeading())
                 .build();
         return toLaunchFar;
+    }
+    public PathChain goToGate(){
+        PathChain toGate = f.pathBuilder()
+                .addPath(new BezierLine(f.getPose() , poses.gatePose))
+                .setLinearHeadingInterpolation(f.getHeading(),poses.gatePose.getHeading())
+                .build();
+        return toGate;
     }
 
 //    public void initAprilTag() {
@@ -347,9 +351,11 @@ public class TeleOpAllInOne extends LinearOpMode{
         telemetry.addData("at sort", hornet.atSortTarget());
 //        telemetry.addData("goal clear", SharedData.storage[hornet.getSlotGoal()] == ColorSensed.NO_COLOR);
 //        telemetry.addData("current ID" , figureID());
-//        telemetry.addData("fx" , f.getPose().getX());
-//        telemetry.addData("fy" , f.getPose().getY());
-//        telemetry.addData("fh" , f.getHeading());
+        telemetry.addData("fx" , f.getPose().getX());
+        telemetry.addData("fy" , f.getPose().getY());
+        telemetry.addData("fh" , f.getHeading());
+
+
         telemetry.update();
     }
 

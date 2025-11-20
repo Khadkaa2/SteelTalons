@@ -18,6 +18,7 @@ public class PoseConstants {
 //    public static Pose FIELD_OFFSET;
 //    public static Pose CamOff;
     public Pose parkPose = SharedData.red ? new Pose(38.375, 32.25,0) :  new Pose(105.625,32.25,Math.toRadians(270));
+    public Pose gatePose = SharedData.red ? new Pose(132.4 , 75.84, Math.toRadians(0)) : new Pose(20.6, 75.84 , Math.toRadians(180));
     public Pose farLaunch = !SharedData.red ? new Pose(56.75,14.75,Math.toRadians(294)) : new Pose(87.25,14.75,Math.toRadians(246));
     public Pose closeLaunch  = !SharedData.red ? new Pose(56.75,80.75,Math.toRadians(315)) :  new Pose(87.25,80.75,Math.toRadians(225));
 }
