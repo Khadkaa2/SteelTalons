@@ -334,9 +334,9 @@ public class TeleOpAllInOne extends LinearOpMode{
         telemetry.addData("at sort", hornet.atSortTarget());
 //        telemetry.addData("goal clear", SharedData.storage[hornet.getSlotGoal()] == ColorSensed.NO_COLOR);
 //        telemetry.addData("current ID" , figureID());
-        telemetry.addData("fx" , f.getPose().getX());
-        telemetry.addData("fy" , f.getPose().getY());
-        telemetry.addData("fh" , f.getHeading());
+//        telemetry.addData("fx" , f.getPose().getX());
+//        telemetry.addData("fy" , f.getPose().getY());
+//        telemetry.addData("fh" , f.getHeading());
         telemetry.update();
     }
 
