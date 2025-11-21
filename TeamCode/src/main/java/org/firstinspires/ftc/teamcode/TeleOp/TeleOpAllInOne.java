@@ -87,32 +87,80 @@ public class TeleOpAllInOne extends LinearOpMode{
                 );
             }
 
-            //Launch Spot 1
-            if (gamepad1.a && !automated) {
-                f.followPath(goToClose());
-                automated = true;
-            }
-            //Auto Pathing to Park
-            else if (gamepad1.x && !automated) {
-                f.followPath(goToPark());
-                automated = true;
-            }
-            //Launch Spot 2
-            else if (gamepad1.b && !automated) {
-                f.followPath(goToFar());
-                automated = true;
-            }
+            if (!automated){
+                //go to close launch main
+                if (gamepad1.a){
+                    f.followPath(goToClose(false));
+                    automated = true;
+                }
+                //go to close launch alt
+                else if (gamepad2.a  && !gamepad2.right_bumper && !gamepad2.left_bumper){
+                    f.followPath(goToClose(true));
+                    automated = true;
+                }
+                //go to park
+                else if (gamepad1.x){
+                    f.followPath(goToPark());
+                    automated = true;
+                }
+                //go to far launch main
+                else if (gamepad1.b){
+                    f.followPath(goToFar(false));
+                    automated = true;
+                }
+                //go to far launch alt
+                else if (gamepad2.b && !gamepad2.right_bumper && !gamepad2.left_bumper ){
+                    f.followPath(goToFar(true));
+                    automated = true;
+                }
+                //go to gate
+                else if ((gamepad1.y ||(gamepad2.y && !gamepad2.right_bumper && !gamepad2.left_bumper))) {
+                    f.followPath(goToGate());
+                    automated = true;
+                }
 
-            else if ((gamepad1.y ||(gamepad2.y && !gamepad2.right_bumper && !gamepad2.left_bumper)) && !automated){
-                f.followPath(goToGate());
-                automated = true;
             }
-
-            //exits automated pathing
-            else if (!gamepad1.a && !gamepad1.x && !gamepad1.b && !(gamepad1.y || (gamepad2.y && !gamepad2.right_bumper && !gamepad2.left_bumper)) && automated) {
+            //exits automated
+            else if (!gamepad1.a && !gamepad1.x && !gamepad1.b && !(gamepad1.y || !(gamepad2.y && gamepad2.b && gamepad2.a) && (!gamepad2.right_bumper && !gamepad2.left_bumper)) && automated) {
                 f.startTeleopDrive(true);
                 automated = false;
             }
+//            //Launch close main
+//            if (gamepad1.a && !automated) {
+//                f.followPath(goToClose(false));
+//                automated = true;
+//            }
+//            //launch close alt
+//            else if (gamepad2.a && !automated){
+//                f.followPath(goToClose(true));
+//                automated = true;
+//            }
+//
+//            //Auto Pathing to Park
+//            else if (gamepad1.x && !automated) {
+//                f.followPath(goToPark());
+//                automated = true;
+//            }
+//            //launch far main
+//            else if (gamepad1.b && !automated) {
+//                f.followPath(goToFar(false));
+//                automated = true;
+//            }
+//            else if (gamepad2.b && !automated){
+//                f.followPath(goToFar(true));
+//                automated = true;
+//            }
+//
+//            else if ((gamepad1.y ||(gamepad2.y && !gamepad2.right_bumper && !gamepad2.left_bumper)) && !automated){
+//                f.followPath(goToGate());
+//                automated = true;
+//            }
+//
+//            //exits automated pathing
+//            else if (!gamepad1.a && !gamepad1.x && !gamepad1.b && !(gamepad1.y || (gamepad2.y && !gamepad2.right_bumper && !gamepad2.left_bumper)) && automated) {
+//                f.startTeleopDrive(true);
+//                automated = false;
+//            }
 
 
             if (gamepad1.dpad_right && gamepad1.right_trigger > .5){
@@ -280,6 +328,33 @@ public class TeleOpAllInOne extends LinearOpMode{
 //                .build();
 //    }
 
+
+    public PathChain goToClose(boolean alt){
+        if (alt){ f.pathBuilder()
+                .addPath(new BezierLine(f.getPose() , poses.closeAlt))
+                .setConstantHeadingInterpolation(poses.closeAlt.getHeading())
+                .build();
+            }
+        else return f.pathBuilder()
+                .addPath(new BezierLine(f.getPose(), poses.closeLaunch))
+                .setConstantHeadingInterpolation(poses.closeAlt.getHeading())
+                .build();
+        return new PathChain();
+    }
+    public PathChain goToFar(boolean alt){
+        if (alt){ f.pathBuilder()
+                .addPath(new BezierLine(f.getPose() , poses.farAlt))
+                .setConstantHeadingInterpolation(poses.farAlt.getHeading())
+                .build();
+        }
+        else return f.pathBuilder()
+                .addPath(new BezierLine(f.getPose(), poses.farLaunch))
+                .setLinearHeadingInterpolation(f.getHeading() , poses.farLaunch.getHeading())
+                .build();
+        return new PathChain();
+    }
+
+
     public PathChain goToPark()
     {
         PathChain toPark = f.pathBuilder()
@@ -288,22 +363,15 @@ public class TeleOpAllInOne extends LinearOpMode{
                 .build();
         return toPark;
     }
-    public PathChain goToClose()
-    {
-        PathChain toLaunchClose = f.pathBuilder()
-                .addPath(new BezierLine(f.getPose(), poses.closeLaunch))
-                .setLinearHeadingInterpolation(f.getPose().getHeading(), poses.closeLaunch.getHeading())
-                .build();
-        return toLaunchClose;
-    }
-    public PathChain goToFar()
-    {
-        PathChain toLaunchFar = f.pathBuilder()
-                .addPath(new BezierLine(f.getPose(), poses.farLaunch))
-                .setLinearHeadingInterpolation(f.getHeading() , poses.farLaunch.getHeading())
-                .build();
-        return toLaunchFar;
-    }
+//    public PathChain goToClose()
+//    {
+//        PathChain toLaunchClose = f.pathBuilder()
+//                .addPath(new BezierLine(f.getPose(), poses.closeLaunch))
+//                .setLinearHeadingInterpolation(f.getPose().getHeading(), poses.closeLaunch.getHeading())
+//                .build();
+//        return toLaunchClose;
+//    }
+
     public PathChain goToGate(){
         PathChain toGate = f.pathBuilder()
                 .addPath(new BezierLine(f.getPose() , poses.gatePose))
@@ -311,6 +379,7 @@ public class TeleOpAllInOne extends LinearOpMode{
                 .build();
         return toGate;
     }
+
 
 //    public void initAprilTag() {
 //        aprilTag = new AprilTagProcessor.Builder()
@@ -353,6 +422,7 @@ public class TeleOpAllInOne extends LinearOpMode{
 //        telemetry.addData("current ID" , figureID());
         telemetry.addData("fx" , f.getPose().getX());
         telemetry.addData("fy" , f.getPose().getY());
+        telemetry.addData("automated" , automated);
         telemetry.addData("fh" , f.getHeading());
 
 
