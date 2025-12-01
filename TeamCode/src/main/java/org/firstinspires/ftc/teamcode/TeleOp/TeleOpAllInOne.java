@@ -121,7 +121,7 @@ public class TeleOpAllInOne extends LinearOpMode{
 
             }
             //exits automated
-            else if (!gamepad1.a && !gamepad1.x && !gamepad1.b && !(gamepad1.y || !(gamepad2.y && gamepad2.b && gamepad2.a) && (!gamepad2.right_bumper && !gamepad2.left_bumper)) && automated) {
+            else if (!(gamepad1.a || (gamepad2.a && !gamepad2.right_bumper && !gamepad2.left_bumper)) && !(gamepad1.y || (gamepad2.y && !gamepad2.right_bumper && !gamepad2.left_bumper)) && !(gamepad1.b || (gamepad2.b && !gamepad2.right_bumper && !gamepad2.left_bumper)) && !gamepad1.x) {
                 f.startTeleopDrive(true);
                 automated = false;
             }
@@ -258,7 +258,7 @@ public class TeleOpAllInOne extends LinearOpMode{
 
         //If launching -> speed up launchMotors
         if(launching){
-            hornet.startLaunchMotors(!(gamepad2.left_trigger > 0.2));
+            hornet.startLaunchMotors(f.getPose().getX() < 48);
             hornet.startIntake(true);
         } else{hornet.stopLaunchMotors();}
 
@@ -330,19 +330,18 @@ public class TeleOpAllInOne extends LinearOpMode{
 
 
     public PathChain goToClose(boolean alt){
-        if (alt){ f.pathBuilder()
+        if (alt){ return f.pathBuilder()
                 .addPath(new BezierLine(f.getPose() , poses.closeAlt))
                 .setConstantHeadingInterpolation(poses.closeAlt.getHeading())
                 .build();
             }
         else return f.pathBuilder()
                 .addPath(new BezierLine(f.getPose(), poses.closeLaunch))
-                .setConstantHeadingInterpolation(poses.closeAlt.getHeading())
+                .setConstantHeadingInterpolation(poses.closeLaunch.getHeading())
                 .build();
-        return new PathChain();
     }
     public PathChain goToFar(boolean alt){
-        if (alt){ f.pathBuilder()
+        if (alt){ return f.pathBuilder()
                 .addPath(new BezierLine(f.getPose() , poses.farAlt))
                 .setConstantHeadingInterpolation(poses.farAlt.getHeading())
                 .build();
@@ -351,7 +350,6 @@ public class TeleOpAllInOne extends LinearOpMode{
                 .addPath(new BezierLine(f.getPose(), poses.farLaunch))
                 .setLinearHeadingInterpolation(f.getHeading() , poses.farLaunch.getHeading())
                 .build();
-        return new PathChain();
     }
 
 
@@ -373,11 +371,11 @@ public class TeleOpAllInOne extends LinearOpMode{
 //    }
 
     public PathChain goToGate(){
-        PathChain toGate = f.pathBuilder()
+        return f.pathBuilder()
                 .addPath(new BezierLine(f.getPose() , poses.gatePose))
                 .setLinearHeadingInterpolation(f.getHeading(),poses.gatePose.getHeading())
                 .build();
-        return toGate;
+
     }
 
 
