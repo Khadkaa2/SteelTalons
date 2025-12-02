@@ -32,11 +32,13 @@ public class TeleOpAllInOne extends LinearOpMode{
     boolean robotCentric;
     boolean autoMode = true;
     boolean xButton;
+    boolean dpadLeft2 = false;
     double speedMultiplier = 1;
     boolean dpadLeft;
     boolean launching;
     boolean automated;
     private Timer launchTimer;
+    private int inMotif = 0;
 //    private Limelight3A limelight;
 //    private LLResult result;
     private TouchSensor touchSensor = null;
@@ -254,6 +256,14 @@ public class TeleOpAllInOne extends LinearOpMode{
             hornet.setStoragePos(SharedData.getPurpleIndex(), false);
             launching = true;
         }
+        if(gamepad2.dpad_right && !SharedData.isEmpty() && !launching)
+        {
+            hornet.setStoragePos(inMotif == SharedData.greenIndex ? SharedData.getGreenIndex() : SharedData.getPurpleIndex(), false);
+            launching = true;
+        }
+        if(dpadLeft2 != gamepad2.dpad_left && gamepad2.dpad_left)
+            inMotif  = inMotif == 2 ? 0 : inMotif + 1;
+        dpadLeft2 = gamepad2.dpad_left;
 
 
         //If launching -> speed up launchMotors
@@ -280,6 +290,7 @@ public class TeleOpAllInOne extends LinearOpMode{
             }
             else if(launching && hornet.isLaunched()){
                 launching = false;
+                inMotif  = inMotif == 2 ? 0 : inMotif + 1;
                 hornet.resetLaunch();
             }
         }
