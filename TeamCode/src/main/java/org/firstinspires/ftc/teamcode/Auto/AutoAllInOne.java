@@ -212,7 +212,7 @@ public class AutoAllInOne extends OpMode {
                 }
                 break;
             case 3:
-                if (!f.isBusy()){
+                if (!f.isBusy() || SharedData.isFull()){
                     //go to scoring pose
                     f.followPath(three, true);
                     f.setMaxPower(1);
@@ -243,7 +243,7 @@ public class AutoAllInOne extends OpMode {
             }
                 break;
             case 6:
-                if (!f.isBusy()){
+                if (!f.isBusy() || SharedData.isFull()){
                     //move to score pose
                     f.followPath(six , true);
                     f.setMaxPower(1);

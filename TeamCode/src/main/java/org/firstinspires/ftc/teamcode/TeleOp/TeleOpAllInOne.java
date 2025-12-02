@@ -423,16 +423,17 @@ public class TeleOpAllInOne extends LinearOpMode{
 //        telemetry.addData("Slow Mode", slowMode);
 //        telemetry.addLine(String.format("LeftVel: %f\nRightVel: %f",hornet.leftLaunch.getVelocity(), hornet.rightLaunch.getVelocity() ));
 //        telemetry.addData("targetVelocity" ,hornet.getLaunchTargetVelocity());
-        telemetry.addData("atTarget" , hornet.atTargetVelocity());
+//        telemetry.addData("atTarget" , hornet.atTargetVelocity());
 //        telemetry.addData("launchTimer", launchTimer.getElapsedTimeSeconds());
 //        telemetry.addData("button", hornet.buttonPressed());
-        telemetry.addData("at sort", hornet.atSortTarget());
+//        telemetry.addData("at sort", hornet.atSortTarget());
 //        telemetry.addData("goal clear", SharedData.storage[hornet.getSlotGoal()] == ColorSensed.NO_COLOR);
 //        telemetry.addData("current ID" , figureID());
         telemetry.addData("fx" , f.getPose().getX());
         telemetry.addData("fy" , f.getPose().getY());
-        telemetry.addData("automated" , automated);
         telemetry.addData("fh" , f.getHeading());
+        telemetry.addData("automated" , automated);
+        telemetry.addData("In Motif", inMotif);
 
 
         telemetry.update();
