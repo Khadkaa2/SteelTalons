@@ -141,6 +141,8 @@ public class Robot {
 
     public boolean atSortTarget() {return Math.abs(fan.getCurrentPosition() - fan.getTargetPosition()) <= 3;}
 
+    public boolean atSortTargetLenient(){return Math.abs(fan.getCurrentPosition() - fan.getTargetPosition()) <= 100;}
+
     public int getSlotGoal() {return slotGoal;}
 
     public ColorSensed detectColor() {

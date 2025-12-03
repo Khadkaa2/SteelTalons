@@ -241,7 +241,7 @@ public class TeleOpAllInOne extends LinearOpMode{
         }
 
 
-        if(hornet.buttonPressed() && hornet.atSortTarget() && SharedData.storage[hornet.getSlotGoal()] == ColorSensed.NO_COLOR){
+        if(hornet.buttonPressed() && hornet.atSortTargetLenient() && SharedData.storage[hornet.getSlotGoal()] == ColorSensed.NO_COLOR){
             SharedData.storage[hornet.getSlotGoal()] = hornet.detectColor();
         }
 

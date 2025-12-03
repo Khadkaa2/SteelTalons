@@ -110,7 +110,7 @@ public class AutoAllInOne extends OpMode {
         } else hornet.stopIntake();
 
         //SET STORAGE COLOR
-        if(hornet.buttonPressed() && hornet.atSortTarget() && SharedData.storage[hornet.getSlotGoal()] == ColorSensed.NO_COLOR){
+        if(hornet.buttonPressed() && hornet.atSortTargetLenient() && SharedData.storage[hornet.getSlotGoal()] == ColorSensed.NO_COLOR){
             SharedData.storage[hornet.getSlotGoal()] = hornet.detectColor();
         }
 
