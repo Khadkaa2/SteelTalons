@@ -15,7 +15,7 @@ public class PoseConstants {
     public  Pose PICKUP1_POSE = !SharedData.red ? (SharedData.shootFar ? new Pose(17.75,33.25, Math.toRadians(180)) : new Pose(17.75,81.25, Math.toRadians(180))) :  (SharedData.shootFar ? new Pose(126.25,33.25, Math.toRadians(0)) : new Pose(126.25,81.25, Math.toRadians(0)));
     public Pose ALIGN2_POSE = !SharedData.red ? new Pose(45.75,57.25,Math.toRadians(180)) :  new Pose(98.25,57.25,Math.toRadians(0));
     public Pose PICKUP2_POSE = !SharedData.red ? new Pose(17.75, 57.25, Math.toRadians(180)) :  new Pose(126.25, 57.25, Math.toRadians(0));
-    public Pose END_POSE = !SharedData.red ? (SharedData.shootFar ? new Pose(20.75,20.75,Math.toRadians(240)) : new Pose(45.75,34.75,Math.toRadians(180))) :  (SharedData.shootFar ? new Pose(123.25, 20.75,0) : new Pose(98.25, 34.75,Math.toRadians(0)));
+    public Pose END_POSE = !SharedData.red ? (SharedData.shootFar ? new Pose(56.75,30.75,Math.toRadians(240)) : new Pose(45.75,69.75,Math.toRadians(180))) :  (SharedData.shootFar ? new Pose(87.25, 30.75,0) : new Pose(98.25, 69.75,Math.toRadians(0)));
 //    public static Pose FIELD_OFFSET;
 //    public static Pose CamOff;
     public Pose parkPose = SharedData.red ? new Pose(38.375, 32.25,0) :  new Pose(105.625,32.25,Math.toRadians(270));
