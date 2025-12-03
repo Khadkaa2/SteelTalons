@@ -66,7 +66,7 @@ public class TeleOpAllInOne extends LinearOpMode{
 
 //        initAprilTag();
         waitForStart();
-        hornet.setStoragePos(hornet.getSlotGoal(), true);
+//        hornet.setStoragePos(hornet.getSlotGoal(), true);
         f.startTeleopDrive(true);
 
         while(opModeIsActive()) {

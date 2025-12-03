@@ -65,7 +65,7 @@ public class Robot {
          rightLaunch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
          rightLaunch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-         fan.setTargetPosition(0);
+         fan.setTargetPosition(fan.getCurrentPosition());
          fan.setMode(DcMotor.RunMode.RUN_TO_POSITION);
          fan.setPower(1);
          fan.setTargetPositionTolerance(3);

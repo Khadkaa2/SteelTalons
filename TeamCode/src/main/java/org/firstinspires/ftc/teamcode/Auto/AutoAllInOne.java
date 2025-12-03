@@ -72,6 +72,13 @@ public class AutoAllInOne extends OpMode {
     telemetry.addData("Start", SharedData.startFar ? "far" : "close");
     telemetry.addData("Shoot", SharedData.shootFar ? "far" : "close");
 
+    if (gamepad2.a){
+        limelight.start();
+    }
+    else if (gamepad2.b){
+        limelight.stop();
+    }
+
     telemetry.update();
     }
 
@@ -129,12 +136,13 @@ public class AutoAllInOne extends OpMode {
             else if(launchingTemp && hornet.isLaunched()){
                 launchingTemp = false;
                 timesLaunched++;
-                if(timesLaunched == 3)
+                if(timesLaunched == 2)
                     timesLaunched = 0;
                 hornet.resetLaunch();
             }
         }
-
+        telemetry.addData("Times Launched", timesLaunched);
+        telemetry.addData("Green Index", SharedData.greenIndex);
         telemetry.addData("Temp launch", launchingTemp);
         telemetry.addData("launching", launching);
         telemetry.addData("sort", hornet.atSortTarget() ? "at target" : "not at target");
