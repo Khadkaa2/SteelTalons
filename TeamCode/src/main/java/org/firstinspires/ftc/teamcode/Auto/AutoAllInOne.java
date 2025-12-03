@@ -129,6 +129,8 @@ public class AutoAllInOne extends OpMode {
             else if(launchingTemp && hornet.isLaunched()){
                 launchingTemp = false;
                 timesLaunched++;
+                if(timesLaunched == 3)
+                    timesLaunched = 0;
                 hornet.resetLaunch();
             }
         }
