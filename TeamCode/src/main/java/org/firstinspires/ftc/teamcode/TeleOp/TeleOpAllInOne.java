@@ -258,7 +258,7 @@ public class TeleOpAllInOne extends LinearOpMode{
         }
         if(gamepad2.dpad_right && !SharedData.isEmpty() && !launching)
         {
-            hornet.setStoragePos(inMotif == SharedData.greenIndex ? SharedData.getGreenIndex() : SharedData.getPurpleIndex(), false);
+            hornet.setStoragePos(inMotif == SharedData.greenIndex ? (SharedData.getGreenIndex() == -1 ? SharedData.getPurpleIndex() : SharedData.getGreenIndex()) : (SharedData.getPurpleIndex() == -1 ? SharedData.getGreenIndex() : SharedData.getPurpleIndex()), false);
             launching = true;
         }
         if(dpadLeft2 != gamepad2.dpad_left && gamepad2.dpad_left)
