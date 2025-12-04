@@ -384,7 +384,7 @@ public class TeleOpAllInOne extends LinearOpMode{
     public PathChain goToGate(){
         return f.pathBuilder()
                 .addPath(new BezierLine(f.getPose() , poses.gatePose))
-                .setLinearHeadingInterpolation(f.getHeading(),poses.gatePose.getHeading())
+                .setConstantHeadingInterpolation(poses.gatePose.getHeading())
                 .build();
 
     }
