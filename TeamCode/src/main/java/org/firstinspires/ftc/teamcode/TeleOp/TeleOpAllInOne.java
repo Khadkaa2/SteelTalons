@@ -57,14 +57,10 @@ public class TeleOpAllInOne extends LinearOpMode{
         f.update();
         launchTimer = new Timer();
         touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
-       // limelight = hardwareMap.get(Limelight3A.class, "limelight");
-//        limelight.pipelineSwitch(0);
-//        limelight.start();
         hornet.resetHammer();
 
 
 
-//        initAprilTag();
         waitForStart();
 //        hornet.setStoragePos(hornet.getSlotGoal(), true);
         f.startTeleopDrive(true);
@@ -418,7 +414,7 @@ public class TeleOpAllInOne extends LinearOpMode{
 //        telemetry.addData("Pattern", SharedData.greenIndex);
 //        telemetry.addLine(String.format("Storage: %s, %s, %s", SharedData.storage[0], SharedData.storage[1], SharedData.storage[2] ));
         telemetry.addData("auto Mode", autoMode);
-        telemetry.addData("Side", SharedData.red ? "Red" : "Blue");
+//        telemetry.addData("Side", SharedData.red ? "Red" : "Blue");
 //        telemetry.addData("Robot Centric" , robotCentric);
 //        telemetry.addData("Slow Mode", slowMode);
 //        telemetry.addLine(String.format("LeftVel: %f\nRightVel: %f",hornet.leftLaunch.getVelocity(), hornet.rightLaunch.getVelocity() ));
@@ -429,10 +425,10 @@ public class TeleOpAllInOne extends LinearOpMode{
 //        telemetry.addData("at sort", hornet.atSortTarget());
 //        telemetry.addData("goal clear", SharedData.storage[hornet.getSlotGoal()] == ColorSensed.NO_COLOR);
 //        telemetry.addData("current ID" , figureID());
-        telemetry.addData("fx" , f.getPose().getX());
-        telemetry.addData("fy" , f.getPose().getY());
-        telemetry.addData("fh" , f.getHeading());
-        telemetry.addData("automated" , automated);
+//        telemetry.addData("fx" , f.getPose().getX());
+//        telemetry.addData("fy" , f.getPose().getY());
+//        telemetry.addData("fh" , f.getHeading());
+//        telemetry.addData("automated" , automated);
         telemetry.addData("In Motif", inMotif);
 
 
