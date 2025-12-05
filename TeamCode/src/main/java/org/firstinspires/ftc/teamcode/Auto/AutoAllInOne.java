@@ -203,7 +203,7 @@ public class AutoAllInOne extends OpMode {
                 break;
             case 1:
                 sendPose();
-                if (!f.isBusy() && SharedData.isEmpty()){
+                if (!f.isBusy() && SharedData.isEmpty() && launchTimer.getElapsedTimeSeconds() > .25){
                     //go to align 1 pos
                     f.followPath(one, true);
                     setPathState(2);
@@ -233,7 +233,7 @@ public class AutoAllInOne extends OpMode {
                 }
                 break;
             case 4:
-                if (!f.isBusy() && SharedData.isEmpty()) {
+                if (!f.isBusy() && SharedData.isEmpty() && launchTimer.getElapsedTimeSeconds() > .25) {
                     //go to align 2
                     f.followPath(four, true);
                     setPathState(5);
@@ -264,7 +264,7 @@ public class AutoAllInOne extends OpMode {
                 }
                 break;
             case 7:
-                if (!f.isBusy() && SharedData.isEmpty() && opmodeTimer.getElapsedTimeSeconds() < 28.5){
+                if (!f.isBusy() && SharedData.isEmpty() && launchTimer.getElapsedTimeSeconds() > .25 && opmodeTimer.getElapsedTimeSeconds() < 28.5){
                     // sends to final location
                     f.followPath(end);
                     setPathState(8);
