@@ -99,7 +99,8 @@ public class AutoAllInOne extends OpMode {
             hornet.resetHammer();
             hornet.resetLaunch();
             hornet.stopLaunchMotors();
-            hornet.setStoragePos(SharedData.storage[0] == ColorSensed.NO_COLOR ? 0 : (SharedData.storage[1] == ColorSensed.NO_COLOR ? 1 : 2) , !SharedData.isFull());
+            if(launchTimer.getElapsedTimeSeconds() > .25)
+                hornet.setStoragePos(SharedData.storage[0] == ColorSensed.NO_COLOR ? 0 : (SharedData.storage[1] == ColorSensed.NO_COLOR ? 1 : 2) , !SharedData.isFull());
             launchingTemp = false;
         }else{hornet.startLaunchMotors(SharedData.shootFar);}
 
@@ -263,7 +264,7 @@ public class AutoAllInOne extends OpMode {
                 }
                 break;
             case 7:
-                if (!f.isBusy() && SharedData.isEmpty()){
+                if (!f.isBusy() && SharedData.isEmpty() && opmodeTimer.getElapsedTimeSeconds() < 28.5){
                     // sends to final location
                     f.followPath(end);
                     setPathState(8);
