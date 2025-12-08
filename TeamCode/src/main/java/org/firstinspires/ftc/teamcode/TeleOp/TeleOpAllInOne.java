@@ -59,8 +59,8 @@ public class TeleOpAllInOne extends LinearOpMode{
         touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
         hornet.resetHammer();
 
-
-
+        int crashed = 0;
+        String crashName;
         waitForStart();
 //        hornet.setStoragePos(hornet.getSlotGoal(), true);
         f.startTeleopDrive(true);
@@ -70,7 +70,13 @@ public class TeleOpAllInOne extends LinearOpMode{
 //            if (result != null && result.isValid()){
 //
 //            }
-            f.update();
+            try {
+                f.update();
+            } catch (Exception e){
+                crashName = e.getMessage();
+                crashed++;
+                telemetry.addData("crashed" , e.getMessage() );
+            }
             tele();
 
             //
