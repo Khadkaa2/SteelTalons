@@ -45,6 +45,9 @@ public class TeleOpAllInOne extends LinearOpMode{
 //    private static AprilTagProcessor aprilTag;
 //    private VisionPortal visionPortal;
 //    private AprilTagDetection currentDetection;
+    int crashed = 0;
+    String crashName = "";
+
     private PanelsTelemetry panelsTelemetry = PanelsTelemetry.INSTANCE;
 
     boolean slowMode;
@@ -59,8 +62,7 @@ public class TeleOpAllInOne extends LinearOpMode{
         touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
         hornet.resetHammer();
 
-        int crashed = 0;
-        String crashName;
+
         waitForStart();
 //        hornet.setStoragePos(hornet.getSlotGoal(), true);
         f.startTeleopDrive(true);
@@ -76,6 +78,7 @@ public class TeleOpAllInOne extends LinearOpMode{
                 crashName = e.getMessage();
                 crashed++;
                 telemetry.addData("crashed" , e.getMessage() );
+
             }
             tele();
 
@@ -414,6 +417,8 @@ public class TeleOpAllInOne extends LinearOpMode{
 
 
     public void tele() {
+        telemetry.addData("crashed" , crashed);
+        telemetry.addData("latest crash name" , crashName);
 //            telemetry.addData("FOLLOWER X",f.getPose().getX());
 //            telemetry.addData("FOLLOWER Y",f.getPose().getY());
 //            telemetry.addData("FOLLOWER Heading",f.getPose().getHeading());
