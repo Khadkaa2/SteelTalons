@@ -179,6 +179,8 @@ public class AutoAllInOne extends OpMode {
         four = f.pathBuilder()
                 .addPath(new BezierLine(poses.LAUNCH_POSE, poses.ALIGN2_POSE))
                 .setConstantHeadingInterpolation(poses.ALIGN2_POSE.getHeading())
+                .setBrakingStrength(.5)
+                //.setBrakingStart(.5)
                 .build();
         five = f.pathBuilder()
                 .addPath(new BezierLine(poses.ALIGN2_POSE, poses.PICKUP2_POSE))
@@ -208,6 +210,7 @@ public class AutoAllInOne extends OpMode {
                     f.followPath(one, true);
                     setPathState(2);
                     sendPose();
+
                     launching = false;
                 }
                 //score 1
