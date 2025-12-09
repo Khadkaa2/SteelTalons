@@ -98,7 +98,10 @@ public class AutoAllInOne extends OpMode {
         if(!launching) {
             hornet.resetHammer();
             hornet.resetLaunch();
-            hornet.stopLaunchMotors();
+            if(pathState == 1 || pathState == 4 || pathState == 7)
+                hornet.startLaunchMotors(SharedData.shootFar);
+            else
+                hornet.stopLaunchMotors();
             if(launchTimer.getElapsedTimeSeconds() > .25)
                 hornet.setStoragePos(SharedData.storage[0] == ColorSensed.NO_COLOR ? 0 : (SharedData.storage[1] == ColorSensed.NO_COLOR ? 1 : 2) , !SharedData.isFull());
             launchingTemp = false;
