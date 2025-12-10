@@ -17,7 +17,6 @@ import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 
-import org.firstinspires.ftc.teamcode.Auto.PoseConstantsClose;
 import org.firstinspires.ftc.teamcode.ColorSensed;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.SharedData;
@@ -28,7 +27,6 @@ public class TeleOpAllInOne extends LinearOpMode{
     private Robot hornet = new Robot();
     private Follower f;
     private PoseConstants poses = new PoseConstants();
-    private PoseConstantsClose posesClose = new PoseConstantsClose();
     boolean robotCentric;
     boolean autoMode = true;
     boolean xButton;

@@ -13,21 +13,20 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-
 import org.firstinspires.ftc.teamcode.ColorSensed;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.SharedData;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-//@Autonomous (name = "Auto CLOSE")
-public class CloseAuto extends OpMode {
+@Autonomous (name = "Auto")
+public class Auto9Ball extends OpMode {
 
     private Robot hornet = new Robot();
     private Follower f = null;
     public PanelsTelemetry panels = PanelsTelemetry.INSTANCE;
     private int pathState;
-    private Timer pathTimer,opmodeTimer,launchTimer,detectColorTimer, launchPauseTimer;
-    private PoseConstantsClose posesClose = new PoseConstantsClose();
+    private Timer pathTimer,opmodeTimer,launchTimer,detectColorTimer;
+    private PoseConstants poses = new PoseConstants();
     Pose currentPose = null;
     private Path start, end;
     private PathChain one, two, three, four, five, six;
@@ -36,7 +35,6 @@ public class CloseAuto extends OpMode {
     boolean launching = false , launchingTemp = false;
     private LLResult result;
     int timesLaunched = 0;
-    boolean firstPaused = false;
 
     @Override
     public void init() {
@@ -45,13 +43,11 @@ public class CloseAuto extends OpMode {
         pathTimer = new Timer();
         opmodeTimer = new Timer();
         launchTimer = new Timer();
-        launchPauseTimer = new Timer();
         opmodeTimer.resetTimer();
-        launchPauseTimer.resetTimer();
         limelight = hardwareMap.get(Limelight3A.class , "limelight");
 
         f = Constants.createFollower(hardwareMap);
-        f.setStartingPose(posesClose.START_POSE);
+        f.setStartingPose(poses.START_POSE);
         buildPaths();
         hornet.disableLED();
         hornet.resetHammer();
@@ -63,17 +59,26 @@ public class CloseAuto extends OpMode {
 
     @Override
     public void init_loop() {
-        int ID = figureID();
-        if (ID == 21) index = 0;
-        else if (ID == 22) index = 1;
-        else if (ID == 23) index = 2;
+    int ID = figureID();
+    if (ID == 21) index = 0;
+    else if (ID == 22) index = 1;
+    else if (ID == 23) index = 2;
 
-        SharedData.greenIndex = index;
-        telemetry.addData("ID" , ID);
-        telemetry.addData("Green Index", index );
-        telemetry.addData("Side", SharedData.red ? "Red" : "Blue");
+    SharedData.greenIndex = index;
+    telemetry.addData("ID" , ID);
+    telemetry.addData("Green Index", index );
+    telemetry.addData("Side", SharedData.red ? "Red" : "Blue");
+    telemetry.addData("Start", SharedData.startFar ? "far" : "close");
+    telemetry.addData("Shoot", SharedData.shootFar ? "far" : "close");
 
-        telemetry.update();
+    if (gamepad2.a){
+        limelight.start();
+    }
+    else if (gamepad2.b){
+        limelight.stop();
+    }
+
+    telemetry.update();
     }
 
     @Override
@@ -92,10 +97,14 @@ public class CloseAuto extends OpMode {
         if(!launching) {
             hornet.resetHammer();
             hornet.resetLaunch();
-            hornet.stopLaunchMotors();
-            hornet.setStoragePos(SharedData.storage[0] == ColorSensed.NO_COLOR ? 0 : (SharedData.storage[1] == ColorSensed.NO_COLOR ? 1 : 2) , !SharedData.isFull());
+            if(pathState == 1 || pathState == 4 || pathState == 7)
+                hornet.startLaunchMotors(SharedData.shootFar);
+            else
+                hornet.stopLaunchMotors();
+            if(launchTimer.getElapsedTimeSeconds() > .25)
+                hornet.setStoragePos(SharedData.storage[0] == ColorSensed.NO_COLOR ? 0 : (SharedData.storage[1] == ColorSensed.NO_COLOR ? 1 : 2) , !SharedData.isFull());
             launchingTemp = false;
-        }else{hornet.startLaunchMotors(false);}
+        }else{hornet.startLaunchMotors(SharedData.shootFar);}
 
         // panels.getTelemetry().addData("key", value);
         // panels.getTelemetry().update();
@@ -104,7 +113,7 @@ public class CloseAuto extends OpMode {
         } else hornet.stopIntake();
 
         //SET STORAGE COLOR
-        if(hornet.buttonPressed() && hornet.atSortTarget() && SharedData.storage[hornet.getSlotGoal()] == ColorSensed.NO_COLOR){
+        if(hornet.buttonPressed() && hornet.atSortTargetLenient() && SharedData.storage[hornet.getSlotGoal()] == ColorSensed.NO_COLOR){
             SharedData.storage[hornet.getSlotGoal()] = hornet.detectColor();
         }
 
@@ -113,12 +122,10 @@ public class CloseAuto extends OpMode {
             if(timesLaunched == SharedData.greenIndex || ind == -1) {
                 ind = SharedData.getGreenIndex() == -1 ? ind : SharedData.getGreenIndex();
             }
-
             hornet.setStoragePos(ind,false);
             launchingTemp = true;
         }
-
-        if(launchingTemp && hornet.atSortTarget() && hornet.atTargetVelocity() && !hornet.hammerAtLaunch() && !hornet.isLaunched() && launchPauseTimer.getElapsedTimeSeconds() > .5){
+        if(launchingTemp && hornet.atSortTarget() && hornet.atTargetVelocity() && !hornet.hammerAtLaunch() && !hornet.isLaunched()){
             hornet.launch();
             launchTimer.resetTimer();
         }
@@ -131,11 +138,14 @@ public class CloseAuto extends OpMode {
             }
             else if(launchingTemp && hornet.isLaunched()){
                 launchingTemp = false;
+                timesLaunched++;
+                if(timesLaunched == 2)
+                    timesLaunched = 0;
                 hornet.resetLaunch();
-                launchPauseTimer.resetTimer();
             }
         }
-
+        telemetry.addData("Times Launched", timesLaunched);
+        telemetry.addData("Green Index", SharedData.greenIndex);
         telemetry.addData("Temp launch", launchingTemp);
         telemetry.addData("launching", launching);
         telemetry.addData("sort", hornet.atSortTarget() ? "at target" : "not at target");
@@ -153,35 +163,37 @@ public class CloseAuto extends OpMode {
 
 
     public void buildPaths(){
-        start = new Path( new BezierLine(posesClose.START_POSE , posesClose.LAUNCH_POSE));
-        start.setLinearHeadingInterpolation(posesClose.START_POSE.getHeading() , posesClose.LAUNCH_POSE.getHeading());
+        start = new Path( new BezierLine(poses.START_POSE , poses.LAUNCH_POSE));
+        start.setLinearHeadingInterpolation(poses.START_POSE.getHeading() , poses.LAUNCH_POSE.getHeading());
 
         one = f.pathBuilder()
-                .addPath(new BezierLine( posesClose.LAUNCH_POSE , posesClose.ALIGN1_POSE))
-                .setConstantHeadingInterpolation(posesClose.ALIGN1_POSE.getHeading())
+                .addPath(new BezierLine( poses.LAUNCH_POSE , poses.ALIGN1_POSE))
+                .setConstantHeadingInterpolation(poses.ALIGN1_POSE.getHeading())
                 .build();
         two = f.pathBuilder()
-                .addPath(new BezierLine( posesClose.ALIGN1_POSE , posesClose.PICKUP1_POSE))
-                .setLinearHeadingInterpolation( posesClose.ALIGN1_POSE.getHeading() , posesClose.PICKUP1_POSE.getHeading())
+                .addPath(new BezierLine( poses.ALIGN1_POSE , poses.PICKUP1_POSE))
+                .setLinearHeadingInterpolation( poses.ALIGN1_POSE.getHeading() , poses.PICKUP1_POSE.getHeading())
                 .build();
         three = f.pathBuilder()
-                .addPath(new BezierLine(posesClose.PICKUP1_POSE , posesClose.LAUNCH_POSE ))
-                .setLinearHeadingInterpolation(posesClose.PICKUP1_POSE.getHeading() , posesClose.LAUNCH_POSE.getHeading())
+                .addPath(new BezierLine(poses.PICKUP1_POSE , poses.LAUNCH_POSE ))
+                .setLinearHeadingInterpolation(poses.PICKUP1_POSE.getHeading() , poses.LAUNCH_POSE.getHeading())
                 .build();
         four = f.pathBuilder()
-                .addPath(new BezierLine(posesClose.LAUNCH_POSE, posesClose.ALIGN2_POSE))
-                .setConstantHeadingInterpolation(posesClose.ALIGN2_POSE.getHeading())
+                .addPath(new BezierLine(poses.LAUNCH_POSE, poses.ALIGN2_POSE))
+                .setConstantHeadingInterpolation(poses.ALIGN2_POSE.getHeading())
+                .setBrakingStrength(.5)
+                //.setBrakingStart(.5)
                 .build();
         five = f.pathBuilder()
-                .addPath(new BezierLine(posesClose.ALIGN2_POSE, posesClose.PICKUP2_POSE))
-                .setLinearHeadingInterpolation(posesClose.ALIGN2_POSE.getHeading(), posesClose.PICKUP2_POSE.getHeading())
+                .addPath(new BezierLine(poses.ALIGN2_POSE, poses.PICKUP2_POSE))
+                .setLinearHeadingInterpolation(poses.ALIGN2_POSE.getHeading(), poses.PICKUP2_POSE.getHeading())
                 .build();
         six = f.pathBuilder()
-                .addPath(new BezierLine(posesClose.PICKUP2_POSE, posesClose.LAUNCH_POSE))
-                .setLinearHeadingInterpolation(posesClose.PICKUP2_POSE.getHeading(), posesClose.LAUNCH_POSE.getHeading())
+                .addPath(new BezierLine(poses.PICKUP2_POSE, poses.LAUNCH_POSE))
+                .setLinearHeadingInterpolation(poses.PICKUP2_POSE.getHeading(), poses.LAUNCH_POSE.getHeading())
                 .build();
-        end = new Path(new BezierLine(posesClose.LAUNCH_POSE, posesClose.END_POSE));
-        end.setLinearHeadingInterpolation(posesClose.LAUNCH_POSE.getHeading(), posesClose.END_POSE.getHeading());
+        end = new Path(new BezierLine(poses.LAUNCH_POSE, poses.END_POSE));
+        end.setLinearHeadingInterpolation(poses.LAUNCH_POSE.getHeading(), poses.END_POSE.getHeading());
     }
 
     public void autoPathUpdates(){
@@ -195,35 +207,29 @@ public class CloseAuto extends OpMode {
                 break;
             case 1:
                 sendPose();
-                if (!f.isBusy() && SharedData.isEmpty()){
+                if (!f.isBusy() && SharedData.isEmpty() && launchTimer.getElapsedTimeSeconds() > .25){
                     //go to align 1 pos
                     f.followPath(one, true);
                     setPathState(2);
                     sendPose();
+
                     launching = false;
-                    firstPaused = false;
                 }
                 //score 1
-                else if (!f.isBusy()) {
+                else if (!f.isBusy())
                     launching = true;
-                    if (!firstPaused)
-                    {
-                        launchPauseTimer.resetTimer();
-                        firstPaused = true;
-                    }
-                }
                 break;
             case 2:
                 if (!f.isBusy()){
                     //pickup balls
                     f.followPath(two, true);
-                    f.setMaxPower(.15);
+                    f.setMaxPower(.2);
                     setPathState(3);
                     sendPose();
                 }
                 break;
             case 3:
-                if (!f.isBusy()){
+                if (!f.isBusy() || SharedData.isFull()){
                     //go to scoring pose
                     f.followPath(three, true);
                     f.setMaxPower(1);
@@ -232,37 +238,29 @@ public class CloseAuto extends OpMode {
                 }
                 break;
             case 4:
-                if (!f.isBusy() && SharedData.isEmpty()) {
+                if (!f.isBusy() && SharedData.isEmpty() && launchTimer.getElapsedTimeSeconds() > .25) {
                     //go to align 2
                     f.followPath(four, true);
                     setPathState(5);
                     sendPose();
                     launching = false;
-                    firstPaused = false;
                 }
                 //score 2
                 else if (!f.isBusy()) {
                     launching = true;
-                    if (!firstPaused)
-                    {
-                        launchPauseTimer.resetTimer();
-                        firstPaused = true;
-                    }
-
-
                 }
                 break;
             case 5:
                 if (!f.isBusy()){
                     //pickup 2
                     f.followPath(five , true);
-                    f.setMaxPower(.15);
+                    f.setMaxPower(.2);
                     setPathState(6);
                     sendPose();
-                }
+            }
                 break;
             case 6:
-                if (!f.isBusy()){
+                if (!f.isBusy() || SharedData.isFull()){
                     //move to score pose
                     f.followPath(six , true);
                     f.setMaxPower(1);
@@ -271,7 +269,7 @@ public class CloseAuto extends OpMode {
                 }
                 break;
             case 7:
-                if (!f.isBusy() && SharedData.isEmpty()){
+                if (!f.isBusy() && SharedData.isEmpty() && launchTimer.getElapsedTimeSeconds() > .25 && opmodeTimer.getElapsedTimeSeconds() < 28.5){
                     // sends to final location
                     f.followPath(end);
                     setPathState(8);
@@ -280,11 +278,6 @@ public class CloseAuto extends OpMode {
                 //score 3
                 else if (!f.isBusy()){
                     launching = true;
-                    if (!firstPaused)
-                    {
-                        launchPauseTimer.resetTimer();
-                        firstPaused = true;
-                    }
                 }
                 break;
             case 8:
@@ -292,7 +285,6 @@ public class CloseAuto extends OpMode {
                     setPathState(-1);
                     sendPose();
                     launching = false;
-                    firstPaused = false;
                 }
                 break;
         }
