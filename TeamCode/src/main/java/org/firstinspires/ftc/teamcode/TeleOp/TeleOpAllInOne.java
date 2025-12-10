@@ -277,7 +277,7 @@ public class TeleOpAllInOne extends LinearOpMode{
 
         //if ready to launch -> then launch
         if(launching && hornet.atSortTarget() && hornet.atTargetVelocity() && !hornet.hammerAtLaunch() && !hornet.isLaunched()){
-            sleep(2000)
+            sleep(2000);
             hornet.launch();
             launchTimer.resetTimer();
         }
