@@ -18,8 +18,8 @@ import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.SharedData;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@Autonomous (name = "9Auto")
-public class Auto9Ball extends OpMode {
+@Autonomous (name = "12Auto")
+public class Auto12Ball extends OpMode {
 
     private Robot hornet = new Robot();
     private Follower f = null;
@@ -59,26 +59,26 @@ public class Auto9Ball extends OpMode {
 
     @Override
     public void init_loop() {
-    int ID = figureID();
-    if (ID == 21) index = 0;
-    else if (ID == 22) index = 1;
-    else if (ID == 23) index = 2;
+        int ID = figureID();
+        if (ID == 21) index = 0;
+        else if (ID == 22) index = 1;
+        else if (ID == 23) index = 2;
 
-    SharedData.greenIndex = index;
-    telemetry.addData("ID" , ID);
-    telemetry.addData("Green Index", index );
-    telemetry.addData("Side", SharedData.red ? "Red" : "Blue");
-    telemetry.addData("Start", SharedData.startFar ? "far" : "close");
-    telemetry.addData("Shoot", SharedData.shootFar ? "far" : "close");
+        SharedData.greenIndex = index;
+        telemetry.addData("ID" , ID);
+        telemetry.addData("Green Index", index );
+        telemetry.addData("Side", SharedData.red ? "Red" : "Blue");
+        telemetry.addData("Start", SharedData.startFar ? "far" : "close");
+        telemetry.addData("Shoot", SharedData.shootFar ? "far" : "close");
 
-    if (gamepad2.a){
-        limelight.start();
-    }
-    else if (gamepad2.b){
-        limelight.stop();
-    }
+        if (gamepad2.a){
+            limelight.start();
+        }
+        else if (gamepad2.b){
+            limelight.stop();
+        }
 
-    telemetry.update();
+        telemetry.update();
     }
 
     @Override
@@ -257,7 +257,7 @@ public class Auto9Ball extends OpMode {
                     f.setMaxPower(.2);
                     setPathState(6);
                     sendPose();
-            }
+                }
                 break;
             case 6:
                 if (!f.isBusy() || SharedData.isFull()){
