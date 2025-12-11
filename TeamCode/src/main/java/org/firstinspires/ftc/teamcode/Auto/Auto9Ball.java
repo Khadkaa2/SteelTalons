@@ -108,9 +108,12 @@ public class Auto9Ball extends OpMode {
 
         // panels.getTelemetry().addData("key", value);
         // panels.getTelemetry().update();
-        if ((pathState == 3 || pathState == 4 || pathState == 6 || pathState == 7) || launching) {
-            hornet.startIntake(true);
-        } else hornet.stopIntake();
+        if ((pathState == 3 || pathState == 4 || pathState == 6 || pathState == 7)) {
+            hornet.startIntake(true, 1);
+        }
+        else if(launching)
+            hornet.startIntake(true,.1);
+        else hornet.stopIntake();
 
         //SET STORAGE COLOR
         if(hornet.buttonPressed() && hornet.atSortTargetLenient() && SharedData.storage[hornet.getSlotGoal()] == ColorSensed.NO_COLOR){
@@ -223,7 +226,7 @@ public class Auto9Ball extends OpMode {
                 if (!f.isBusy()){
                     //pickup balls
                     f.followPath(two, true);
-                    f.setMaxPower(.2);
+                    f.setMaxPower(.4);
                     setPathState(3);
                     sendPose();
                 }
@@ -254,7 +257,7 @@ public class Auto9Ball extends OpMode {
                 if (!f.isBusy()){
                     //pickup 2
                     f.followPath(five , true);
-                    f.setMaxPower(.2);
+                    f.setMaxPower(.4);
                     setPathState(6);
                     sendPose();
             }

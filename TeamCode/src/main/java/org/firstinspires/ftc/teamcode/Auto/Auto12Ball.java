@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.SharedData;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@Autonomous (name = "12Auto")
+//@Autonomous (name = "12Auto")
 public class Auto12Ball extends OpMode {
 
     private Robot hornet = new Robot();
@@ -109,7 +109,7 @@ public class Auto12Ball extends OpMode {
         // panels.getTelemetry().addData("key", value);
         // panels.getTelemetry().update();
         if ((pathState == 3 || pathState == 4 || pathState == 6 || pathState == 7) || launching) {
-            hornet.startIntake(true);
+            hornet.startIntake(true, 1);
         } else hornet.stopIntake();
 
         //SET STORAGE COLOR

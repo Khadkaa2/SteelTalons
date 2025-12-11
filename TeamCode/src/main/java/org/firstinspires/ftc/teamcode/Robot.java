@@ -19,7 +19,8 @@ public class Robot {
     public static DcMotorEx fan;
     public static DcMotorEx rightLaunch;
     public static DcMotorEx leftLaunch;
-    public static CRServo intakeServo;
+    public static DcMotorEx intake;
+//    public static CRServo intakeServo;
     public static Servo hammer;
     private static ColorSensor colorRight;
     private static ColorSensor colorLeft;
@@ -48,7 +49,9 @@ public class Robot {
         leftLaunch = hwMp.get(DcMotorEx.class, "leftLaunch");
         colorLeft = hwMp.get(ColorSensor.class, "colorLeft");
 
-         intakeServo = hwMp.get(CRServo.class, "intakeServo");
+        intake = hwMp.get(DcMotorEx.class, "intake");
+        intake.setDirection(DcMotorSimple.Direction.REVERSE);
+//         intakeServo = hwMp.get(CRServo.class, "intakeServo");
          fan = hwMp.get(DcMotorEx.class, "fan");
 
 
@@ -116,11 +119,11 @@ public class Robot {
         }
     }
 
-    public void startIntake(boolean in) {intakeServo.setPower(in ? 1 : -1);}
-    public void stopIntake() {intakeServo.setPower(0);}
+    public void startIntake(boolean in, double pow) {intake.setPower(in ? pow : -1*pow);}
+    public void stopIntake() {intake.setPower(0);}
 
     public void startLaunchMotors(boolean far) {
-         launchTargetVelocity = far ? 1500 : 1050;
+         launchTargetVelocity = far ? 1800: 1550;
          leftLaunch.setVelocity(launchTargetVelocity);
          rightLaunch.setVelocity(launchTargetVelocity);
     }

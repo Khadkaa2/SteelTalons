@@ -187,11 +187,12 @@ public class TeleOpAllInOne extends LinearOpMode{
             if(xButton != gamepad2.x && gamepad2.x)
                 autoMode = !autoMode;
             xButton = gamepad2.x;
-
-            if(gamepad1.right_bumper )
-                hornet.startIntake(true);
+            if(SharedData.isFull()&&!launching && !hornet.atSortTargetLenient())
+                hornet.startIntake(false,.2);
+            else if(gamepad1.right_bumper)
+                hornet.startIntake(true,1);
             else if(gamepad1.left_bumper)
-                hornet.startIntake(false);
+                hornet.startIntake(false,1);
             else
                 hornet.stopIntake();
 
@@ -272,12 +273,11 @@ public class TeleOpAllInOne extends LinearOpMode{
         //If launching -> speed up launchMotors
         if(launching){
             hornet.startLaunchMotors(f.getPose().getY() < 48);
-            hornet.startIntake(true);
+            hornet.startIntake(true, .1);
         } else{hornet.stopLaunchMotors();}
 
         //if ready to launch -> then launch
         if(launching && hornet.atSortTarget() && hornet.atTargetVelocity() && !hornet.hammerAtLaunch() && !hornet.isLaunched()){
-            sleep(2000);
             hornet.launch();
             launchTimer.resetTimer();
         }
@@ -285,7 +285,7 @@ public class TeleOpAllInOne extends LinearOpMode{
         //if flap has had time to move...
         //and flap is at launch position -> move flap back and clear storage slot
         //and flap is at not launch position and it says its launching -> say its not launching
-        if(launchTimer.getElapsedTimeSeconds() >= 1){
+        if(launchTimer.getElapsedTimeSeconds() >= .25){
             if(hornet.hammerAtLaunch() && launching){
                 launchTimer.resetTimer();
                 hornet.resetHammer();
