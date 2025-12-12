@@ -187,7 +187,7 @@ public class TeleOpAllInOne extends LinearOpMode{
             if(xButton != gamepad2.x && gamepad2.x)
                 autoMode = !autoMode;
             xButton = gamepad2.x;
-            if(SharedData.isFull()&&!launching && !hornet.atSortTargetLenient())
+            if(SharedData.isFull()&&!launching && !hornet.atSortTarget())
                 hornet.startIntake(false,.2);
             else if(gamepad1.right_bumper)
                 hornet.startIntake(true,1);

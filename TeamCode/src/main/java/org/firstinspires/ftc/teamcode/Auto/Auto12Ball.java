@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import java.util.ArrayList;
 
-//@Autonomous (name = "12Auto")
+@Autonomous (name = "12Auto")
 public class Auto12Ball extends OpMode {
 
     private Robot hornet = new Robot();
@@ -239,7 +239,7 @@ public class Auto12Ball extends OpMode {
                 if (!f.isBusy()){
                     //pickup balls
                     f.followPath(two, true);
-                    f.setMaxPower(.2);
+                    f.setMaxPower(.35);
                     setPathState(3);
                     sendPose();
                 }
@@ -270,7 +270,7 @@ public class Auto12Ball extends OpMode {
                 if (!f.isBusy()){
                     //pickup 2
                     f.followPath(five , true);
-                    f.setMaxPower(.2);
+                    f.setMaxPower(.35);
                     setPathState(6);
                     sendPose();
                 }
@@ -301,7 +301,7 @@ public class Auto12Ball extends OpMode {
                 if (!f.isBusy()){
                     //pickup 3
                     f.followPath(eight , true);
-                    f.setMaxPower(.2);
+                    f.setMaxPower(.35);
                     setPathState(9);
                     sendPose();
                 }
