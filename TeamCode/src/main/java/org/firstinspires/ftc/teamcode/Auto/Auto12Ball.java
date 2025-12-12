@@ -191,11 +191,11 @@ public class Auto12Ball extends OpMode {
                 .setLinearHeadingInterpolation(poses.ALIGN2_POSE.getHeading(), poses.PICKUP2_POSE.getHeading())
                 .build();
         six = f.pathBuilder()
-                .addPath(new BezierLine(poses.PICKUP2_POSE, poses.LAUNCH_POSE_FAR))
-                .setLinearHeadingInterpolation(poses.PICKUP2_POSE.getHeading(), poses.LAUNCH_POSE_FAR.getHeading())
+                .addPath(new BezierLine(poses.PICKUP2_POSE, poses.LAUNCH_POSE_CLOSE))
+                .setLinearHeadingInterpolation(poses.PICKUP2_POSE.getHeading(), poses.LAUNCH_POSE_CLOSE.getHeading())
                 .build();
         seven = f.pathBuilder()
-                .addPath(new BezierLine(poses.LAUNCH_POSE_FAR, poses.ALIGN3_POSE))
+                .addPath(new BezierLine(poses.LAUNCH_POSE_CLOSE, poses.ALIGN3_POSE))
                 .setConstantHeadingInterpolation(poses.ALIGN3_POSE.getHeading())
                 .setBrakingStrength(.5)
                 .build();
@@ -204,11 +204,11 @@ public class Auto12Ball extends OpMode {
                 .setLinearHeadingInterpolation(poses.ALIGN3_POSE.getHeading(), poses.PICKUP3_POSE.getHeading())
                 .build();
         nine = f.pathBuilder()
-                .addPath(new BezierLine(poses.PICKUP3_POSE, poses.LAUNCH_POSE_FAR))
-                .setLinearHeadingInterpolation(poses.PICKUP3_POSE.getHeading(), poses.LAUNCH_POSE_FAR.getHeading())
+                .addPath(new BezierLine(poses.PICKUP3_POSE, poses.LAUNCH_POSE_CLOSE))
+                .setLinearHeadingInterpolation(poses.PICKUP3_POSE.getHeading(), poses.LAUNCH_POSE_CLOSE.getHeading())
                 .build();
-        end = new Path( new BezierLine(poses.LAUNCH_POSE_FAR , poses.END_POSE));
-        end.setLinearHeadingInterpolation(poses.LAUNCH_POSE_FAR.getHeading() , poses.END_POSE.getHeading());
+        end = new Path( new BezierLine(poses.LAUNCH_POSE_CLOSE , poses.END_POSE_CLOSE));
+        end.setLinearHeadingInterpolation(poses.LAUNCH_POSE_CLOSE.getHeading() , poses.END_POSE_CLOSE.getHeading());
 
     }
 
@@ -239,7 +239,7 @@ public class Auto12Ball extends OpMode {
                 if (!f.isBusy()){
                     //pickup balls
                     f.followPath(two, true);
-                    f.setMaxPower(.35);
+                    f.setMaxPower(.3);
                     setPathState(3);
                     sendPose();
                 }
@@ -270,7 +270,7 @@ public class Auto12Ball extends OpMode {
                 if (!f.isBusy()){
                     //pickup 2
                     f.followPath(five , true);
-                    f.setMaxPower(.35);
+                    f.setMaxPower(.3);
                     setPathState(6);
                     sendPose();
                 }
@@ -301,7 +301,7 @@ public class Auto12Ball extends OpMode {
                 if (!f.isBusy()){
                     //pickup 3
                     f.followPath(eight , true);
-                    f.setMaxPower(.35);
+                    f.setMaxPower(.3);
                     setPathState(9);
                     sendPose();
                 }
