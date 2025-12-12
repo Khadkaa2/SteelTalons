@@ -4,6 +4,7 @@ import androidx.xr.runtime.math.Pose;
 
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
@@ -18,6 +19,8 @@ import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.SharedData;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
+import java.util.ArrayList;
+
 //@Autonomous (name = "12Auto")
 public class Auto12Ball extends OpMode {
 
@@ -26,10 +29,10 @@ public class Auto12Ball extends OpMode {
     public PanelsTelemetry panels = PanelsTelemetry.INSTANCE;
     private int pathState;
     private Timer pathTimer,opmodeTimer,launchTimer,detectColorTimer;
-    private PoseConstants poses = new PoseConstants();
+    private TwelveBallPoseConstants poses = new TwelveBallPoseConstants();
     Pose currentPose = null;
     private Path start, end;
-    private PathChain one, two, three, four, five, six;
+    private PathChain one, two, three, four, five, six, seven, eight, nine;
     int index;
     private Limelight3A limelight;
     boolean launching = false , launchingTemp = false;
@@ -97,7 +100,7 @@ public class Auto12Ball extends OpMode {
         if(!launching) {
             hornet.resetHammer();
             hornet.resetLaunch();
-            if(pathState == 1 || pathState == 4 || pathState == 7)
+            if(pathState == 1 || pathState == 4 || pathState == 7|| pathState == 10)
                 hornet.startLaunchMotors(SharedData.shootFar);
             else
                 hornet.stopLaunchMotors();
@@ -108,7 +111,7 @@ public class Auto12Ball extends OpMode {
 
         // panels.getTelemetry().addData("key", value);
         // panels.getTelemetry().update();
-        if ((pathState == 3 || pathState == 4 || pathState == 6 || pathState == 7) || launching) {
+        if ((pathState == 3 || pathState == 4 || pathState == 6 || pathState == 7 || pathState == 9||pathState == 10) || launching) {
             hornet.startIntake(true, 1);
         } else hornet.stopIntake();
 
@@ -163,37 +166,50 @@ public class Auto12Ball extends OpMode {
 
 
     public void buildPaths(){
-        start = new Path( new BezierLine(poses.START_POSE , poses.LAUNCH_POSE));
-        start.setLinearHeadingInterpolation(poses.START_POSE.getHeading() , poses.LAUNCH_POSE.getHeading());
+        start = new Path( new BezierLine(poses.START_POSE , poses.LAUNCH_POSE_FAR));
+        start.setLinearHeadingInterpolation(poses.START_POSE.getHeading() , poses.LAUNCH_POSE_FAR.getHeading());
 
         one = f.pathBuilder()
-                .addPath(new BezierLine( poses.LAUNCH_POSE , poses.ALIGN1_POSE))
+                .addPath(new BezierLine( poses.LAUNCH_POSE_FAR , poses.ALIGN1_POSE))
                 .setConstantHeadingInterpolation(poses.ALIGN1_POSE.getHeading())
                 .build();
         two = f.pathBuilder()
-                .addPath(new BezierLine( poses.ALIGN1_POSE , poses.PICKUP1_POSE))
+                .addPath(new BezierLine(poses.ALIGN1_POSE , poses.PICKUP1_POSE))
                 .setLinearHeadingInterpolation( poses.ALIGN1_POSE.getHeading() , poses.PICKUP1_POSE.getHeading())
                 .build();
         three = f.pathBuilder()
-                .addPath(new BezierLine(poses.PICKUP1_POSE , poses.LAUNCH_POSE ))
-                .setLinearHeadingInterpolation(poses.PICKUP1_POSE.getHeading() , poses.LAUNCH_POSE.getHeading())
+                .addPath(new BezierCurve(poses.PICKUP1_POSE, poses.ALIGN1_POSE,poses.LAUNCH_POSE_FAR))
+                .setLinearHeadingInterpolation(poses.PICKUP1_POSE.getHeading() , poses.LAUNCH_POSE_FAR.getHeading())
                 .build();
         four = f.pathBuilder()
-                .addPath(new BezierLine(poses.LAUNCH_POSE, poses.ALIGN2_POSE))
+                .addPath(new BezierLine(poses.LAUNCH_POSE_FAR, poses.ALIGN2_POSE))
                 .setConstantHeadingInterpolation(poses.ALIGN2_POSE.getHeading())
                 .setBrakingStrength(.5)
-                //.setBrakingStart(.5)
                 .build();
         five = f.pathBuilder()
                 .addPath(new BezierLine(poses.ALIGN2_POSE, poses.PICKUP2_POSE))
                 .setLinearHeadingInterpolation(poses.ALIGN2_POSE.getHeading(), poses.PICKUP2_POSE.getHeading())
                 .build();
         six = f.pathBuilder()
-                .addPath(new BezierLine(poses.PICKUP2_POSE, poses.LAUNCH_POSE))
-                .setLinearHeadingInterpolation(poses.PICKUP2_POSE.getHeading(), poses.LAUNCH_POSE.getHeading())
+                .addPath(new BezierLine(poses.PICKUP2_POSE, poses.LAUNCH_POSE_FAR))
+                .setLinearHeadingInterpolation(poses.PICKUP2_POSE.getHeading(), poses.LAUNCH_POSE_FAR.getHeading())
                 .build();
-        end = new Path(new BezierLine(poses.LAUNCH_POSE, poses.END_POSE));
-        end.setLinearHeadingInterpolation(poses.LAUNCH_POSE.getHeading(), poses.END_POSE.getHeading());
+        seven = f.pathBuilder()
+                .addPath(new BezierLine(poses.LAUNCH_POSE_FAR, poses.ALIGN3_POSE))
+                .setConstantHeadingInterpolation(poses.ALIGN3_POSE.getHeading())
+                .setBrakingStrength(.5)
+                .build();
+        eight = f.pathBuilder()
+                .addPath(new BezierLine(poses.ALIGN3_POSE, poses.PICKUP3_POSE))
+                .setLinearHeadingInterpolation(poses.ALIGN3_POSE.getHeading(), poses.PICKUP3_POSE.getHeading())
+                .build();
+        nine = f.pathBuilder()
+                .addPath(new BezierLine(poses.PICKUP3_POSE, poses.LAUNCH_POSE_FAR))
+                .setLinearHeadingInterpolation(poses.PICKUP3_POSE.getHeading(), poses.LAUNCH_POSE_FAR.getHeading())
+                .build();
+        end = new Path( new BezierLine(poses.LAUNCH_POSE_FAR , poses.END_POSE));
+        end.setLinearHeadingInterpolation(poses.LAUNCH_POSE_FAR.getHeading() , poses.END_POSE.getHeading());
+
     }
 
     public void autoPathUpdates(){
@@ -270,10 +286,11 @@ public class Auto12Ball extends OpMode {
                 break;
             case 7:
                 if (!f.isBusy() && SharedData.isEmpty() && launchTimer.getElapsedTimeSeconds() > .25 && opmodeTimer.getElapsedTimeSeconds() < 28.5){
-                    // sends to final location
-                    f.followPath(end);
+                    // sends to align 3
+                    f.followPath(seven, true);
                     setPathState(8);
                     sendPose();
+                    launching = false;
                 }
                 //score 3
                 else if (!f.isBusy()){
@@ -281,6 +298,36 @@ public class Auto12Ball extends OpMode {
                 }
                 break;
             case 8:
+                if (!f.isBusy()){
+                    //pickup 3
+                    f.followPath(eight , true);
+                    f.setMaxPower(.2);
+                    setPathState(9);
+                    sendPose();
+                }
+                break;
+            case 9:
+                if (!f.isBusy() || SharedData.isFull()){
+                    //move to score pose
+                    f.followPath(nine , true);
+                    f.setMaxPower(1);
+                    sendPose();
+                    setPathState(10);
+                }
+                break;
+            case 10:
+                if (!f.isBusy() && SharedData.isEmpty() && launchTimer.getElapsedTimeSeconds() > .25 && opmodeTimer.getElapsedTimeSeconds() < 28.5){
+                    // sends to final location
+                    f.followPath(end);
+                    setPathState(11);
+                    sendPose();
+                }
+                //score 3
+                else if (!f.isBusy()){
+                    launching = true;
+                }
+                break;
+            case 11:
                 if (!f.isBusy()){
                     setPathState(-1);
                     sendPose();
