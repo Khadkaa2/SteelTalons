@@ -117,6 +117,7 @@ public class Auto9Ball extends OpMode {
 
         //SET STORAGE COLOR
         if(hornet.buttonPressed() && hornet.atSortTargetLenient() && SharedData.storage[hornet.getSlotGoal()] == ColorSensed.NO_COLOR){
+            hornet.updateLED();
             SharedData.storage[hornet.getSlotGoal()] = hornet.detectColor();
         }
 
@@ -219,14 +220,14 @@ public class Auto9Ball extends OpMode {
                     launching = false;
                 }
                 //score 1
-                else if (!f.isBusy())
+                else if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 3)
                     launching = true;
                 break;
             case 2:
                 if (!f.isBusy()){
                     //pickup balls
                     f.followPath(two, true);
-                    f.setMaxPower(.4);
+                    f.setMaxPower(.3);
                     setPathState(3);
                     sendPose();
                 }
@@ -249,7 +250,7 @@ public class Auto9Ball extends OpMode {
                     launching = false;
                 }
                 //score 2
-                else if (!f.isBusy()) {
+                else if (!f.isBusy()&& pathTimer.getElapsedTimeSeconds() > 3) {
                     launching = true;
                 }
                 break;
@@ -257,7 +258,7 @@ public class Auto9Ball extends OpMode {
                 if (!f.isBusy()){
                     //pickup 2
                     f.followPath(five , true);
-                    f.setMaxPower(.4);
+                    f.setMaxPower(.3);
                     setPathState(6);
                     sendPose();
             }
@@ -279,7 +280,7 @@ public class Auto9Ball extends OpMode {
                     sendPose();
                 }
                 //score 3
-                else if (!f.isBusy()){
+                else if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 3){
                     launching = true;
                 }
                 break;
