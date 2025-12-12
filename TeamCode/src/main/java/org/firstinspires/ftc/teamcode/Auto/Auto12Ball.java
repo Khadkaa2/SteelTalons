@@ -101,13 +101,13 @@ public class Auto12Ball extends OpMode {
             hornet.resetHammer();
             hornet.resetLaunch();
             if(pathState == 1 || pathState == 4 || pathState == 7|| pathState == 10)
-                hornet.startLaunchMotors(SharedData.shootFar);
+                hornet.startLaunchMotors(f.getPose().getY() < 48);
             else
                 hornet.stopLaunchMotors();
             if(launchTimer.getElapsedTimeSeconds() > .25)
                 hornet.setStoragePos(SharedData.storage[0] == ColorSensed.NO_COLOR ? 0 : (SharedData.storage[1] == ColorSensed.NO_COLOR ? 1 : 2) , !SharedData.isFull());
             launchingTemp = false;
-        }else{hornet.startLaunchMotors(SharedData.shootFar);}
+        }else{hornet.startLaunchMotors(f.getPose().getY() < 48);}
 
         // panels.getTelemetry().addData("key", value);
         // panels.getTelemetry().update();

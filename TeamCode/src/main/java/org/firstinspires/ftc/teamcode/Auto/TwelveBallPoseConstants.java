@@ -18,14 +18,19 @@ public class TwelveBallPoseConstants {
 //    public Pose closeLaunch  = !SharedData.red ? new Pose(56.75,80.75,Math.toRadians(315)) :  new Pose(87.25,80.75,Math.toRadians(225));
 
     public Pose START_POSE =  !SharedData.red ? (SharedData.startFar ? new Pose(56.75,9.36,Math.toRadians(270)) : new Pose(27.85, 125.85, Math.toRadians(190.75))) :  (SharedData.startFar ? new Pose(87.25,8.75,Math.toRadians(270)) : new Pose(118.55, 125.25, Math.toRadians(350)));
+
     public Pose LAUNCH_POSE_FAR = !SharedData.red ? new Pose(56.75,14.75,Math.toRadians(292)) : new Pose(87.25,14.75,Math.toRadians(246));
     public Pose LAUNCH_POSE_CLOSE = !SharedData.red ? new Pose(56.75,80.75,Math.toRadians(312)) : new Pose(87.25,80.75,Math.toRadians(225));
+
     public Pose ALIGN1_POSE = !SharedData.red ? new Pose(45.75,59.25,Math.toRadians(180)) :  new Pose(102.25,59.25,Math.toRadians(0));
     public Pose PICKUP1_POSE = !SharedData.red ? new Pose(16, 62.25, Math.toRadians(180)) :  new Pose(137, 62.25, Math.toRadians(0));
-    public Pose ALIGN2_POSE = !SharedData.red ? new Pose(45.75,33.25,Math.toRadians(180)) :  new Pose(98.25,33.25,Math.toRadians(0));
+
+    public Pose ALIGN2_POSE = !SharedData.red ? new Pose(45.75,33.25,Math.toRadians(180)) :  new Pose(102,33.25,Math.toRadians(0));
     public Pose PICKUP2_POSE = !SharedData.red ? new Pose(17.75,33.25, Math.toRadians(180)) : new Pose(126.25,33.25, Math.toRadians(0));
-    public Pose ALIGN3_POSE = !SharedData.red ? new Pose(45.75,81.25,Math.toRadians(180)) : new Pose(98.25,81.25,Math.toRadians(0));
-    public Pose PICKUP3_POSE = !SharedData.red ? new Pose(17.75,81.25, Math.toRadians(180)) : new Pose(126.25,81.25, Math.toRadians(0));
+
+    public Pose ALIGN3_POSE = !SharedData.red ? new Pose(45.75,81.25,Math.toRadians(180)) : new Pose(102,83,Math.toRadians(0));
+    public Pose PICKUP3_POSE = !SharedData.red ? new Pose(17.75,81.25, Math.toRadians(180)) : new Pose(128,83, Math.toRadians(0));
+
     public Pose END_POSE_FAR = !SharedData.red ? new Pose(56.75,30.75,Math.toRadians(240)) : new Pose(87.25, 30.75,0);
     public Pose END_POSE_CLOSE = !SharedData.red ? new Pose(45.75,69.75,Math.toRadians(180)) : new Pose(98.25, 69.75,Math.toRadians(0));
 }
