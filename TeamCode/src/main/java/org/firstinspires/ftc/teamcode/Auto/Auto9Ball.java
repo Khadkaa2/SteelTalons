@@ -117,6 +117,7 @@ public class Auto9Ball extends OpMode {
 
         //SET STORAGE COLOR
         if(hornet.buttonPressed() && hornet.atSortTargetLenient() && SharedData.storage[hornet.getSlotGoal()] == ColorSensed.NO_COLOR){
+            hornet.updateLED();
             SharedData.storage[hornet.getSlotGoal()] = hornet.detectColor();
         }
 
