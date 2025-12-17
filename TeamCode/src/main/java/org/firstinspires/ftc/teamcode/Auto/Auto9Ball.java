@@ -102,7 +102,7 @@ public class Auto9Ball extends OpMode {
             else
                 hornet.stopLaunchMotors();
             if(launchTimer.getElapsedTimeSeconds() > .25)
-                hornet.setStoragePos(SharedData.storage[0] == ColorSensed.NO_COLOR ? 0 : (SharedData.storage[1] == ColorSensed.NO_COLOR ? 1 : 2) , !SharedData.isFull());
+                hornet.setStoragePos(!SharedData.isFull() ? SharedData.storage[0] == ColorSensed.NO_COLOR ? 0 : (SharedData.storage[1] == ColorSensed.NO_COLOR ? 1 : 2) : (SharedData.greenIndex == 0 ? (SharedData.getGreenIndex() == -1 ? SharedData.getPurpleIndex() : SharedData.getGreenIndex()) : (SharedData.getPurpleIndex()) == -1 ? SharedData.getGreenIndex() : SharedData.getPurpleIndex()), !SharedData.isFull());
             launchingTemp = false;
         }else{hornet.startLaunchMotors(SharedData.shootFar);}
 
