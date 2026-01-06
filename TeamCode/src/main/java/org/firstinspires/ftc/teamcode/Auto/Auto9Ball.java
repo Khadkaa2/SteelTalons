@@ -227,7 +227,7 @@ public class Auto9Ball extends OpMode {
                 if (!f.isBusy()){
                     //pickup balls
                     f.followPath(two, true);
-                    f.setMaxPower(.3);
+                    f.setMaxPower(.25);
                     setPathState(3);
                     sendPose();
                 }
@@ -258,7 +258,7 @@ public class Auto9Ball extends OpMode {
                 if (!f.isBusy()){
                     //pickup 2
                     f.followPath(five , true);
-                    f.setMaxPower(.3);
+                    f.setMaxPower(.25);
                     setPathState(6);
                     sendPose();
             }
