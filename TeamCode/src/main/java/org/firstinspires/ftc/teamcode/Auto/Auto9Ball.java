@@ -49,7 +49,6 @@ public class Auto9Ball extends OpMode {
         f = Constants.createFollower(hardwareMap);
         f.setStartingPose(poses.START_POSE);
         buildPaths();
-        hornet.disableLED();
         hornet.resetHammer();
         hornet.resetLaunch();
         limelight.start();
@@ -87,12 +86,14 @@ public class Auto9Ball extends OpMode {
         opmodeTimer.resetTimer();
         limelight.stop();
         setPathState(0);
+        hornet.updateLED();
     }
     @Override
     public void loop() {
         f.update();
         sendPose();
         autoPathUpdates();
+        hornet.updateLED();
 
         if(!launching) {
             hornet.resetHammer();
@@ -117,7 +118,7 @@ public class Auto9Ball extends OpMode {
 
         //SET STORAGE COLOR
         if(hornet.buttonPressed() && hornet.atSortTargetLenient() && SharedData.storage[hornet.getSlotGoal()] == ColorSensed.NO_COLOR){
-            hornet.updateLED();
+            //hornet.updateLED();
             SharedData.storage[hornet.getSlotGoal()] = hornet.detectColor();
         }
 

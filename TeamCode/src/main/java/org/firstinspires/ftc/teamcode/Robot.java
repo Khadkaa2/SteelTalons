@@ -119,8 +119,8 @@ public class Robot {
         }
     }
 
-    public void startIntake(boolean in, double pow) {intake.setPower(in ? pow : -1*pow);}
-    public void stopIntake() {intake.setPower(0);}
+    public void startIntake(boolean in, double vel) {intake.setVelocity(in ? vel : -1*vel);}
+    public void stopIntake() {intake.setVelocity(0);}
 
     public void startLaunchMotors(boolean far) {
          launchTargetVelocity = far ? 1900: 1600;
