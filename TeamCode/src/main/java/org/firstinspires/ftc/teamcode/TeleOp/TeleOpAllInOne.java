@@ -187,12 +187,12 @@ public class TeleOpAllInOne extends LinearOpMode{
             if(xButton != gamepad2.x && gamepad2.x)
                 autoMode = !autoMode;
             xButton = gamepad2.x;
-            if(SharedData.isFull()&&!launching && !hornet.atSortTarget())
-                hornet.startIntake(false,1200);
+            if(SharedData.isFull()&&!launching && hornet.atSortTarget())
+                hornet.startIntake(false,.2);
             else if(gamepad1.right_bumper)
-                hornet.startIntake(true,2000);
+                hornet.startIntake(true,1);
             else if(gamepad1.left_bumper)
-                hornet.startIntake(false,2000);
+                hornet.startIntake(false,1);
             else
                 hornet.stopIntake();
 
@@ -217,6 +217,14 @@ public class TeleOpAllInOne extends LinearOpMode{
 
 
     public void autoMode() {
+
+        if((gamepad2.right_trigger > .2 && gamepad2.left_trigger > .2) || gamepad1.dpad_down)
+        {
+            launching = false;
+            hornet.resetLaunch();
+        }
+
+
         if(!launching)
             hornet.setStoragePos(SharedData.storage[0] == ColorSensed.NO_COLOR ? 0 : (SharedData.storage[1] == ColorSensed.NO_COLOR ? 1 : 2) , !SharedData.isFull());
 
@@ -274,7 +282,7 @@ public class TeleOpAllInOne extends LinearOpMode{
         //If launching -> speed up launchMotors
         if(launching){
             hornet.startLaunchMotors(f.getPose().getY() < 48);
-            hornet.startIntake(true, 1200);
+            hornet.startIntake(true, .1);
         } else{hornet.stopLaunchMotors();}
 
         //if ready to launch -> then launch
