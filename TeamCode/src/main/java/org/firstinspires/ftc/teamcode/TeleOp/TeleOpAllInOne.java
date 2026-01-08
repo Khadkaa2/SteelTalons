@@ -449,6 +449,8 @@ public class TeleOpAllInOne extends LinearOpMode{
 //        telemetry.addData("automated" , automated);
         telemetry.addData("In Motif", inMotif);
 
+        telemetry.addData("\nColor Values\n", hornet.returnColor());
+
 
         telemetry.update();
     }
