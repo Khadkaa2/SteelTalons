@@ -129,7 +129,7 @@ public class Robot {
     }
 	
 	public void startLaunchMotorsAlt(boolean far) {
-		launchTargetVeocity = far ? 2050 : 1500;
+		launchTargetVelocity = far ? 2000 : 1500;
 		leftLaunch.setVelocity(launchTargetVelocity);
 		rightLaunch.setVelocity(launchTargetVelocity);
 	}
