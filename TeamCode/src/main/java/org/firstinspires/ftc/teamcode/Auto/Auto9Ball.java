@@ -70,12 +70,12 @@ public class Auto9Ball extends OpMode {
     telemetry.addData("Start", SharedData.startFar ? "far" : "close");
     telemetry.addData("Shoot", SharedData.shootFar ? "far" : "close");
 
-    if (gamepad2.a){
+    /*if (gamepad2.a){
         limelight.start();
     }
     else if (gamepad2.b){
         limelight.stop();
-    }
+    */}
 
     telemetry.update();
     }
