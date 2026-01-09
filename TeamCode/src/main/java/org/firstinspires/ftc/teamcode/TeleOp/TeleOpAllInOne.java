@@ -424,8 +424,8 @@ public class TeleOpAllInOne extends LinearOpMode{
 
 
     public void tele() {
-        telemetry.addData("crashed" , crashed);
-        telemetry.addData("latest crash name" , crashName);
+//        telemetry.addData("crashed" , crashed);
+//        telemetry.addData("latest crash name" , crashName);
 //            telemetry.addData("FOLLOWER X",f.getPose().getX());
 //            telemetry.addData("FOLLOWER Y",f.getPose().getY());
 //            telemetry.addData("FOLLOWER Heading",f.getPose().getHeading());
@@ -449,7 +449,7 @@ public class TeleOpAllInOne extends LinearOpMode{
 //        telemetry.addData("automated" , automated);
         telemetry.addData("In Motif", inMotif);
 
-        telemetry.addData("\nColor Values\n", hornet.returnColor());
+//        telemetry.addData("\nColor Values\n", hornet.returnColor());
 
 
         telemetry.update();

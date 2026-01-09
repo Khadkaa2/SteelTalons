@@ -151,10 +151,11 @@ public class Auto9Ball extends OpMode {
         }
         telemetry.addData("Times Launched", timesLaunched);
         telemetry.addData("Green Index", SharedData.greenIndex);
-        telemetry.addData("Temp launch", launchingTemp);
-        telemetry.addData("launching", launching);
-        telemetry.addData("sort", hornet.atSortTarget() ? "at target" : "not at target");
-        telemetry.addData("launch motors", hornet.atTargetVelocity() ? "at velocity" : "not at velocity");
+//        telemetry.addData("Temp launch", launchingTemp);
+//        telemetry.addData("launching", launching);
+//        telemetry.addData("sort", hornet.atSortTarget() ? "at target" : "not at target");
+//        telemetry.addData("launch motors", hornet.atTargetVelocity() ? "at velocity" : "not at velocity");
+        telemetry.update();
     }
 
     public void stop(){
