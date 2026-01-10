@@ -23,4 +23,10 @@ public class PoseConstants {
     public Pose closeAlt = !SharedData.red ? new Pose(84 , 116 , Math.toRadians(345)) : new Pose(60 , 116 , Math.toRadians(192));
     public Pose farLaunch = !SharedData.red ? new Pose(56.75,14.75,Math.toRadians(291)) : new Pose(87.25,14.75,Math.toRadians(246));
     public Pose closeLaunch  = !SharedData.red ? new Pose(56.75,80.75,Math.toRadians(310)) :  new Pose(87.25,80.75,Math.toRadians(225));
+
+
+
+
+    public Pose ALIGN3_POSE = SharedData.red ? new Pose(135,28,Math.toRadians(270)) : new Pose(9,28,Math.toRadians(270));
+    public Pose PICKUP3_POSE = SharedData.red ? new Pose(135,9,Math.toRadians(270)) : new Pose(9,28,Math.toRadians(270));
 }
