@@ -144,7 +144,7 @@ public class Auto9Ball extends OpMode {
             else if(launchingTemp && hornet.isLaunched()){
                 launchingTemp = false;
                 timesLaunched++;
-                if(timesLaunched == 2)
+                if(timesLaunched == 3)
                     timesLaunched = 0;
                 hornet.resetLaunch();
             }
@@ -213,7 +213,7 @@ public class Auto9Ball extends OpMode {
                 break;
             case 1:
                 sendPose();
-                if (!f.isBusy() && SharedData.isEmpty() && launchTimer.getElapsedTimeSeconds() > .25){
+                if (!f.isBusy() && SharedData.isEmpty() && launchTimer.getElapsedTimeSeconds() > .5){
                     //go to align 1 pos
                     f.followPath(one, true);
                     setPathState(2);
@@ -244,7 +244,7 @@ public class Auto9Ball extends OpMode {
                 }
                 break;
             case 4:
-                if (!f.isBusy() && SharedData.isEmpty() && launchTimer.getElapsedTimeSeconds() > .25) {
+                if (!f.isBusy() && SharedData.isEmpty() && launchTimer.getElapsedTimeSeconds() > .5) {
                     //go to align 2
                     f.followPath(four, true);
                     setPathState(5);
@@ -275,7 +275,7 @@ public class Auto9Ball extends OpMode {
                 }
                 break;
             case 7:
-                if (!f.isBusy() && SharedData.isEmpty() && launchTimer.getElapsedTimeSeconds() > .25 && opmodeTimer.getElapsedTimeSeconds() < 28.5){
+                if (!f.isBusy() && SharedData.isEmpty() && launchTimer.getElapsedTimeSeconds() > .5 && opmodeTimer.getElapsedTimeSeconds() < 28.5){
                     // sends to final location
                     f.followPath(end);
                     setPathState(8);
