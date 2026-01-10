@@ -285,6 +285,7 @@ public class TeleOpAllInOne extends LinearOpMode{
             	hornet.startLaunchMotorsAlt(f.getPose().getY() < 48);
 			else
 				hornet.startLaunchMotors(f.getPose().getY() < 48);
+
             hornet.startIntake(true, .1);
         } else{hornet.stopLaunchMotors();}
 
