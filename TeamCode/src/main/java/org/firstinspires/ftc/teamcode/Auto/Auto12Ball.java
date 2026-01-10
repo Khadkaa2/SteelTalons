@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import java.util.ArrayList;
 
-@Autonomous (name = "12Auto")
+//@Autonomous (name = "12Auto")
 public class Auto12Ball extends OpMode {
 
     private Robot hornet = new Robot();
