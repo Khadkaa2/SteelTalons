@@ -27,6 +27,6 @@ public class PoseConstants {
 
 
 
-    public Pose ALIGN3_POSE = SharedData.red ? new Pose(135,28,Math.toRadians(270)) : new Pose(20,28,Math.toRadians(270));
-    public Pose PICKUP3_POSE = SharedData.red ? new Pose(135,9,Math.toRadians(270)) : new Pose(20,28,Math.toRadians(270));
+    public Pose ALIGN3_POSE = SharedData.red ? new Pose(135,28,Math.toRadians(270)) : new Pose(10,28,Math.toRadians(270));
+    public Pose PICKUP3_POSE = SharedData.red ? new Pose(135,9,Math.toRadians(270)) : new Pose(10,9,Math.toRadians(270));
 }

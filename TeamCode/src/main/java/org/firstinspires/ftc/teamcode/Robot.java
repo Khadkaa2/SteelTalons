@@ -4,6 +4,7 @@ import org.firstinspires.ftc.robotcore.external.JavaUtil;
 
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -22,8 +23,8 @@ public class Robot {
     public static DcMotorEx intake;
 //    public static CRServo intakeServo;
     public static Servo hammer;
-    private static ColorSensor colorRight;
-    private static ColorSensor colorLeft;
+    private static RevColorSensorV3 colorRight;
+    private static RevColorSensorV3 colorLeft;
     private static TouchSensor touchSensor;
     private Limelight3A limelight;
     private LLResult result;
@@ -43,11 +44,11 @@ public class Robot {
 
      public void initialize(HardwareMap hwMp){
          touchSensor = hwMp.get(TouchSensor.class, "touchSensor");
-        colorRight = hwMp.get(ColorSensor.class, "colorRight");
+        colorRight = hwMp.get(RevColorSensorV3.class, "colorRight");
         hammer = hwMp.get(Servo.class, "hammer");
         rightLaunch = hwMp.get(DcMotorEx.class, "rightLaunch");
         leftLaunch = hwMp.get(DcMotorEx.class, "leftLaunch");
-        colorLeft = hwMp.get(ColorSensor.class, "colorLeft");
+        colorLeft = hwMp.get(RevColorSensorV3.class, "colorLeft");
 
         intake = hwMp.get(DcMotorEx.class, "intake");
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
