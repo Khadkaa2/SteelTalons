@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.SharedData;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-//@Autonomous (name = "9 alt auto")
+@Autonomous (name = "9 alt auto")
 public class Auto9BallAlt extends OpMode {
 
     private Robot hornet = new Robot();
