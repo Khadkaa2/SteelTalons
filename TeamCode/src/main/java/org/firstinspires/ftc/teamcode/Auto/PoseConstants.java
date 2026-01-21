@@ -6,6 +6,7 @@ import com.pedropathing.geometry.Pose;
 
 import org.firstinspires.ftc.teamcode.SharedData;
 
+
 @Configurable
 public class PoseConstants {
     public Pose START_POSE =  !SharedData.red ? (SharedData.startFar ? new Pose(56.75,9.36,Math.toRadians(270)) : new Pose(27.85, 125.85, Math.toRadians(190.75))) :  (SharedData.startFar ? new Pose(87.25,8.75,Math.toRadians(270)) : new Pose(118.55, 125.25, Math.toRadians(350)));
@@ -16,6 +17,8 @@ public class PoseConstants {
     public Pose COMBINED_ALIGN1_POSE = !SharedData.red ? (new Pose(45.75,33.25,Math.toRadians(180)) ):  new Pose(98.25,33.25,Math.toRadians(0));
     public Pose COMBINED_PICKUP1_POSE = !SharedData.red ? (new Pose(17.75,33.25, Math.toRadians(180)) ):  new Pose(126.25,33.25, Math.toRadians(0));
     public Pose COMBINED_ENDPOSE = !SharedData.red ? (new Pose(17.75, 50.25, Math.toRadians(180)) ) : (new Pose(126.25, 59.25, Math.toRadians(0)) );
+    public <List> COMBINED_ALIGHT1_CURVE = new List<>();
+
 
     public  Pose PICKUP1_POSE = !SharedData.red ? (SharedData.shootFar ? new Pose(17.75,33.25, Math.toRadians(180)) : new Pose(17.75,81.25, Math.toRadians(180))) :  (SharedData.shootFar ? new Pose(126.25,33.25, Math.toRadians(0)) : new Pose(128,83, Math.toRadians(0)));
     public Pose ALIGN2_POSE = !SharedData.red ? new Pose(45.75,59.25,Math.toRadians(180)) :  new Pose(102.25,59.25,Math.toRadians(0));

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Auto;
 
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
@@ -176,7 +177,7 @@ public class HebronCombined6BallAuto extends OpMode {
         start.setLinearHeadingInterpolation(poses.START_POSE.getHeading() , poses.LAUNCH_POSE.getHeading());
 
         one = f.pathBuilder()
-                .addPath(new BezierLine(poses.LAUNCH_POSE , poses.COMBINED_ALIGN1_POSE))
+                .addPath(new BezierCurve())
                 .setConstantHeadingInterpolation(poses.COMBINED_ALIGN1_POSE.getHeading())
                 .build();
 
@@ -190,12 +191,8 @@ public class HebronCombined6BallAuto extends OpMode {
                 .setLinearHeadingInterpolation(poses.COMBINED_ALIGN1_POSE.getHeading() , poses.LAUNCH_POSE.getHeading())
                 .build();
 
-        four = f.pathBuilder()
-                .addPath(new BezierLine(poses.LAUNCH_POSE , poses.COMBINED_ENDPOSE))
-                .setConstantHeadingInterpolation(poses.COMBINED_ENDPOSE.getHeading())
-                .build();
-
-
+        end = new Path(new BezierLine( poses.LAUNCH_POSE , poses.COMBINED_ENDPOSE));
+        end.setLinearHeadingInterpolation(poses.LAUNCH_POSE.getHeading() , poses.COMBINED_ENDPOSE.getHeading());
 
         /*
         one = f.pathBuilder()
@@ -226,8 +223,8 @@ public class HebronCombined6BallAuto extends OpMode {
                 .build();
         */
 
-        end = new Path(new BezierLine(poses.LAUNCH_POSE, poses.END_POSE));
-        end.setLinearHeadingInterpolation(poses.LAUNCH_POSE.getHeading(), poses.END_POSE.getHeading());
+//        end = new Path(new BezierLine(poses.LAUNCH_POSE, poses.END_POSE));
+//        end.setLinearHeadingInterpolation(poses.LAUNCH_POSE.getHeading(), poses.END_POSE.getHeading());
     }
 
     public void autoPathUpdates(){
@@ -274,7 +271,7 @@ public class HebronCombined6BallAuto extends OpMode {
             case 4:
                 if (!f.isBusy() && SharedData.isEmpty() && launchTimer.getElapsedTimeSeconds() > .5) {
                     //go to align 2
-                    f.followPath(four, true);
+                    f.followPath(end, true);
                     setPathState(5);
                     sendPose();
                     launching = false;
@@ -285,36 +282,6 @@ public class HebronCombined6BallAuto extends OpMode {
                 }
                 break;
             case 5:
-                if (!f.isBusy()){
-                    //pickup 2
-                    f.followPath(five , true);
-                    f.setMaxPower(.25);
-                    setPathState(6);
-                    sendPose();
-                }
-                break;
-            case 6:
-                if (!f.isBusy() || SharedData.isFull()){
-                    //move to score pose
-                    f.followPath(six , true);
-                    f.setMaxPower(1);
-                    sendPose();
-                    setPathState(7);
-                }
-                break;
-            case 7:
-                if (!f.isBusy() && SharedData.isEmpty() && launchTimer.getElapsedTimeSeconds() > .5 && opmodeTimer.getElapsedTimeSeconds() < 28.5){
-                    // sends to final location
-                    f.followPath(end);
-                    setPathState(8);
-                    sendPose();
-                }
-                //score 3
-                else if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() > 3){
-                    launching = true;
-                }
-                break;
-            case 8:
                 if (!f.isBusy()){
                     setPathState(-1);
                     sendPose();
