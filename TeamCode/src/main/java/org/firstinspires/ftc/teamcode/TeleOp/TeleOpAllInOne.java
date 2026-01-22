@@ -434,14 +434,15 @@ public class TeleOpAllInOne extends LinearOpMode{
 //            telemetry.addData("FOLLOWER Y",f.getPose().getY());
 //            telemetry.addData("FOLLOWER Heading",f.getPose().getHeading());
 //        telemetry.addData("Pattern", SharedData.greenIndex);
-//        telemetry.addLine(String.format("Storage: %s, %s, %s", SharedData.storage[0], SharedData.storage[1], SharedData.storage[2] ));
+//        telemetry.addLine(String.format("Storage: %s, %s, %s", SharedData.storage[0], Sh
+//        aredData.storage[1], SharedData.storage[2] ));
         telemetry.addData("auto Mode", autoMode);
 //        telemetry.addData("Side", SharedData.red ? "Red" : "Blue");
 //        telemetry.addData("Robot Centric" , robotCentric);
 //        telemetry.addData("Slow Mode", slowMode);
-//        telemetry.addLine(String.format("LeftVel: %f\nRightVel: %f",hornet.leftLaunch.getVelocity(), hornet.rightLaunch.getVelocity() ));
-//        telemetry.addData("targetVelocity" ,hornet.getLaunchTargetVelocity());
-//        telemetry.addData("atTarget" , hornet.atTargetVelocity());
+        telemetry.addLine(String.format("LeftVel: %f\nRightVel: %f",hornet.leftLaunch.getVelocity(), hornet.rightLaunch.getVelocity() ));
+        telemetry.addData("targetVelocity" ,hornet.getLaunchTargetVelocity());
+        telemetry.addData("atTarget" , hornet.atTargetVelocity());
 //        telemetry.addData("launchTimer", launchTimer.getElapsedTimeSeconds());
 //        telemetry.addData("button", hornet.buttonPressed());
 //        telemetry.addData("at sort", hornet.atSortTarget());

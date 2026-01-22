@@ -2,7 +2,9 @@ package org.firstinspires.ftc.teamcode.Auto;
 
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.Pose;
+import java.util.*;
 
 import org.firstinspires.ftc.teamcode.SharedData;
 
@@ -16,9 +18,11 @@ public class PoseConstants {
 
     public Pose COMBINED_ALIGN1_POSE = !SharedData.red ? (new Pose(45.75,33.25,Math.toRadians(180)) ):  new Pose(98.25,33.25,Math.toRadians(0));
     public Pose COMBINED_PICKUP1_POSE = !SharedData.red ? (new Pose(17.75,33.25, Math.toRadians(180)) ):  new Pose(126.25,33.25, Math.toRadians(0));
+    public Pose COMBINED_ALIGN1_CONTROL = !SharedData.red ? (new Pose(68, 34.5)) : (new Pose(76,33.5));
     public Pose COMBINED_ENDPOSE = !SharedData.red ? (new Pose(17.75, 50.25, Math.toRadians(180)) ) : (new Pose(126.25, 59.25, Math.toRadians(0)) );
-    public <List> COMBINED_ALIGHT1_CURVE = new List<>();
 
+//    public ArrayList<Pose> curve = new ArrayList<Pose>(Arrays.asList(new Pose()));
+//    public BezierCurve test = new BezierCurve(curve);
 
     public  Pose PICKUP1_POSE = !SharedData.red ? (SharedData.shootFar ? new Pose(17.75,33.25, Math.toRadians(180)) : new Pose(17.75,81.25, Math.toRadians(180))) :  (SharedData.shootFar ? new Pose(126.25,33.25, Math.toRadians(0)) : new Pose(128,83, Math.toRadians(0)));
     public Pose ALIGN2_POSE = !SharedData.red ? new Pose(45.75,59.25,Math.toRadians(180)) :  new Pose(102.25,59.25,Math.toRadians(0));
@@ -26,7 +30,7 @@ public class PoseConstants {
     public Pose END_POSE = !SharedData.red ? (SharedData.shootFar ? new Pose(56.75,30.75,Math.toRadians(240)) : new Pose(45.75,69.75,Math.toRadians(180))) :  (SharedData.shootFar ? new Pose(87.25, 30.75,0) : new Pose(98.25, 69.75,Math.toRadians(0)));
 //    public static Pose FIELD_OFFSET;
     public Pose parkPose = SharedData.red ? new Pose(38.375, 32.25,0) :  new Pose(105.625,32.25,Math.toRadians(270));
-    public Pose gatePose = SharedData.red ? new Pose(126 , 78, Math.toRadians(0)) : new Pose(21, 78 , Math.toRadians(180));
+    public Pose gatePose = SharedData.red ? new Pose(126 , 78, Math.toRadians(0)) : new Pose(12, 58.5 , Math.toRadians(152));
     public Pose farAlt = !SharedData.red ? new Pose(87.75 , 14.75 , Math.toRadians(301)) : new Pose(56.75 , 14.75 , Math.toRadians(234));
     public Pose closeAlt = !SharedData.red ? new Pose(84 , 116 , Math.toRadians(345)) : new Pose(60 , 116 , Math.toRadians(192));
     public Pose farLaunch = !SharedData.red ? new Pose(56.75,14.75,Math.toRadians(291)) : new Pose(87.25,14.75,Math.toRadians(246));
