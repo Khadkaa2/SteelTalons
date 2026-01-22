@@ -15,7 +15,10 @@ public class PoseConstants {
     public Pose COMBINED_ALIGN1_POSE = SharedData.side == Side.BLUE ? (new Pose(45.75,33.25,Math.toRadians(180)) ):  new Pose(98.25,33.25,Math.toRadians(0));
     public Pose COMBINED_PICKUP1_POSE = SharedData.side == Side.BLUE ? (new Pose(17.75,33.25, Math.toRadians(180)) ):  new Pose(126.25,33.25, Math.toRadians(0));
     public Pose COMBINED_ALIGN1_CONTROL = SharedData.side == Side.BLUE ? (new Pose(68, 34.5)) : (new Pose(76,33.5));
-    public Pose COMBINED_ENDPOSE = SharedData.side == Side.BLUE ? (new Pose(17.75, 50.25, Math.toRadians(180)) ) : (new Pose(126.25, 59.25, Math.toRadians(0)) );
+    public Pose COMBINED_PICKUP1_CONTROL = SharedData.side == Side.BLUE ? (new Pose(70,34.5 )) : (new Pose(74, 34.5));
+//    public Pose COMBINED_ENDPOSE = SharedData.side == Side.BLUE ? (new Pose(17.75, 50.25, Math.toRadians(180)) ) : (new Pose(126.25, 59.25, Math.toRadians(0)) );
+    public Pose COMBINED_ENDPOSE = SharedData.side == Side.BLUE ? (new Pose(38.375, 12, Math.toRadians(180)) ) : (new Pose(105.625, 12, Math.toRadians(0)) );
+    public Pose COMBINED_ENDPOSE_CONTROL = SharedData.side == Side.BLUE? (new Pose(66, 30)) : (new Pose (70, 30));
 
 //    public ArrayList<Pose> curve = new ArrayList<Pose>(Arrays.asList(new Pose()));
 //    public BezierCurve test = new BezierCurve(curve);
@@ -24,6 +27,7 @@ public class PoseConstants {
     public Pose ALIGN2_POSE = SharedData.side == Side.BLUE ? new Pose(45.75,59.25,Math.toRadians(180)) :  new Pose(102.25,59.25,Math.toRadians(0));
     public Pose PICKUP2_POSE = SharedData.side == Side.BLUE ? new Pose(17.75, 59.25, Math.toRadians(180)) :  new Pose(126.25, 59.25, Math.toRadians(0));
     public Pose END_POSE = SharedData.side == Side.BLUE ? (SharedData.shootFar ? new Pose(56.75,30.75,Math.toRadians(240)) : new Pose(45.75,69.75,Math.toRadians(180))) :  (SharedData.shootFar ? new Pose(87.25, 30.75,0) : new Pose(98.25, 69.75,Math.toRadians(0)));
+
 //    public static Pose FIELD_OFFSET;
     public Pose parkPose = SharedData.side == Side.RED ? new Pose(38.375, 32.25,0) :  new Pose(105.625,32.25,Math.toRadians(270));
     public Pose gatePose = SharedData.side == Side.RED ? new Pose(126 , 78, Math.toRadians(0)) : new Pose(12, 58.5 , Math.toRadians(152));
