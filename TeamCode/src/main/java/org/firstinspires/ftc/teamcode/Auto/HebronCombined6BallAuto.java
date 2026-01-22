@@ -192,9 +192,15 @@ public class HebronCombined6BallAuto extends OpMode {
                 .addPath(new BezierCurve(poses.COMBINED_PICKUP1_POSE , poses.COMBINED_PICKUP1_CONTROL , poses.LAUNCH_POSE))
                 .setLinearHeadingInterpolation(poses.COMBINED_ALIGN1_POSE.getHeading() , poses.LAUNCH_POSE.getHeading())
                 .build();
+//PUT THIS AS FOUR NOT ENDPOSE
+//        four = f.pathBuilder()
+//                .addPath(new BezierCurve(poses.LAUNCH_POSE , poses.COMBINED_ALIGN2_CONTROL, poses.COMBINED_ALIGN2_POSE))
+//                .setLinearHeadingInterpolation(poses.LAUNCH_POSE.getHeading() , poses.COMBINED_ALIGN2_POSE.getHeading())
+//                .build();
 
-        end = new Path(new BezierCurve( poses.LAUNCH_POSE , poses.COMBINED_ENDPOSE_CONTROL,  poses.COMBINED_ENDPOSE));
-        end.setLinearHeadingInterpolation(poses.LAUNCH_POSE.getHeading() , poses.COMBINED_ENDPOSE.getHeading());
+        end = new Path( new BezierCurve(poses.LAUNCH_POSE , poses.COMBINED_ALIGN2_CONTROL , poses.COMBINED_ALIGN2_POSE));
+        end.setLinearHeadingInterpolation(poses.LAUNCH_POSE.getHeading() , poses.COMBINED_ALIGN2_POSE.getHeading());
+
 
         /*
         one = f.pathBuilder()43

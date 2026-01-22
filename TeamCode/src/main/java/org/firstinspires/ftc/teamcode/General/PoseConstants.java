@@ -17,9 +17,13 @@ public class PoseConstants {
     public Pose COMBINED_ALIGN1_CONTROL = SharedData.side == Side.BLUE ? (new Pose(68, 34.5)) : (new Pose(76,33.5));
     public Pose COMBINED_PICKUP1_CONTROL = SharedData.side == Side.BLUE ? (new Pose(70,34.5 )) : (new Pose(74, 34.5));
 //    public Pose COMBINED_ENDPOSE = SharedData.side == Side.BLUE ? (new Pose(17.75, 50.25, Math.toRadians(180)) ) : (new Pose(126.25, 59.25, Math.toRadians(0)) );
-    public Pose COMBINED_ENDPOSE = SharedData.side == Side.BLUE ? (new Pose(38.375, 12, Math.toRadians(180)) ) : (new Pose(105.625, 12, Math.toRadians(0)) );
-    public Pose COMBINED_ENDPOSE_CONTROL = SharedData.side == Side.BLUE? (new Pose(66, 30)) : (new Pose (70, 30));
 
+
+    public Pose COMBINED_ALIGN2_POSE = SharedData.side == Side.BLUE ? (new Pose(15.75, 12, Math.toRadians(180)) ) : (new Pose(120, 12, Math.toRadians(0)) );
+    public Pose COMBINED_ALIGN2_CONTROL = SharedData.side == Side.BLUE? (new Pose(66, 30)) : (new Pose (70, 30));
+
+//    public Pose COMBINED_PICKUP2_POSE = SharedData.side == Side.BLUE? () : ();
+//    public Pose COMBINED_PICKUP2_CONTROL = SharedData.side == Side.BLUE ? () : ();
 //    public ArrayList<Pose> curve = new ArrayList<Pose>(Arrays.asList(new Pose()));
 //    public BezierCurve test = new BezierCurve(curve);
 
