@@ -1,13 +1,8 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.LED;
-
-import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.General.Robot;
 
 //@TeleOp
 public class LEDTest extends LinearOpMode {

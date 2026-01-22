@@ -10,16 +10,17 @@ import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.Auto.PoseConstants;
+import org.firstinspires.ftc.teamcode.General.PoseConstants;
 
 
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 
-import org.firstinspires.ftc.teamcode.ColorSensed;
-import org.firstinspires.ftc.teamcode.Robot;
-import org.firstinspires.ftc.teamcode.SharedData;
+import org.firstinspires.ftc.teamcode.General.ColorSensed;
+import org.firstinspires.ftc.teamcode.General.Robot;
+import org.firstinspires.ftc.teamcode.General.SharedData;
+import org.firstinspires.ftc.teamcode.General.Side;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @TeleOp (name = "TeleOp")
@@ -88,7 +89,7 @@ public class TeleOpAllInOne extends LinearOpMode{
                         -gamepad1.left_stick_x * speedMultiplier,
                         -gamepad1.right_stick_x * speedMultiplier,
                         robotCentric,
-                        (SharedData.red || robotCentric) ? 0 : Math.toRadians(180)
+                        (SharedData.side == Side.RED || robotCentric) ? 0 : Math.toRadians(180)
                 );
             }
 
@@ -281,7 +282,7 @@ public class TeleOpAllInOne extends LinearOpMode{
 
         //If launching -> speed up launchMotors
         if(launching){
-			if(SharedData.red ? (f.getPose().getX() < 72) : (f.getPose().getX() > 72))
+			if(SharedData.side == Side.RED ? (f.getPose().getX() < 72) : (f.getPose().getX() > 72))
             	hornet.startLaunchMotorsAlt(f.getPose().getY() < 48);
 			else
 				hornet.startLaunchMotors(f.getPose().getY() < 48);
@@ -437,7 +438,7 @@ public class TeleOpAllInOne extends LinearOpMode{
 //        telemetry.addLine(String.format("Storage: %s, %s, %s", SharedData.storage[0], Sh
 //        aredData.storage[1], SharedData.storage[2] ));
         telemetry.addData("auto Mode", autoMode);
-//        telemetry.addData("Side", SharedData.red ? "Red" : "Blue");
+//        telemetry.addData("Side", SharedData.side);
 //        telemetry.addData("Robot Centric" , robotCentric);
 //        telemetry.addData("Slow Mode", slowMode);
         telemetry.addLine(String.format("LeftVel: %f\nRightVel: %f",hornet.leftLaunch.getVelocity(), hornet.rightLaunch.getVelocity() ));

@@ -13,9 +13,10 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.teamcode.ColorSensed;
-import org.firstinspires.ftc.teamcode.Robot;
-import org.firstinspires.ftc.teamcode.SharedData;
+import org.firstinspires.ftc.teamcode.General.ColorSensed;
+import org.firstinspires.ftc.teamcode.General.PoseConstants;
+import org.firstinspires.ftc.teamcode.General.Robot;
+import org.firstinspires.ftc.teamcode.General.SharedData;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Autonomous (name = "9Auto")
@@ -66,7 +67,7 @@ public class Auto9Ball extends OpMode {
     SharedData.greenIndex = index;
     telemetry.addData("ID" , ID);
     telemetry.addData("Green Index", index );
-    telemetry.addData("Side", SharedData.red ? "Red" : "Blue");
+    telemetry.addData("Side", SharedData.side);
     telemetry.addData("Start", SharedData.startFar ? "far" : "close");
     telemetry.addData("Shoot", SharedData.shootFar ? "far" : "close");
 

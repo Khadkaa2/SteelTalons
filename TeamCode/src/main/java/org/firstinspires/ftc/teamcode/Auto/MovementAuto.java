@@ -1,14 +1,13 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.ColorSensed;
-import org.firstinspires.ftc.teamcode.SharedData;
+import org.firstinspires.ftc.teamcode.General.ColorSensed;
+import org.firstinspires.ftc.teamcode.General.PoseConstants;
+import org.firstinspires.ftc.teamcode.General.SharedData;
 
 import com.bylazar.telemetry.PanelsTelemetry;
 
@@ -163,7 +162,7 @@ public class MovementAuto extends OpMode {
 
         SharedData.greenIndex = index;
         telemetry.addData("Green Index", index );
-        telemetry.addData("Side", SharedData.red ? "Red" : "Blue");
+        telemetry.addData("Side", SharedData.side);
 
 
         currentPose = robotPose();
@@ -201,7 +200,7 @@ public class MovementAuto extends OpMode {
         telemetry.addData("launching", launching);
         telemetry.addData("cc", currentColor);
         telemetry.addData("pc", previousColor);
-        telemetry.addData("Side", SharedData.red ? "Red" : "Blue");
+        telemetry.addData("Side", SharedData.side);
         panels.getTelemetry().update();
 
 

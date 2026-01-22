@@ -5,7 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import org.firstinspires.ftc.teamcode.SharedData;
+import org.firstinspires.ftc.teamcode.General.SharedData;
+import org.firstinspires.ftc.teamcode.General.Side;
 
 @TeleOp
 public class Calibration extends LinearOpMode {
@@ -22,9 +23,9 @@ public class Calibration extends LinearOpMode {
         while(opModeIsActive())
         {
             if(gamepad1.a || gamepad2.a)
-                SharedData.red = false;
+                SharedData.side = Side.BLUE;
             else if(gamepad1.b || gamepad2.b)
-                SharedData.red = true;
+                SharedData.side = Side.RED;
             else if((gamepad1.x || gamepad2.x) && (gamepad1.x || gamepad2.x) != shootF)
                 SharedData.shootFar = !SharedData.shootFar;
             else if((gamepad1.y || gamepad2.y) && (gamepad1.y || gamepad2.y) != startF)
@@ -32,7 +33,7 @@ public class Calibration extends LinearOpMode {
             shootF = gamepad1.x || gamepad2.x;
             startF = gamepad1.y || gamepad2.y;
             telemetry.addLine("B to set to red\nA to set to blue\nY to change start spot\nX to change shoot spot\n");
-            telemetry.addData("Side", SharedData.red ? "red" : "blue");
+            telemetry.addData("Side", SharedData.side);
             telemetry.addData("Shooting", SharedData.shootFar ? "far" : "close");
             telemetry.addData("Starting", SharedData.startFar ? "far" : "close");
             telemetry.update();

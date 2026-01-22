@@ -11,15 +11,13 @@ import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.teamcode.ColorSensed;
-import org.firstinspires.ftc.teamcode.Robot;
-import org.firstinspires.ftc.teamcode.SharedData;
+import org.firstinspires.ftc.teamcode.General.ColorSensed;
+import org.firstinspires.ftc.teamcode.General.Robot;
+import org.firstinspires.ftc.teamcode.General.SharedData;
+import org.firstinspires.ftc.teamcode.General.TwelveBallPoseConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-
-import java.util.ArrayList;
 
 //@Autonomous (name = "12Auto")
 public class Auto12Ball extends OpMode {
@@ -70,7 +68,7 @@ public class Auto12Ball extends OpMode {
         SharedData.greenIndex = index;
         telemetry.addData("ID" , ID);
         telemetry.addData("Green Index", index );
-        telemetry.addData("Side", SharedData.red ? "Red" : "Blue");
+        telemetry.addData("Side", SharedData.side);
         telemetry.addData("Start", SharedData.startFar ? "far" : "close");
         telemetry.addData("Shoot", SharedData.shootFar ? "far" : "close");
 

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.General;
 
 import com.pedropathing.geometry.Pose;
 
@@ -7,7 +7,7 @@ public class SharedData {
     public static int greenIndex = 0;
     public static Pose toTeleopPose;
     public static ColorSensed[] storage = {ColorSensed.GREEN, ColorSensed.PURPLE, ColorSensed.PURPLE};
-    public static boolean red = true;
+    public static Side side = Side.RED;
     public static boolean startFar = true;
     public static boolean shootFar;
 
