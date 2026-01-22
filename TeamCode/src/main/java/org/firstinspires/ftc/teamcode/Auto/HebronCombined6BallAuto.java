@@ -177,8 +177,8 @@ public class HebronCombined6BallAuto extends OpMode {
         start.setLinearHeadingInterpolation(poses.START_POSE.getHeading() , poses.LAUNCH_POSE.getHeading());
 
         one = f.pathBuilder()
-                .addPath(new BezierCurve())
-                .setConstantHeadingInterpolation(poses.COMBINED_ALIGN1_POSE.getHeading())
+                .addPath(new BezierCurve(poses.LAUNCH_POSE, poses.COMBINED_ALIGN1_CONTROL, poses.COMBINED_ALIGN1_POSE))
+                .setTangentHeadingInterpolation()
                 .build();
 
         two = f.pathBuilder()
