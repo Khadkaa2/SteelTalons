@@ -299,18 +299,19 @@ public class TeleOpAllInOne extends LinearOpMode{
         //if flap has had time to move...
         //and flap is at launch position -> move flap back and clear storage slot
         //and flap is at not launch position and it says its launching -> say its not launching
-        if(launchTimer.getElapsedTimeSeconds() >= .25){
-            if(hornet.hammerAtLaunch() && launching){
+
+            if(hornet.hammerAtLaunch() && launching && !hornet.atTargetVelocity() && launchTimer.getElapsedTimeSeconds() > .25){
                 launchTimer.resetTimer();
                 hornet.resetHammer();
                 SharedData.clearSlot(hornet.getSlotGoal());
             }
-            else if(launching && hornet.isLaunched()){
+
+            if(launching && hornet.isLaunched() && !hornet.hammerAtLaunch() && launchTimer.getElapsedTimeSeconds() > .25){
                 launching = false;
                 inMotif  = inMotif == 2 ? 0 : inMotif + 1;
                 hornet.resetLaunch();
             }
-        }
+
 
 
     }
