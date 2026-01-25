@@ -62,6 +62,9 @@ public class TeleOpAllInOne extends LinearOpMode{
         hornet.resetHammer();
 
 
+
+
+        controlTele();
         waitForStart();
 //        hornet.setStoragePos(hornet.getSlotGoal(), true);
         f.startTeleopDrive(true);
@@ -460,6 +463,13 @@ public class TeleOpAllInOne extends LinearOpMode{
 
 
         telemetry.update();
+    }
+
+    public void controlTele(){
+        telemetry.addLine("Driver Controls:\nDown D-pad to Cancel Shooting\nLeft D-Pad to toggle field/robot centric\na = close launch, b = far launch\ny = gate, x = park\nLTRIGGER = slow mode\nL/R BUTTON = out-/in-take\nRight D-Pad + Right Trigger RESETS Y POS");
+        telemetry.addLine("Operator Controls:\nRight D-pad auto shoots motif\nUp D-pad = green\nDown D-pad = purple\na = closeAlt, b = farAlt\n y = gate\n");
+        telemetry.update();
+
     }
 
 
