@@ -43,6 +43,7 @@ public class HebronCombined6BallAuto extends OpMode {
 
     @Override
     public void init() {
+        SharedData.shootFar = false;
         hornet.initialize(this.hardwareMap);
         SharedData.reset();
         pathTimer = new Timer();
@@ -192,14 +193,19 @@ public class HebronCombined6BallAuto extends OpMode {
                 .addPath(new BezierCurve(poses.COMBINED_PICKUP1_POSE , poses.COMBINED_PICKUP1_CONTROL , poses.LAUNCH_POSE))
                 .setLinearHeadingInterpolation(poses.COMBINED_ALIGN1_POSE.getHeading() , poses.LAUNCH_POSE.getHeading())
                 .build();
-//PUT THIS AS FOUR NOT ENDPOSE
-//        four = f.pathBuilder()
-//                .addPath(new BezierCurve(poses.LAUNCH_POSE , poses.COMBINED_ALIGN2_CONTROL, poses.COMBINED_ALIGN2_POSE))
-//                .setLinearHeadingInterpolation(poses.LAUNCH_POSE.getHeading() , poses.COMBINED_ALIGN2_POSE.getHeading())
-//                .build();
 
-        end = new Path( new BezierCurve(poses.LAUNCH_POSE , poses.COMBINED_ALIGN2_CONTROL , poses.COMBINED_ALIGN2_POSE));
-        end.setLinearHeadingInterpolation(poses.LAUNCH_POSE.getHeading() , poses.COMBINED_ALIGN2_POSE.getHeading());
+        four = f.pathBuilder()
+                .addPath( new BezierCurve(poses.LAUNCH_POSE , poses.COMBINED_ALIGN2_CONTROL , poses.COMBINED_ALIGN2_POSE))
+                .setLinearHeadingInterpolation(poses.LAUNCH_POSE.getHeading() , poses.COMBINED_ALIGN2_POSE.getHeading())
+                .build();
+
+        five = f.pathBuilder()
+                .addPath(new BezierCurve(poses.COMBINED_ALIGN2_POSE , poses.COMBINED_ALIGN2_CONTROL, poses.LAUNCH_POSE))
+                .setLinearHeadingInterpolation(poses.COMBINED_ALIGN2_POSE.getHeading() , poses.LAUNCH_POSE.getHeading())
+                .build();
+
+        end = new Path( new BezierLine(poses.LAUNCH_POSE , poses.END_POSE));
+        end.setLinearHeadingInterpolation(poses.LAUNCH_POSE.getHeading() , poses.END_POSE.getHeading());
 
 
         /*
@@ -259,6 +265,7 @@ public class HebronCombined6BallAuto extends OpMode {
                     launching = true;
                 break;
             case 2:
+                sendPose();
                 if (!f.isBusy()){
                     //pickup balls
                     f.followPath(two, true);
@@ -268,6 +275,7 @@ public class HebronCombined6BallAuto extends OpMode {
                 }
                 break;
             case 3:
+                sendPose();
                 if (!f.isBusy() || SharedData.isFull()){
                     //go to scoring pose
                     f.followPath(three, true);
@@ -277,9 +285,10 @@ public class HebronCombined6BallAuto extends OpMode {
                 }
                 break;
             case 4:
+                sendPose();
                 if (!f.isBusy() && SharedData.isEmpty() && launchTimer.getElapsedTimeSeconds() > .5) {
                     //go to align 2
-                    f.followPath(end, true);
+                    f.followPath(four, true);
                     setPathState(5);
                     sendPose();
                     launching = false;
@@ -290,6 +299,28 @@ public class HebronCombined6BallAuto extends OpMode {
                 }
                 break;
             case 5:
+                sendPose();
+                if (!f.isBusy() || SharedData.isFull()){
+                    //go to scoring pose
+                    f.followPath(five, true);
+                    f.setMaxPower(1);
+                    setPathState(4);
+                    sendPose();
+                }
+                break;
+            case 6:
+                sendPose();
+                if (!f.isBusy() && SharedData.isEmpty() && launchTimer.getElapsedTimeSeconds()>.5 &&  opmodeTimer.getElapsedTimeSeconds() < 28.5){
+                    f.followPath(end);
+                    setPathState(7);
+                    sendPose();
+                }
+                else if (!f.isBusy() && pathTimer.getElapsedTimeSeconds() < 3){
+                    launching = true;
+                }
+                break;
+            case 7:
+                sendPose();
                 if (!f.isBusy()){
                     setPathState(-1);
                     sendPose();

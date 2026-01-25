@@ -20,7 +20,7 @@ public class PoseConstants {
 
 
     public Pose COMBINED_ALIGN2_POSE = SharedData.side == Side.BLUE ? (new Pose(15.75, 12, Math.toRadians(180)) ) : (new Pose(120, 12, Math.toRadians(0)) );
-    public Pose COMBINED_ALIGN2_CONTROL = SharedData.side == Side.BLUE? (new Pose(66, 30)) : (new Pose (70, 30));
+    public Pose COMBINED_ALIGN2_CONTROL = SharedData.side == Side.BLUE? (new Pose(70, 5)) : (new Pose (70, 30));
 
 //    public Pose COMBINED_PICKUP2_POSE = SharedData.side == Side.BLUE? () : ();
 //    public Pose COMBINED_PICKUP2_CONTROL = SharedData.side == Side.BLUE ? () : ();
