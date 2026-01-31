@@ -285,7 +285,7 @@ public class TeleOpAllInOne extends LinearOpMode{
 
         //If launching -> speed up launchMotors
         if(launching){
-			if(SharedData.side == Side.RED ? (f.getPose().getX() < 72) : (f.getPose().getX() > 72))
+            if(SharedData.side == Side.RED ? (f.getPose().getX() < 72) : (f.getPose().getX() > 72))
             	hornet.startLaunchMotorsAlt(f.getPose().getY() < 48);
 			else
 				hornet.startLaunchMotors(f.getPose().getY() < 48);
