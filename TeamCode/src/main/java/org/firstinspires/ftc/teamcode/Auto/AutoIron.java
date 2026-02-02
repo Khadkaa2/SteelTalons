@@ -4,7 +4,6 @@ import androidx.xr.runtime.math.Pose;
 
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
@@ -20,8 +19,8 @@ import org.firstinspires.ftc.teamcode.General.Robot;
 import org.firstinspires.ftc.teamcode.General.SharedData;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@Autonomous (name = "9 alt auto")
-public class Auto9BallAlt extends OpMode {
+@Autonomous (name = "Auto Iron")
+public class AutoIron extends OpMode {
 
     private Robot hornet = new Robot();
     private Follower f = null;
@@ -146,7 +145,7 @@ public class Auto9BallAlt extends OpMode {
             else if(launchingTemp && hornet.isLaunched()){
                 launchingTemp = false;
                 timesLaunched++;
-                if(timesLaunched == 2)
+                if(timesLaunched == 3)
                     timesLaunched = 0;
                 hornet.resetLaunch();
             }
@@ -175,42 +174,11 @@ public class Auto9BallAlt extends OpMode {
         start.setLinearHeadingInterpolation(poses.START_POSE.getHeading() , poses.LAUNCH_POSE.getHeading());
 
         one = f.pathBuilder()
-                .addPath(new BezierLine( poses.LAUNCH_POSE , poses.ALIGN1_POSE))
-                .setConstantHeadingInterpolation(poses.ALIGN1_POSE.getHeading())
+                .addPath(new BezierLine( poses.LAUNCH_POSE , poses.START_POSE))
+                .setConstantHeadingInterpolation(poses.START_POSE.getHeading())
                 .build();
-        two = f.pathBuilder()
-                .addPath(new BezierLine( poses.ALIGN1_POSE , poses.PICKUP1_POSE))
-                .setLinearHeadingInterpolation( poses.ALIGN1_POSE.getHeading() , poses.PICKUP1_POSE.getHeading())
-                .build();
-        three = f.pathBuilder()
-                .addPath(new BezierLine(poses.PICKUP1_POSE , poses.LAUNCH_POSE ))
-                .setLinearHeadingInterpolation(poses.PICKUP1_POSE.getHeading() , poses.LAUNCH_POSE.getHeading())
-                .build();
-        four = f.pathBuilder()
-                .addPath(new BezierLine(poses.LAUNCH_POSE, poses.ALIGN3_POSE))
-                .setLinearHeadingInterpolation(poses.LAUNCH_POSE.getHeading() , poses.ALIGN3_POSE.getHeading())
-                .setBrakingStrength(.5)
-                //.setBrakingStart(.5)
-                .build();
-
-//        five = f.pathBuilder()
-//                .addPath(new BezierLine(poses.COMBINED_ALIGN2_POSE , poses.LAUNCH_POSE))
-//                .setConstantHeadingInterpolation(poses.LAUNCH_POSE.getHeading())
-//                .build();
-
-        five = f.pathBuilder()
-                .addPath(new BezierLine(poses.ALIGN3_POSE, poses.PICKUP3_POSE))
-                .setLinearHeadingInterpolation(poses.ALIGN3_POSE.getHeading(), poses.PICKUP3_POSE.getHeading())
-                .build();
-
-        six = f.pathBuilder()
-                .addPath(new BezierLine(poses.PICKUP3_POSE, poses.LAUNCH_POSE))
-                .setLinearHeadingInterpolation(poses.PICKUP3_POSE.getHeading(), poses.LAUNCH_POSE.getHeading())
-                .build();
-
-
-        end = new Path(new BezierLine(poses.LAUNCH_POSE, poses.END_POSE));
-        end.setLinearHeadingInterpolation(poses.LAUNCH_POSE.getHeading(), poses.END_POSE.getHeading());
+        end = new Path(new BezierLine(poses.START_POSE, poses.END_POSE));
+        end.setLinearHeadingInterpolation(poses.START_POSE.getHeading(), poses.END_POSE.getHeading());
     }
 
     public void autoPathUpdates(){
@@ -224,7 +192,7 @@ public class Auto9BallAlt extends OpMode {
                 break;
             case 1:
                 sendPose();
-                if (!f.isBusy() && SharedData.isEmpty() && launchTimer.getElapsedTimeSeconds() > .25){
+                if (!f.isBusy() && SharedData.isEmpty() && launchTimer.getElapsedTimeSeconds() > .5){
                     //go to align 1 pos
                     f.followPath(one, true);
                     setPathState(2);
@@ -237,58 +205,7 @@ public class Auto9BallAlt extends OpMode {
                     launching = true;
                 break;
             case 2:
-                if (!f.isBusy()){
-                    //pickup balls
-                    f.followPath(two, true);
-                    f.setMaxPower(.25);
-                    setPathState(3);
-                    sendPose();
-                }
-                break;
-            case 3:
-                if (!f.isBusy() || SharedData.isFull()){
-                    hornet.startIntake(false, .25);
-                    f.followPath(three, true);
-
-                    f.setMaxPower(1);
-                    setPathState(4);
-                    sendPose();
-                }
-                break;
-            case 4:
-                if (!f.isBusy() && SharedData.isEmpty() && launchTimer.getElapsedTimeSeconds() > .25) {
-                    //go to align 2
-                    f.followPath(four, true);
-                    setPathState(5);
-                    sendPose();
-                    launching = false;
-                }
-                //score 2
-                else if (!f.isBusy()&& pathTimer.getElapsedTimeSeconds() > 4.5) {
-                    launching = true;
-                }
-                break;
-            case 5:
-                if (!f.isBusy()){
-                    //pickup 2
-                    f.followPath(five , true);
-                    f.setMaxPower(.3);
-                    setPathState(6);
-                    sendPose();
-                }
-                break;
-            case 6:
-                if (!f.isBusy() || SharedData.isFull() || pathTimer.getElapsedTimeSeconds() > 3.5){
-                    //move to score pose
-                    hornet.startIntake(false, .25);
-                    f.followPath(six , true);
-                    f.setMaxPower(1);
-                    sendPose();
-                    setPathState(7);
-                }
-                break;
-            case 7:
-                if (!f.isBusy() && SharedData.isEmpty() && launchTimer.getElapsedTimeSeconds() > .25 && opmodeTimer.getElapsedTimeSeconds() < 28.5){
+                if (!f.isBusy() && SharedData.isEmpty() && launchTimer.getElapsedTimeSeconds() > .5 && opmodeTimer.getElapsedTimeSeconds() > 27){
                     // sends to final location
                     f.followPath(end);
                     setPathState(8);
@@ -299,7 +216,7 @@ public class Auto9BallAlt extends OpMode {
                     launching = true;
                 }
                 break;
-            case 8:
+            case 3:
                 if (!f.isBusy()){
                     setPathState(-1);
                     sendPose();
